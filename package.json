@@ -1,0 +1,46 @@
+{
+  "name": "vite-builder-dao",
+  "version": "0.0.0",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint \"./src/*/**/*.{ts,vue,json}\" --fix"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.4.16",
+    "@vue/apollo-composable": "^4.0.0-alpha.15",
+    "eslint": "^8.0.0",
+    "graphql": "^15.6.1",
+    "graphql-tag": "^2.12.5",
+    "remove-markdown": "^0.3.0",
+    "vue": "^3.2.16",
+    "vue-i18n": "^8.26.1",
+    "vue-router": "^3.5.2",
+    "vue-tippy": "^4.12.0",
+    "vuedraggable": "^2.24.3"
+  },
+  "devDependencies": {
+    "@types/node": "^16.10.4",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "@vitejs/plugin-vue": "^1.9.3",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/eslint-config-typescript": "^7.0.0",
+    "autoprefixer": "^10.3.7",
+    "babel-eslint": "^10.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-vue": "^7.19.1",
+    "postcss": "^8.3.9",
+    "prettier": "^2.4.1",
+    "rollup-plugin-visualizer": "^5.5.2",
+    "sass": "^1.42.1",
+    "sass-loader": "^12.2.0",
+    "tailwindcss": "^2.2.16",
+    "typescript": "^4.4.4",
+    "unplugin-vue-components": "^0.15.6",
+    "vite": "^2.6.4"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/zachdolph/vite-builder-dao"
+}
