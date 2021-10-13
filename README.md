@@ -2,9 +2,9 @@
   <img src="https://raw.githubusercontent.com/zachdolph/vite-builder-dao/blob/main/src/assets/img/vite-logo.png" width="224px"/><br/>
   Vite Builder DAO
 </h1>
-<p align="center">Important decisions need to be made and governed on the Vite network, with votes made by VITE<b>holders, with their VITE, via a DAO. Similarly, key decisions for ViteX require voting by VX holders.<b>Introduce Vite Builder DAOshboard (DAO Dashboard):</p>
+<p align="center">Important decisions need to be made and governed on the Vite network, with votes made by VITE<b>holders, with their VITE, via a DAO. Similarly, key decisions for ViteX require voting by VX holders.<b> Introduce Vite Builder DAOshboard (DAO Dashboard):</p>
 
-<p align="center"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License" />&nbsp;<<img src="https://img.shields.io/tokei/lines/github/zachdolph/vite-builder-dao?logoColor=purple" alt="Lines of Code" /><br><img src="https://img.shields.io/badge/version-v1.0.0-blue?style=for-the-badge&logo=none" alt="Vite Builder DAO Version" /></a></p>
+<p align="center"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License" />&nbsp;<img src="https://img.shields.io/tokei/lines/github/zachdolph/vite-builder-dao?logoColor=purple" alt="Lines of Code" /><br><img src="https://img.shields.io/badge/version-v1.0.0-blue?style=for-the-badge&logo=none" alt="Vite Builder DAO Version" /></a></p>
 
 ## 💎 Features
 
