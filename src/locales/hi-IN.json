@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "खोजें",
-  "spaceCount": "{0} स्पेसेस",
+  "guildCount": "{0} स्पेसेस",
   "createSpace": "स्पेस बनाएं",
   "backToHome": "होम",
   "actions": "एक्शन",
@@ -30,7 +30,7 @@
   "seeMore": "और देखें",
   "network": "नेटवर्क",
   "networks": "नेटवर्क",
-  "skins": "स्किन",
+  "themes": "स्किन",
   "members": "कोई सदस्य नहीं | {count} सदस्य | {count} सदस्य",
   "editStrategy": "रणनीति संपादित करें",
   "invalidProposals": "अमान्य प्रस्ताव",
@@ -96,7 +96,7 @@
   "proposalBy": "द्वारा{0}",
   "endDate": "ख़त्म {0}",
   "contectHash": "कंटेंट हैश",
-  "defaultSkin": "डिफ़ॉल्ट स्किन",
+  "defaultTheme": "डिफ़ॉल्ट स्किन",
   "select": "चुनें",
   "language": "भाषा",
   "agree": "मैं सहमत हूँ",
@@ -185,7 +185,7 @@
     "terms": "शर्तें",
     "network": "नेटवर्क",
     "symbol": "चिन्ह",
-    "skin": "स्किन",
+    "theme": "स्किन",
     "customDomain": "कस्टम डोमेन",
     "domain": "डोमेन नाम",
     "strategies": "स्ट्रेटेजीज",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "उदाहरण. yam.eth",
     "useExistingEns": "स्पेस बनाने के लिए मौजूदा इ एन ऐस नाम का उपयोग करे",
-    "createASpace": "स्पेस तैयार करे"
+    "createGuild": "स्पेस तैयार करे"
   },
   "notify": {
     "youDidIt": "संपूर्ण हुआ",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "स्ट्रेटेजी बनाये",
-    "createSkin": "स्किन बनाये",
+    "createTheme": "स्किन बनाये",
     "addNetwork": "नेटवर्क बनाये",
     "createPlugin": "प्लगइन बनाये",
     "strategies": "स्ट्रेटेजीज",
-    "skins": "स्किन",
+    "themes": "स्किन",
     "networks": "नेटवर्क",
     "plugins": "प्लगइन्स",
     "results": "परिणाम"

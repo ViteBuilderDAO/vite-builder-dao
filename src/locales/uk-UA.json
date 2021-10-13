@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "Пошук",
-  "spaceCount": "{0} розділ(и)",
+  "guildCount": "{0} розділ(и)",
   "createSpace": "Створити розділ",
   "backToHome": "Головна",
   "actions": "Дії",
@@ -30,7 +30,7 @@
   "seeMore": "Показати більше",
   "network": "Мережа",
   "networks": "Мережі",
-  "skins": "Теми оформлення",
+  "themes": "Теми оформлення",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "Редагувати стратегію",
   "invalidProposals": "Недійсні пропозиції",
@@ -96,7 +96,7 @@
   "proposalBy": "від {0}",
   "endDate": "кінець {0}",
   "contectHash": "Хеш контенту",
-  "defaultSkin": "Тема оформлення за замовчуванням",
+  "defaultTheme": "Тема оформлення за замовчуванням",
   "select": "Вибрати",
   "language": "Мова",
   "agree": "Я згоден",
@@ -185,7 +185,7 @@
     "terms": "Умови",
     "network": "Мережа",
     "symbol": "Символ",
-    "skin": "Тема оформлення",
+    "theme": "Тема оформлення",
     "customDomain": "Custom domain",
     "domain": "Ім'я домену",
     "strategies": "Стратегія(ї)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "наприклад yam.eth",
     "useExistingEns": "Для створення свого простору використовуйте наявну назву ENS",
-    "createASpace": "Створити області"
+    "createGuild": "Створити області"
   },
   "notify": {
     "youDidIt": "Ви це зробили!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Створити стратегію",
-    "createSkin": "Створити тему",
+    "createTheme": "Створити тему",
     "addNetwork": "Додати мережу",
     "createPlugin": "Створити плагін",
     "strategies": "стратегія(ї)",
-    "skins": "тема(и) оформлення",
+    "themes": "тема(и) оформлення",
     "networks": "мережа(і)",
     "plugins": "плагін(и)",
     "results": "результат(и)"

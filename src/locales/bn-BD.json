@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "অনুসন্ধান",
-  "spaceCount": "{0} স্থান",
+  "guildCount": "{0} স্থান",
   "createSpace": "স্থান তৈরি কর",
   "backToHome": "হোম",
   "actions": "অ্যাকশনঃ",
@@ -30,7 +30,7 @@
   "seeMore": "আরো দেখুন",
   "network": "নেটওয়ার্ক",
   "networks": "নেটওয়ার্ক",
-  "skins": "স্কীন",
+  "themes": "স্কীন",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "স্ট্রাটেজি সম্পাদনা করুন",
   "invalidProposals": "অবৈধ প্রোপসল",
@@ -96,7 +96,7 @@
   "proposalBy": "দ্বারা{0}",
   "endDate": "শেষ{0}",
   "contectHash": "কনটেন্ট হ্যাশ",
-  "defaultSkin": "ডিফল্ট স্কিন",
+  "defaultTheme": "ডিফল্ট স্কিন",
   "select": "নির্বাচন করুন",
   "language": "ভাষায়",
   "agree": "আমি রাজী",
@@ -185,7 +185,7 @@
     "terms": "শর্তাদি",
     "network": "নেটওয়ার্ক",
     "symbol": "প্রতীক",
-    "skin": "স্কিন",
+    "theme": "স্কিন",
     "customDomain": "Custom domain",
     "domain": "ডোমেন নাম",
     "strategies": "স্ট্রাটেজি",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "উদাহরণ. yam.eth",
     "useExistingEns": "আপনার জায়গা তৈরি করতে একটি বিদ্যমান ENS নাম ব্যবহার করুন.",
-    "createASpace": "একটি জায়গা তৈরি করুন"
+    "createGuild": "একটি জায়গা তৈরি করুন"
   },
   "notify": {
     "youDidIt": "তুমি এটি করেছিলে!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "স্ট্রাটেজি তৈরি",
-    "createSkin": "স্কিন তৈরি কর",
+    "createTheme": "স্কিন তৈরি কর",
     "addNetwork": "নেটওয়ার্ক যুক্ত করুন",
     "createPlugin": "প্লাগইন তৈরি করুন",
     "strategies": "স্ট্রাটেজি",
-    "skins": "স্কীন",
+    "themes": "স্কীন",
     "networks": "নেটওয়ার্ক",
     "plugins": "প্লাগইন",
     "results": "ফলাফল(সমূহ)"

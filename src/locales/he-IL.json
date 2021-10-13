@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "חיפוש",
-  "spaceCount": "{0} מרחבים",
+  "guildCount": "{0} מרחבים",
   "createSpace": "צור מרחב",
   "backToHome": "בית",
   "actions": "פעולות",
@@ -30,7 +30,7 @@
   "seeMore": "הצג עוד",
   "network": "רשת",
   "networks": "רשתות",
-  "skins": "סקינים",
+  "themes": "סקינים",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "ערוך אסטרטגיה",
   "invalidProposals": "הצעות לא חוקיות",
@@ -96,7 +96,7 @@
   "proposalBy": "על ידי {0}",
   "endDate": "סיים {0}",
   "contectHash": "Hash התוכן",
-  "defaultSkin": "סקין ברירת מחדל",
+  "defaultTheme": "סקין ברירת מחדל",
   "select": "בחר",
   "language": "שפה",
   "agree": "אני מסכים",
@@ -185,7 +185,7 @@
     "terms": "תנאים",
     "network": "רשת",
     "symbol": "סמל",
-    "skin": "סקין",
+    "theme": "סקין",
     "customDomain": "Custom domain",
     "domain": "שם דומיין",
     "strategies": "אסטרטגיות",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "לדוגמא yam.eth",
     "useExistingEns": "השתמש בשם ENS כדי ליצור מרחב חדש.",
-    "createASpace": "צור מרחב"
+    "createGuild": "צור מרחב"
   },
   "notify": {
     "youDidIt": "עשית זאת!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "צור אסטרטגיה",
-    "createSkin": "צור סקין",
+    "createTheme": "צור סקין",
     "addNetwork": "הוסף רשת",
     "createPlugin": "צור פלאגין",
     "strategies": "אסטרטגיות",
-    "skins": "סקינים",
+    "themes": "סקינים",
     "networks": "רשתות",
     "plugins": "פלאגינים",
     "results": "תוצאות"

@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "Søg:",
-  "spaceCount": "i mellemrum",
+  "guildCount": "i mellemrum",
   "createSpace": "Lav plads",
   "backToHome": "Forside",
   "actions": "Handlinger",
@@ -30,7 +30,7 @@
   "seeMore": "se mere",
   "network": "netværk",
   "networks": "netværk",
-  "skins": "skind",
+  "themes": "themed",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "rediger Strategi",
   "invalidProposals": "ugyldige forslag",
@@ -96,7 +96,7 @@
   "proposalBy": "by {0} (Automatic Copy)",
   "endDate": "afslut {0}",
   "contectHash": "Indhold hash",
-  "defaultSkin": "Standard-skin",
+  "defaultTheme": "Standard-theme",
   "select": "Vælg",
   "language": "Sprog",
   "agree": "Jeg er enig",
@@ -185,7 +185,7 @@
     "terms": "Vilkår",
     "network": "netværk",
     "symbol": "Symbol",
-    "skin": "Layout",
+    "theme": "Layout",
     "customDomain": "Custom domain",
     "domain": "Domænenavn",
     "strategies": "Strategier",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "e.g. yam.eth",
     "useExistingEns": "Brug et eksisterende ENS navn til at oprette din plads med.",
-    "createASpace": "skabe plads"
+    "createGuild": "skabe plads"
   },
   "notify": {
     "youDidIt": "Du gjorde det!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Opret strategi",
-    "createSkin": "Opret skin",
+    "createTheme": "Opret theme",
     "addNetwork": "Tilføj netværk",
     "createPlugin": "Opret og redigér plugin",
     "strategies": "strategier",
-    "skins": "skind)",
+    "themes": "themed)",
     "networks": "netværk)",
     "plugins": "plugins)",
     "results": "resultat(er)"

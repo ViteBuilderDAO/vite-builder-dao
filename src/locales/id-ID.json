@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "Cari",
-  "spaceCount": "Pemisah",
+  "guildCount": "Pemisah",
   "createSpace": "Buat ruang",
   "backToHome": "Beranda",
   "actions": "Aksi",
@@ -30,7 +30,7 @@
   "seeMore": "Lihat lebih banyak",
   "network": "Jaringan",
   "networks": "Jaringan",
-  "skins": "Tampilan",
+  "themes": "Tampilan",
   "members": "Tidak ada anggota | {count} anggota",
   "editStrategy": "Ubah strategi",
   "invalidProposals": "Proposal tidak valid",
@@ -96,7 +96,7 @@
   "proposalBy": "oleh {0}",
   "endDate": "akhir {0}",
   "contectHash": "Hash konten",
-  "defaultSkin": "Skin bawaan",
+  "defaultTheme": "Theme bawaan",
   "select": "Pilih",
   "language": "Bahasa",
   "agree": "Saya setuju",
@@ -185,7 +185,7 @@
     "terms": "Ketentuan",
     "network": "Jaringan",
     "symbol": "Simbol",
-    "skin": "Skin",
+    "theme": "Theme",
     "customDomain": "Custom domain",
     "domain": "Nama domain",
     "strategies": "Strategi",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "mis. yam.eth",
     "useExistingEns": "Gunakan sebuah nama ENS yang telah tersedia untuk membuat ruang Anda tersebut.",
-    "createASpace": "Buat sebuah ruang"
+    "createGuild": "Buat sebuah ruang"
   },
   "notify": {
     "youDidIt": "Anda berhasil!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Buat strategi",
-    "createSkin": "Buat skin",
+    "createTheme": "Buat theme",
     "addNetwork": "Tambahkan jaringan",
     "createPlugin": "Buat plugin",
     "strategies": "strategi",
-    "skins": "skin",
+    "themes": "theme",
     "networks": "jaringan",
     "plugins": "plugin",
     "results": "hasil"

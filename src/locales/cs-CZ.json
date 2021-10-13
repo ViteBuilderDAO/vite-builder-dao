@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "Hledání",
-  "spaceCount": "{0} skupin(y)",
+  "guildCount": "{0} skupin(y)",
   "createSpace": "Create spaces",
   "backToHome": "Domovská stránka",
   "actions": "Akce",
@@ -30,7 +30,7 @@
   "seeMore": "Zobrazit více",
   "network": "WiFi a mobilních sítí",
   "networks": "Sítě",
-  "skins": "Vzhledy",
+  "themes": "Vzhledy",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "Upravit strategii",
   "invalidProposals": "Neplatný návrh.",
@@ -96,7 +96,7 @@
   "proposalBy": "od {0}",
   "endDate": "End: {0}",
   "contectHash": "Hash obsahu",
-  "defaultSkin": "Výchozí vzhled",
+  "defaultTheme": "Výchozí vzhled",
   "select": "Výběr",
   "language": "Jazyk (Language)",
   "agree": "Souhlasím",
@@ -185,7 +185,7 @@
     "terms": "Podmínky",
     "network": "WiFi a mobilních sítí",
     "symbol": "Symbol",
-    "skin": "Stáhnout z kůže",
+    "theme": "Stáhnout z kůže",
     "customDomain": "Custom domain",
     "domain": "Název domény",
     "strategies": "Strategie (strategie)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "e.g. yam.eth",
     "useExistingEns": "Použijte existující ENS název k vytvoření vašeho prostoru.",
-    "createASpace": "Create spaces"
+    "createGuild": "Create spaces"
   },
   "notify": {
     "youDidIt": "Dokázals to!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Vytvořit strategii",
-    "createSkin": "Hlasujte",
+    "createTheme": "Hlasujte",
     "addNetwork": "Přidat síť",
     "createPlugin": "Vytvořit/upravit plugin",
     "strategies": "strategie (strategie)",
-    "skins": "vzhledy)",
+    "themes": "vzhledy)",
     "networks": "sítě)",
     "plugins": "zásuvné moduly)",
     "results": "výsledků"

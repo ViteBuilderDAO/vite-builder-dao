@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "検索",
-  "spaceCount": "{0} スペース",
+  "guildCount": "{0} スペース",
   "createSpace": "スペースを作成する",
   "backToHome": "ホーム",
   "actions": "アクション",
@@ -30,7 +30,7 @@
   "seeMore": "もっと見る",
   "network": "ネットワーク",
   "networks": "ネットワーク",
-  "skins": "スキン",
+  "themes": "スキン",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "ストラテジーを編集する",
   "invalidProposals": "不正な提案です",
@@ -96,7 +96,7 @@
   "proposalBy": "by {0}",
   "endDate": "{0} 終了",
   "contectHash": "コンテンツのハッシュ",
-  "defaultSkin": "デフォルトのスキン",
+  "defaultTheme": "デフォルトのスキン",
   "select": "選択する",
   "language": "言語",
   "agree": "I agree",
@@ -185,7 +185,7 @@
     "terms": "Terms",
     "network": "ネットワーク",
     "symbol": "シンボル",
-    "skin": "スキン",
+    "theme": "スキン",
     "customDomain": "Custom domain",
     "domain": "ドメイン名",
     "strategies": "ストラテジー",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "例 yam.eth",
     "useExistingEns": "スペースを作成するため、存在するENS名を使ってください。",
-    "createASpace": "スペースを作成する"
+    "createGuild": "スペースを作成する"
   },
   "notify": {
     "youDidIt": "おつかれさまです！",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Create strategy",
-    "createSkin": "Create skin",
+    "createTheme": "Create theme",
     "addNetwork": "Add network",
     "createPlugin": "Create plugin",
     "strategies": "strategie(s)",
-    "skins": "skin(s)",
+    "themes": "theme(s)",
     "networks": "network(s)",
     "plugins": "plugin(s)",
     "results": "result(s)"

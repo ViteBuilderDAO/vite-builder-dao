@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "శోధన",
-  "spaceCount": "{0} స్పేస్(లు)",
+  "guildCount": "{0} స్పేస్(లు)",
   "createSpace": "స్పేస్ సృష్టించండి",
   "backToHome": "హోమ్",
   "actions": "చర్యలు",
@@ -30,7 +30,7 @@
   "seeMore": "మరింత చూడండి",
   "network": "నెట్‌వర్క్",
   "networks": "నెట్‌వర్క్‌లు",
-  "skins": "స్కిన్స్",
+  "themes": "స్కిన్స్",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "వ్యూహాన్ని సవరించండి",
   "invalidProposals": "చెల్లని ప్రతిపాదనలు",
@@ -96,7 +96,7 @@
   "proposalBy": "by {0}",
   "endDate": "ముగింపు {0}",
   "contectHash": "కంటెంట్ హాష్",
-  "defaultSkin": "డిఫాల్ట్ స్కిన్స్",
+  "defaultTheme": "డిఫాల్ట్ స్కిన్స్",
   "select": "ఎంచుకోండి",
   "language": "Language",
   "agree": "I agree",
@@ -185,7 +185,7 @@
     "terms": "Terms",
     "network": "Network",
     "symbol": "చిహ్నం",
-    "skin": "స్కిన్స",
+    "theme": "స్కిన్స",
     "customDomain": "Custom domain",
     "domain": "డొమైన్ పేరు",
     "strategies": "Strategie(s)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "ఉదాహరణ. yarn.eth",
     "useExistingEns": "మీ స్పేస్ సృష్టించడానికి ఇప్పటికే ఉన్న ENS పేరును ఉపయోగించండి.",
-    "createASpace": "స్పేస్ సృష్టించండి"
+    "createGuild": "స్పేస్ సృష్టించండి"
   },
   "notify": {
     "youDidIt": "మీరు సాధించారు!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Create strategy",
-    "createSkin": "Create skin",
+    "createTheme": "Create theme",
     "addNetwork": "Add network",
     "createPlugin": "Create plugin",
     "strategies": "strategie(s)",
-    "skins": "skin(s)",
+    "themes": "theme(s)",
     "networks": "network(s)",
     "plugins": "plugin(s)",
     "results": "result(s)"

@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "Ara",
-  "spaceCount": "adet",
+  "guildCount": "adet",
   "createSpace": "Alan oluştur",
   "backToHome": "Anasayfa",
   "actions": "İşlemler",
@@ -30,7 +30,7 @@
   "seeMore": "Daha fazla göster",
   "network": "Ağ",
   "networks": "Ağlar",
-  "skins": "Ciltler",
+  "themes": "Ciltler",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "Stratejiyi Düzenle",
   "invalidProposals": "Geçersiz teklifler",
@@ -96,7 +96,7 @@
   "proposalBy": "{0} tarafından",
   "endDate": "bitiş {0}",
   "contectHash": "İçerik sağlama",
-  "defaultSkin": "Varsayılan seçim",
+  "defaultTheme": "Varsayılan seçim",
   "select": "Seçin",
   "language": "Dil",
   "agree": "Kabul Ediyorum",
@@ -185,7 +185,7 @@
     "terms": "Koşullar",
     "network": "Ağ",
     "symbol": "Sembol",
-    "skin": "Birim",
+    "theme": "Birim",
     "customDomain": "Custom domain",
     "domain": "Domain adı",
     "strategies": "Strateji",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "örneğin. yam.eth",
     "useExistingEns": "Alanınızı oluşturmak için mevcut bir ENS adını kullanın.",
-    "createASpace": "Oluştur"
+    "createGuild": "Oluştur"
   },
   "notify": {
     "youDidIt": "Başardınız!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Strateji oluştur",
-    "createSkin": "Yeni bir tema oluştur",
+    "createTheme": "Yeni bir tema oluştur",
     "addNetwork": "Ağ ekle",
     "createPlugin": "Eklenti oluştur",
     "strategies": "strateji(ler)",
-    "skins": "birim(ler)",
+    "themes": "birim(ler)",
     "networks": "ağ(lar)",
     "plugins": "eklenti(ler)",
     "results": "sonuç(lar)"

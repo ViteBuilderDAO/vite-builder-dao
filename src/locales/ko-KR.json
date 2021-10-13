@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "검색",
-  "spaceCount": "{0} 공간(들)",
+  "guildCount": "{0} 공간(들)",
   "createSpace": "공간 만들기",
   "backToHome": "홈페지",
   "actions": "액션",
@@ -30,7 +30,7 @@
   "seeMore": "더보기",
   "network": "네트워크",
   "networks": "네트워크들",
-  "skins": "스킨",
+  "themes": "스킨",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "전략 수정",
   "invalidProposals": "유효하지 않는 신청",
@@ -96,7 +96,7 @@
   "proposalBy": "에 의하여 {0}",
   "endDate": "말단 {0}",
   "contectHash": "콘텐츠 해시",
-  "defaultSkin": "기본 스킨",
+  "defaultTheme": "기본 스킨",
   "select": "고른",
   "language": "언어",
   "agree": "나는 동의한다",
@@ -185,7 +185,7 @@
     "terms": "약관",
     "network": "회로망",
     "symbol": "상징",
-    "skin": "피부",
+    "theme": "피부",
     "customDomain": "Custom domain",
     "domain": "도메인 이름",
     "strategies": "전략(에스)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "예를 들어 얌.eth",
     "useExistingEns": "기존를 사용 이자형열네번째에스 평점 당신의 공간을 만들 이름.",
-    "createASpace": "공간 만들기"
+    "createGuild": "공간 만들기"
   },
   "notify": {
     "youDidIt": "해냈어!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "전략 만들기",
-    "createSkin": "스킨 생성",
+    "createTheme": "스킨 생성",
     "addNetwork": "네트워크 추가",
     "createPlugin": "플러그인 만들기",
     "strategies": "멜라 (들)",
-    "skins": "피부 (들)",
+    "themes": "피부 (들)",
     "networks": "네트워크 (들)",
     "plugins": "플러그인 (들)",
     "results": "결과(에스)"

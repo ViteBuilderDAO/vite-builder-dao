@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "Zoeken",
-  "spaceCount": "{0} ruimte(s)",
+  "guildCount": "{0} ruimte(s)",
   "createSpace": "Creëer een ruimte",
   "backToHome": "Home",
   "actions": "Acties",
@@ -30,7 +30,7 @@
   "seeMore": "Zie meer",
   "network": "Netwerk",
   "networks": "Netwerken",
-  "skins": "Skins",
+  "themes": "Themes",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "Strategie bewerken",
   "invalidProposals": "Ongeldige voorstellen",
@@ -96,7 +96,7 @@
   "proposalBy": "door {0}",
   "endDate": "einde {0}",
   "contectHash": "Inhoud hash",
-  "defaultSkin": "Standaard skin",
+  "defaultTheme": "Standaard theme",
   "select": "Kies",
   "language": "Taal",
   "agree": "Ik ga akkoord",
@@ -185,7 +185,7 @@
     "terms": "Voorwaarden",
     "network": "Netwerk",
     "symbol": "Symbool",
-    "skin": "Skin",
+    "theme": "Theme",
     "customDomain": "Custom domain",
     "domain": "Domeinnaam",
     "strategies": "Strategie(ën)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "b.v. yam.eth",
     "useExistingEns": "Gebruik een bestaande ENS-naam om uw ruimte mee te creëren.",
-    "createASpace": "Creëer een ruimte"
+    "createGuild": "Creëer een ruimte"
   },
   "notify": {
     "youDidIt": "Het is je gelukt!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Maak strategie",
-    "createSkin": "Maak skin",
+    "createTheme": "Maak theme",
     "addNetwork": "Netwerk toevoegen",
     "createPlugin": "Maak plugin",
     "strategies": "strategie(ën)",
-    "skins": "skin(s)",
+    "themes": "theme(s)",
     "networks": "netwerk(en)",
     "plugins": "plugin(s)",
     "results": "resultaat(en)"

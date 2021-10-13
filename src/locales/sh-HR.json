@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "Pretraga",
-  "spaceCount": "{0} prostor(a)",
+  "guildCount": "{0} prostor(a)",
   "createSpace": "Napravi prostor",
   "backToHome": "Početna",
   "actions": "Radnje",
@@ -30,7 +30,7 @@
   "seeMore": "Vidi više",
   "network": "Mreža",
   "networks": "Mreže",
-  "skins": "Izgledi",
+  "themes": "Izgledi",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "Uredi strategiju",
   "invalidProposals": "Nevažeći predlozi",
@@ -96,7 +96,7 @@
   "proposalBy": "by {0}",
   "endDate": "kraj {0}",
   "contectHash": "Heš sadržaja",
-  "defaultSkin": "Podrazumevana tema",
+  "defaultTheme": "Podrazumevana tema",
   "select": "Izaberi",
   "language": "Jezik",
   "agree": "I agree",
@@ -185,7 +185,7 @@
     "terms": "Terms",
     "network": "Network",
     "symbol": "Simbol",
-    "skin": "Tema",
+    "theme": "Tema",
     "customDomain": "Custom domain",
     "domain": "Naziv domena",
     "strategies": "Strategie(s)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "npr. yam.eth",
     "useExistingEns": "Koristite postojeće ENS ime za kreaciju vašeg prostora.",
-    "createASpace": "Napravi prostor"
+    "createGuild": "Napravi prostor"
   },
   "notify": {
     "youDidIt": "Uspjeh!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Create strategy",
-    "createSkin": "Create skin",
+    "createTheme": "Create theme",
     "addNetwork": "Add network",
     "createPlugin": "Create plugin",
     "strategies": "strategie(s)",
-    "skins": "skin(s)",
+    "themes": "theme(s)",
     "networks": "network(s)",
     "plugins": "plugin(s)",
     "results": "result(s)"

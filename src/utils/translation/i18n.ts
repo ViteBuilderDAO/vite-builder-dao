@@ -2,7 +2,7 @@ import { createI18n } from 'vue-i18n';
 import { nextTick } from 'vue';
 import en from '@/locales/default.json';
 import languages from '@/locales/languages.json';
-import { lsRemove } from '@/helpers/utils';
+import { lsRemove } from '@/utils/helperFunctions';
 
 export let defaultLocale = 'en-US';
 

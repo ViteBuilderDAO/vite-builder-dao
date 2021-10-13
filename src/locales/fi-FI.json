@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "Haku",
-  "spaceCount": "{0} tilaa",
+  "guildCount": "{0} tilaa",
   "createSpace": "Luo tilaa",
   "backToHome": "Koti",
   "actions": "Toiminnot",
@@ -30,7 +30,7 @@
   "seeMore": "Katso lisää",
   "network": "Verkko",
   "networks": "Verkoissa",
-  "skins": "Skins",
+  "themes": "Themes",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "Muokkaa strategiaa",
   "invalidProposals": "Virheelliset ehdotukset",
@@ -96,7 +96,7 @@
   "proposalBy": "tekijältä {0}",
   "endDate": "loppu {0}",
   "contectHash": "Sisällön hash",
-  "defaultSkin": "Oletus skin",
+  "defaultTheme": "Oletus theme",
   "select": "Valitse",
   "language": "Kieli",
   "agree": "Olen samaa mieltä",
@@ -185,7 +185,7 @@
     "terms": "Ehdot",
     "network": "Verkko",
     "symbol": "Symboli",
-    "skin": "Skin",
+    "theme": "Theme",
     "customDomain": "Custom domain",
     "domain": "Verkkotunnus",
     "strategies": "Strategia(t)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "e.g. yam.eth",
     "useExistingEns": "Käytä olemassa olevaa ENS-nimeä luodaksesi välilyönnin.",
-    "createASpace": "Luo välilehti"
+    "createGuild": "Luo välilehti"
   },
   "notify": {
     "youDidIt": "Sinä teit sen!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Luo strategia",
-    "createSkin": "Luo skin",
+    "createTheme": "Luo theme",
     "addNetwork": "Lisää verkko",
     "createPlugin": "Luo liitännäinen",
     "strategies": "strategia(t)",
-    "skins": "skins(s)",
+    "themes": "themes(s)",
     "networks": "verkoissa",
     "plugins": "liitännäinen(s)",
     "results": "tuloksia"

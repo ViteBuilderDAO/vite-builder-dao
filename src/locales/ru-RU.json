@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "Поиск",
-  "spaceCount": "{0} раздел(ов)",
+  "guildCount": "{0} раздел(ов)",
   "createSpace": "Создать раздел",
   "backToHome": "Главная",
   "actions": "Действия",
@@ -30,7 +30,7 @@
   "seeMore": "Показать больше",
   "network": "Сеть",
   "networks": "Сети",
-  "skins": "Темы",
+  "themes": "Темы",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "Редактировать стратегию",
   "invalidProposals": "Неверные параметры опроса",
@@ -96,7 +96,7 @@
   "proposalBy": "от: {0}",
   "endDate": "по {0}",
   "contectHash": "Хэш содержимого",
-  "defaultSkin": "Тема по умолчанию",
+  "defaultTheme": "Тема по умолчанию",
   "select": "Выбрать",
   "language": "Язык",
   "agree": "Я принимаю",
@@ -185,7 +185,7 @@
     "terms": "Условия",
     "network": "Сеть",
     "symbol": "Символ",
-    "skin": "Тема",
+    "theme": "Тема",
     "customDomain": "Custom domain",
     "domain": "Доменное имя",
     "strategies": "Стратегия(и)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "например, yam.eth",
     "useExistingEns": "Используйте существующий домен ENS для создания раздела.",
-    "createASpace": "Создать раздел"
+    "createGuild": "Создать раздел"
   },
   "notify": {
     "youDidIt": "У вас получилось!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Создать стратегию",
-    "createSkin": "Создать обложку",
+    "createTheme": "Создать обложку",
     "addNetwork": "Добавить сеть",
     "createPlugin": "Создать модуль",
     "strategies": "стратегия(и)",
-    "skins": "обложка(и)",
+    "themes": "обложка(и)",
     "networks": "сеть(и)",
     "plugins": "Модуль(и)",
     "results": "результат(ы)"

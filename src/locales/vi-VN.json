@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "Tìm kiếm",
-  "spaceCount": "{0} khoảng trống(s)",
+  "guildCount": "{0} khoảng trống(s)",
   "createSpace": "Tạo khoảng trống",
   "backToHome": "Nhà",
   "actions": "Hành động",
@@ -30,7 +30,7 @@
   "seeMore": "Xem nhiều hơn",
   "network": "Mạng",
   "networks": "Mạng",
-  "skins": "Giao diện",
+  "themes": "Giao diện",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "Chỉnh sửa chiến lược",
   "invalidProposals": "Đề xuất không hợp lệ",
@@ -96,7 +96,7 @@
   "proposalBy": "bởi {0}",
   "endDate": "kết thúc {0}",
   "contectHash": "Nội dung băm",
-  "defaultSkin": "Skin mặc định",
+  "defaultTheme": "Theme mặc định",
   "select": "Lựa chọn",
   "language": "Ngôn ngữ",
   "agree": "Tôi đồng ý",
@@ -185,7 +185,7 @@
     "terms": "Kỳ hạn",
     "network": "Mạng",
     "symbol": "Biểu tượng",
-    "skin": "Skin",
+    "theme": "Theme",
     "customDomain": "Custom domain",
     "domain": "Tên miền",
     "strategies": "Chiến lược(s)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "e.g.yam.eth",
     "useExistingEns": "Sử dụng tên ENS hiện có để tạo không gian của bạn với.",
-    "createASpace": "Tạo một không gian"
+    "createGuild": "Tạo một không gian"
   },
   "notify": {
     "youDidIt": "Bạn đã thực hiện nó!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Tạo chiến lược",
-    "createSkin": "Tạo skin",
+    "createTheme": "Tạo theme",
     "addNetwork": "Thêm mạng",
     "createPlugin": "Tạo plugin",
     "strategies": "chiến lược(s)",
-    "skins": "skin(s)",
+    "themes": "theme(s)",
     "networks": "mạng(s)",
     "plugins": "plugin(s)",
     "results": "kết quả(s)"

@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "Magsaliksik",
-  "spaceCount": "{0} space(s)",
+  "guildCount": "{0} space(s)",
   "createSpace": "Lumikha ng puwang",
   "backToHome": "Home",
   "actions": "Mga aksyon",
@@ -30,7 +30,7 @@
   "seeMore": "Tumingin pa",
   "network": "Network",
   "networks": "Mga network",
-  "skins": "Mga Skin",
+  "themes": "Mga Theme",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "Edit strategy",
   "invalidProposals": "Invalid proposals",
@@ -96,7 +96,7 @@
   "proposalBy": "by {0}",
   "endDate": "end {0}",
   "contectHash": "Content hash",
-  "defaultSkin": "Default skin",
+  "defaultTheme": "Default theme",
   "select": "Piliin",
   "language": "Lingwahe",
   "agree": "I agree",
@@ -185,7 +185,7 @@
     "terms": "Terms",
     "network": "Network",
     "symbol": "Sagisag",
-    "skin": "Skin",
+    "theme": "Theme",
     "customDomain": "Custom domain",
     "domain": "Domain name",
     "strategies": "Strategie(s)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "e.g. yam.eth",
     "useExistingEns": "Gumamit ng kasalukuyang ENS name para gumawa ng espasyo kasama ng.",
-    "createASpace": "Create a space"
+    "createGuild": "Create a space"
   },
   "notify": {
     "youDidIt": "You did it!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Create strategy",
-    "createSkin": "Create skin",
+    "createTheme": "Create theme",
     "addNetwork": "Add network",
     "createPlugin": "Create plugin",
     "strategies": "strategie(s)",
-    "skins": "skin(s)",
+    "themes": "theme(s)",
     "networks": "network(s)",
     "plugins": "plugin(s)",
     "results": "result(s)"

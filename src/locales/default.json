@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "Search",
-  "spaceCount": "{0} space(s)",
+  "guildCount": "{0} space(s)",
   "createSpace": "Create space",
   "backToHome": "Home",
   "actions": "Actions",
@@ -30,7 +30,7 @@
   "seeMore": "See more",
   "network": "Network",
   "networks": "Networks",
-  "skins": "Skins",
+  "themes": "Themes",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "Edit strategy",
   "invalidProposals": "Invalid proposals",
@@ -96,7 +96,7 @@
   "proposalBy": "by {0}",
   "endDate": "end {0}",
   "contectHash": "Content hash",
-  "defaultSkin": "Default skin",
+  "defaultTheme": "Default theme",
   "select": "Select",
   "language": "Language",
   "agree": "I agree",
@@ -185,7 +185,7 @@
     "terms": "Terms",
     "network": "Network",
     "symbol": "Symbol",
-    "skin": "Skin",
+    "theme": "Theme",
     "customDomain": "Custom domain",
     "domain": "Domain name",
     "strategies": "Strategie(s)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "e.g. yam.eth",
     "useExistingEns": "Use an existing ENS name to create your space with.",
-    "createASpace": "Create a space"
+    "createGuild": "Create a space"
   },
   "notify": {
     "youDidIt": "You did it!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Create strategy",
-    "createSkin": "Create skin",
+    "createTheme": "Create theme",
     "addNetwork": "Add network",
     "createPlugin": "Create plugin",
     "strategies": "strategie(s)",
-    "skins": "skin(s)",
+    "themes": "theme(s)",
     "networks": "network(s)",
     "plugins": "plugin(s)",
     "results": "result(s)"

@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "Rechercher",
-  "spaceCount": "{0} espace(s)",
+  "guildCount": "{0} espace(s)",
   "createSpace": "Créer un espace",
   "backToHome": "Accueil",
   "actions": "Actions",
@@ -30,7 +30,7 @@
   "seeMore": "Voir plus",
   "network": "Réseau",
   "networks": "Réseaux",
-  "skins": "Thèmes",
+  "themes": "Thèmes",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "Modifier la stratégie",
   "invalidProposals": "Propositions incorrectes",
@@ -96,7 +96,7 @@
   "proposalBy": "by {0}",
   "endDate": "fin {0}",
   "contectHash": "Hash du contenu",
-  "defaultSkin": "Thème par défaut",
+  "defaultTheme": "Thème par défaut",
   "select": "Sélectionnez",
   "language": "Langage",
   "agree": "J'accepte",
@@ -185,7 +185,7 @@
     "terms": "Conditions générales",
     "network": "Réseau",
     "symbol": "Symbole",
-    "skin": "Thème",
+    "theme": "Thème",
     "customDomain": "Custom domain",
     "domain": "Nom de domaine",
     "strategies": "Stratégie(s)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "ex : yam.eth",
     "useExistingEns": "Utilisez un nom ENS existant pour créer votre espace.",
-    "createASpace": "Créer un espace"
+    "createGuild": "Créer un espace"
   },
   "notify": {
     "youDidIt": "Tout est bon !",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Créer une stratégie",
-    "createSkin": "Créer un thème",
+    "createTheme": "Créer un thème",
     "addNetwork": "Ajouter un réseau",
     "createPlugin": "Créer un plugin",
     "strategies": "stratégie(s)",
-    "skins": "thème(s)",
+    "themes": "thème(s)",
     "networks": "réseau(x)",
     "plugins": "plugin(s)",
     "results": "résultat(s)"

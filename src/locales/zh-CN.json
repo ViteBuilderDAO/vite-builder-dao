@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "搜索",
-  "spaceCount": "{0} 空间 (s)",
+  "guildCount": "{0} 空间 (s)",
   "createSpace": "创建空间",
   "backToHome": "主页",
   "actions": "行动",
@@ -30,7 +30,7 @@
   "seeMore": "查看更多",
   "network": "网络",
   "networks": "网络",
-  "skins": "皮肤",
+  "themes": "皮肤",
   "members": "没有成员 | {count} 会员 | {count} 成员",
   "editStrategy": "编辑策略",
   "invalidProposals": "提案无效",
@@ -96,7 +96,7 @@
   "proposalBy": "由 {0}",
   "endDate": "结束 {0}",
   "contectHash": "内容散列",
-  "defaultSkin": "默认皮肤",
+  "defaultTheme": "默认皮肤",
   "select": "选择",
   "language": "语言",
   "agree": "我同意",
@@ -185,7 +185,7 @@
     "terms": "使用条款",
     "network": "网络",
     "symbol": "符号",
-    "skin": "皮肤",
+    "theme": "皮肤",
     "customDomain": "自定义域名",
     "domain": "域名",
     "strategies": "策略",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "例如 yam.eth",
     "useExistingEns": "使用现有的ENS名称来创建您的空间。",
-    "createASpace": "创建空间"
+    "createGuild": "创建空间"
   },
   "notify": {
     "youDidIt": "你成功了!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "创建策略",
-    "createSkin": "创建新皮肤",
+    "createTheme": "创建新皮肤",
     "addNetwork": "添加网络",
     "createPlugin": "创建插件",
     "strategies": "策略",
-    "skins": "皮肤",
+    "themes": "皮肤",
     "networks": "网络",
     "plugins": "插件",
     "results": "结果"

@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "ค้นหา",
-  "spaceCount": "{0} พื้นที่(s)",
+  "guildCount": "{0} พื้นที่(s)",
   "createSpace": "สร้างพื้นที่",
   "backToHome": "หน้าแรก",
   "actions": "การดำเนินการ",
@@ -30,7 +30,7 @@
   "seeMore": "ดูเพิ่มเติม",
   "network": "เครือข่าย",
   "networks": "เครือข่าย",
-  "skins": "ผิวหนัง",
+  "themes": "ผิวหนัง",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "แก้ไขกลยุทธ์",
   "invalidProposals": "ข้อเสนอไม่ถูกต้อง",
@@ -96,7 +96,7 @@
   "proposalBy": "by {0}",
   "endDate": "สิ้นสุด{0}",
   "contectHash": "เนื้อหายุ่งเหยิง",
-  "defaultSkin": "ค่าเริ่มต้นของผิวหนัง",
+  "defaultTheme": "ค่าเริ่มต้นของผิวหนัง",
   "select": "เลือก",
   "language": "ภาษา",
   "agree": "ยอมรับ",
@@ -185,7 +185,7 @@
     "terms": "เงื่อนไข",
     "network": "เครือข่าย",
     "symbol": "สัญลักษณ์",
-    "skin": "ผิว",
+    "theme": "ผิว",
     "customDomain": "Custom domain",
     "domain": "ชื่อโดเมน",
     "strategies": "กลยุทธ์(s)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "เช่น.แยมและอื่นๆ",
     "useExistingEns": "ใช้ชื่อ ENS ที่มีอยู่เพื่อสร้าง Space ของคุณ",
-    "createASpace": "ดำเนินการสร้างพื้นที่ใช้งาน"
+    "createGuild": "ดำเนินการสร้างพื้นที่ใช้งาน"
   },
   "notify": {
     "youDidIt": "คุณทำได้แล้ว!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "สร้างกลยุทธ์",
-    "createSkin": "สร้างผิวใหม่",
+    "createTheme": "สร้างผิวใหม่",
     "addNetwork": "เพิ่มเครือข่าย",
     "createPlugin": "สร้างปลั๊กอิน",
     "strategies": "กลยุทธ์(s)",
-    "skins": "ผิว(s)",
+    "themes": "ผิว(s)",
     "networks": "เครือข่าย(s)",
     "plugins": "ปลั๊กอิน(s)",
     "results": "ผลลัพธ์(s)"

@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "بحث",
-  "spaceCount": "{0} مساحة",
+  "guildCount": "{0} مساحة",
   "createSpace": "إنشاء مساحة",
   "backToHome": "الصفحه الرئيسيه",
   "actions": "الإجراءات",
@@ -30,7 +30,7 @@
   "seeMore": "الاطّلاع على المزيد",
   "network": "الشبكة",
   "networks": "الشبكات",
-  "skins": "المظاهر",
+  "themes": "المظاهر",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "تعديل الاستراتيجية",
   "invalidProposals": "اقتراحات غير صالحة",
@@ -96,7 +96,7 @@
   "proposalBy": "بواسطة: {0}",
   "endDate": "نهاية {0}",
   "contectHash": "تجزئة المحتوى",
-  "defaultSkin": "المضهر الافتراضي",
+  "defaultTheme": "المضهر الافتراضي",
   "select": "حدد",
   "language": "اللغة",
   "agree": "أوافق",
@@ -185,7 +185,7 @@
     "terms": "الشروط",
     "network": "الشبكة",
     "symbol": "الرمز",
-    "skin": "المظهر",
+    "theme": "المظهر",
     "customDomain": "Custom domain",
     "domain": "إسم النطاق",
     "strategies": "استراتيجية (استراتيجيات)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "مثال yam.eth",
     "useExistingEns": "استخدم اسم ENS موجود لإنشاء مساحتك.",
-    "createASpace": "إنشاء مساحة"
+    "createGuild": "إنشاء مساحة"
   },
   "notify": {
     "youDidIt": "لقد نجحت!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "إنشاء استراتيجية",
-    "createSkin": "انشاء مظهر",
+    "createTheme": "انشاء مظهر",
     "addNetwork": "إضافة شبكة",
     "createPlugin": "إنشاء إضافة",
     "strategies": "استراتيجية(استراتيجيات)",
-    "skins": "المظهر(المظاهر)",
+    "themes": "المظهر(المظاهر)",
     "networks": "شبكة (شبكات)",
     "plugins": "ملحق(ات)",
     "results": "النتيجة (النتائج)"

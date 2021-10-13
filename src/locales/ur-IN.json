@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "تلاش کریں",
-  "spaceCount": "جگہ{0}",
+  "guildCount": "جگہ{0}",
   "createSpace": "جگہ بنائیں",
   "backToHome": "ہوم",
   "actions": "فعل",
@@ -30,7 +30,7 @@
   "seeMore": "اور دیکھے",
   "network": "نیٹ ورک",
   "networks": "نیٹ ورک",
-  "skins": "سکینس",
+  "themes": "سکینس",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "Edit Strategies",
   "invalidProposals": "غلط تجاویز",
@@ -96,7 +96,7 @@
   "proposalBy": "سے{0}",
   "endDate": "اختتام{0}",
   "contectHash": "کونٹینٹ ہاش",
-  "defaultSkin": "پہلے سے طے شدہ سکیں",
+  "defaultTheme": "پہلے سے طے شدہ سکیں",
   "select": "منتخب کریں",
   "language": "بھاشا",
   "agree": "میں راضی ہوں",
@@ -185,7 +185,7 @@
     "terms": "شرائط",
     "network": "نیٹ ورک",
     "symbol": "علامت",
-    "skin": "سکیں",
+    "theme": "سکیں",
     "customDomain": "Custom domain",
     "domain": "ڈومین نام",
     "strategies": "سٹریٹیجیز",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "مثال. yam.eth",
     "useExistingEns": "اپنی جگہ بنانے کے لئے موجودہ ENS نام کا استعمال کریں۔",
-    "createASpace": "جگہ پیدا کریں"
+    "createGuild": "جگہ پیدا کریں"
   },
   "notify": {
     "youDidIt": "تم نے یہ کیا!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "سٹرٹیگے بنائے",
-    "createSkin": "سکیں بنائیں",
+    "createTheme": "سکیں بنائیں",
     "addNetwork": "نیٹ ورک شامل کریں",
     "createPlugin": "پلگ ان بنائیں",
     "strategies": "سٹریٹیجیز",
-    "skins": "سکنس",
+    "themes": "سکنس",
     "networks": "نیٹ ورک",
     "plugins": "پلگیں",
     "results": "نتائج"

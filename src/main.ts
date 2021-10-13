@@ -3,11 +3,11 @@ import { Buffer } from 'buffer';
 (window as any).Buffer = Buffer;
 import { createApp, h, provide } from 'vue';
 import App from '@/App.vue';
-//import router from '@/router';
-//import mixins from '@/mixins';
-import i18n from '@/utils/i18n';
+import router from '@/router';
+import mixins from '@/mixins';
+import i18n from '@/utils/translation/i18n';
 import '@/style.scss';
-import { apolloClient } from '@/utils/apolloClient';
+import { apolloClient } from '@/utils/network/apolloClient';
 import { DefaultApolloClient } from '@vue/apollo-composable';
 import VueTippy from 'vue-tippy';
 
@@ -18,13 +18,13 @@ const app = createApp({
   render: () => h(App)
 })
   .use(i18n)
-  //.use(router) // ZACH FIX ME
+  .use(router)
   .use(VueTippy, {
     defaultProps: { delay: [400, null] },
     directive: 'tippy' // => v-tippy
   })
 
-  //.mixin(mixins); // ZACH FIX ME
+  .mixin(mixins);
 
 app.mount('#app');
 

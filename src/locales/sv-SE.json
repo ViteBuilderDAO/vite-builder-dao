@@ -1,6 +1,6 @@
 {
   "searchPlaceholder": "Sök",
-  "spaceCount": "{0} space(s)",
+  "guildCount": "{0} space(s)",
   "createSpace": "Skapa space",
   "backToHome": "Startsida",
   "actions": "Åtgärd",
@@ -30,7 +30,7 @@
   "seeMore": "Se mer",
   "network": "Nätverk",
   "networks": "Nätverk",
-  "skins": "Skins",
+  "themes": "Themes",
   "members": "No members | {count} member | {count} members",
   "editStrategy": "Redigera strategi",
   "invalidProposals": "Ogiltiga förslag",
@@ -96,7 +96,7 @@
   "proposalBy": "av {0}",
   "endDate": "avsluta {0}",
   "contectHash": "Innehåll hash",
-  "defaultSkin": "Förvalt skin",
+  "defaultTheme": "Förvalt theme",
   "select": "Välj",
   "language": "Språk",
   "agree": "Jag godkänner",
@@ -185,7 +185,7 @@
     "terms": "Villkor",
     "network": "Nätverk",
     "symbol": "Symbol",
-    "skin": "Skin",
+    "theme": "Theme",
     "customDomain": "Custom domain",
     "domain": "Domain namn",
     "strategies": "Strategi(er)",
@@ -209,7 +209,7 @@
   "setup": {
     "example": "e.g. yam.eth",
     "useExistingEns": "Använd ett befintligt ENS-namn för att skapa ditt space med.",
-    "createASpace": "Skapa space"
+    "createGuild": "Skapa space"
   },
   "notify": {
     "youDidIt": "Du har gjort det!",
@@ -220,11 +220,11 @@
   },
   "explore": {
     "createStrategy": "Skapa strategi",
-    "createSkin": "Skapa skin",
+    "createTheme": "Skapa theme",
     "addNetwork": "Lägg till nätverk",
     "createPlugin": "Skapa plugin",
     "strategies": "strategi(er)",
-    "skins": "skin(er)",
+    "themes": "theme(er)",
     "networks": "nätverk(er)",
     "plugins": "plugin(er)",
     "results": "resultat (er)"
