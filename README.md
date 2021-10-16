@@ -49,11 +49,11 @@ That's all it takes to get started! 🎉
 
 Temp paragraph text.
 
-## 📖 Demo Video
+## 📽️ Demo Video
 
 Temp paragraph text.
 
-## 📖 Screenshots
+## 📸 Screenshots
 
 Temp paragraph text.
 
