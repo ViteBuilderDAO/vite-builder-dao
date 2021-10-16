@@ -1,0 +1,32 @@
+// Credit to https://www.ludu.co/course/ethereum/metamask-authentication
+
+contract UserController is BaseController
+{
+
+  function createUser(
+    bytes32 _userName, 
+    bytes32 _firstName, 
+    bytes32 _lastName,
+    string memory _bio,
+    string memory _gravatarEmail
+  ) public returns(uint)
+  {
+    ContractManager _manager = ContractManager(managerAddr);
+
+    address _userStorageAddr = _manager.getAddress("UserStorage");
+    UserStorage _storage = UserStorage(_userStorageAddr); 
+
+    require(_storage.addresses(msg.sender) == 0);
+    require(_storage.userNames(_userName) == 0);
+
+    return _storage.createUser(
+      msg.sender,
+      _userName, 
+      _firstName, 
+      _lastName, 
+      _bio,
+      _gravatarEmail
+    );
+  }
+
+}

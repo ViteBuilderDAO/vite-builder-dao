@@ -1,0 +1,34 @@
+// Credit to https://www.ludu.co/course/ethereum/metamask-authentication
+
+contract UserStorage is BaseStorage
+{
+
+  // ...
+
+  function createUser(
+    address _address,
+    bytes32 _userName,
+    bytes32 _firstName,
+    bytes32 _lastName,
+    string memory _bio,
+    string memory _gravatarEmail
+  ) public onlyController returns(uint)
+  {
+    latestUserId++;  
+
+    profiles[latestUserId] = Profile(
+      latestUserId, 
+      _userName,
+      _firstName,
+      _lastName,
+      _bio,
+      _gravatarEmail
+    );
+
+    addresses[_address] = latestUserId;
+    userNames[_userName] = latestUserId;
+
+    return latestUserId;
+  }
+
+}

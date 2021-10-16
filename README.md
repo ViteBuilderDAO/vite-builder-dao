@@ -15,37 +15,45 @@
 - ✨ Guild branding with custom color schemes, domain name and more.
 - 📖 Docs: https://vite-builder-dao.gitbook.io/docs/
 
-## ⚡️ Quick Start
+## ⚡️ How to Run Locally - Quick Start
 
-Temp step text 1:
+1. Create a directory to clone the project into:
 
 ```bash
-# Comment:
-temp bash
-
-# Comment:
-temp bash
+mkdir vite-builder-dao && cd vite-builder-dao
 ```
 
-Temp step text 2:
-
+2. Clone into the directory:
 
 ```bash
-# Comment:
-temp bash
+git clone git://github.com/ViteBuilderDAO/vite-builder-dao.git .
 ```
 
-Temp final step text:
-
+3. Install dependencies and build the optimized project:
 
 ```bash
-# Comment:
-temp bash
+# or npm i && npm run build
+yarn && yarn build
+```
+
+4. Run the build locally:
+
+```bash
+# or npm run serve
+yarn serve
 ```
 
 That's all it takes to get started! 🎉
 
 ## 📖 Documentation
+
+Temp paragraph text.
+
+## 📖 Demo Video
+
+Temp paragraph text.
+
+## 📖 Screenshots
 
 Temp paragraph text.
 
@@ -67,6 +75,10 @@ If you want to say **thank you** or/and support active development of `Vite Buil
 - Find Vite related announcements on [on Twitter](https://twitter.com/vitelabs).
 
 Together, we can make the DeFi revolution **reality**! 💖
+
+## 📖 Acknowledgments
+
+Temp paragraph text.
 
 ## ⚖️ License
 

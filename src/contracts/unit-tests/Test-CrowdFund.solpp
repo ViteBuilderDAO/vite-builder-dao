@@ -1,0 +1,7 @@
+// Declare the contract is written in soliditypp 0.4.3. Backwards compatibility is guaranteed for generating the same compiling result.
+pragma soliditypp ^0.4.3;
+
+contract TestCrowdFund
+{
+  
+}

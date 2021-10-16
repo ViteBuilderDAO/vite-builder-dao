@@ -1,0 +1,23 @@
+// Credit to https://www.ludu.co/course/ethereum/metamask-authentication
+
+contract TestUserStorage
+{
+  
+  // ...
+
+  function testCreateFirstUser() public
+  {
+    uint _expectedId = 1;
+
+    Assert.equal(userStorage.createUser(
+      address(0),
+      "tristan",
+      "Tristan",
+      "Edwards",
+      "I like building stuff",
+      "example@example.com"
+    ), _expectedId, "Should create user with ID 1");
+  }
+
+  // ...
+}
