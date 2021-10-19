@@ -1,30 +1,35 @@
 <template>
-  <div class="container" style="padding: 50px 0 100px 0">
-    <Profile v-if="store.user" />
-    <Auth v-else />
-  </div>
+  <component :is="resolveLayout">
+    <router-view></router-view>
+  </component>
 </template>
 
 <script>
-import { store } from "./store/store"
-import { supabase } from "./supabase/supabase"
-import Auth from "./components/auth/Login.vue"
-import Profile from "./components/user/UserProfile.vue"
+import { computed } from '@vue/composition-api'
+import { useRouter } from '@/utils'
+
+const LayoutBlank = () => import('@/layouts/Blank.vue')
+const LayoutContent = () => import('@/layouts/Content.vue')
 
 export default {
   components: {
-    Auth,
-    Profile,
+    LayoutBlank,
+    LayoutContent,
   },
-
   setup() {
-    store.user = supabase.auth.user()
-    supabase.auth.onAuthStateChange((_, session) => {
-      store.user = session.user
+    const { route } = useRouter()
+
+    const resolveLayout = computed(() => {
+      // Handles initial route
+      if (route.value.name === null) return null
+
+      if (route.value.meta.layout === 'blank') return 'layout-blank'
+
+      return 'layout-content'
     })
 
     return {
-      store,
+      resolveLayout,
     }
   },
 }

@@ -1,12 +1,12 @@
 <h1 align="center">
-  <img src="https://raw.githubusercontent.com/ViteBuilderDAO/vite-builder-dao/master/src/assets/img/vite-cover-milltay-2.png" width="1000px"/><br/>
+  <img src="https://raw.githubusercontent.com/ViteBuilderDAO/vite-builder-dao/master/src/assets/img/logos/vite-cover-milltay-2.png" width="1000px"/><br/>
   Vite Builder DAO
 </h1>
 <p align="center">Important decisions need to be made and governed on the Vite network, with votes made by VITE<br/>holders using their VITE via a DAO. Similarly, key decisions for ViteX require voting by VX holders.<br/>Introduce Vite Builder DAOshboard (DAO Dashboard):</p>
 
-<p align="center"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License" />&nbsp;<img src="https://img.shields.io/tokei/lines/github/vitebuilderdao/vite-builder-dao?logoColor=purple" alt="Lines of Code" /><br><img src="https://img.shields.io/badge/version-v1.0.0-blue?style=for-the-badge&logo=none" alt="Vite Builder DAO Version" /></a></p>
+<p align="center"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License" />&nbsp;<img src="https://img.shields.io/tokei/lines/github/vitebuilderdao/vite-builder-dao?logoColor=purple" alt="Lines of Code" /><br><img src="https://img.shields.io/badge/version-v0.0.0-green?style=for-the-badge&logo=none" alt="Vite Builder DAO Version" /></a><a href="https://twitter.com/vitelabs" target="_blank"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/vitelabs"></a>
 
-## 💎 Features
+## Features 💎
 
 - 💰 Connect Vite wallet via QR code with the Vite App.
 - ✔️ Ability to submit proposals.
@@ -15,49 +15,64 @@
 - ✨ Guild branding with custom color schemes, domain name and more.
 - 📖 Docs: https://vite-builder-dao.gitbook.io/docs/
 
-## ⚡️ How to Run Locally - Quick Start
+## Installation ⚒️
 
 1. Create a directory to clone the project into:
 
-```bash
-mkdir vite-builder-dao && cd vite-builder-dao
-```
+    ```
+    mkdir vite-builder-dao && cd vite-builder-dao
+    ```
 
 2. Clone into the directory:
 
-```bash
-git clone git://github.com/ViteBuilderDAO/vite-builder-dao.git .
-```
+    ```
+    git clone git://github.com/ViteBuilderDAO/vite-builder-dao.git .
+    ```
 
-3. Install dependencies and build the optimized project:
+> We recommend you use yarn
 
-```bash
-# or npm i && npm run build
-yarn && yarn build
-```
+3. Install all packages
 
-4. Run the build locally:
+   ```
+   yarn
 
-```bash
-# or npm run serve
-yarn serve
-```
+   # npm install [for npm]
+   ```
+
+4. Run development server
+
+   ```
+   yarn dev
+
+   # npm run dev [for npm]
+   ```
+
+5. Generate build files for deployment
+
+   ```
+   yarn build
+
+   # npm run build [for npm]
+   ```
+
 
 That's all it takes to get started! 🎉
 
-## 📖 Documentation
+## Documentation 📖
 
 Temp paragraph text.
 
-## 📽️ Demo Video
+## Demo Video 📽️
 
 Temp paragraph text.
 
-## 📸 Screenshots
+## Screenshots 📸
 
-Temp paragraph text.
+<p align="center">
+  <img height="750" width="985" src="https://raw.githubusercontent.com/ViteBuilderDAO/vite-builder-dao/master/src/assets/img/misc/vbd-screenshot_10-18.png">
+</p>
 
-## ⚙️ Configuration
+## Configuration ⚙️
 
 Temp paragraph text.
 
@@ -65,7 +80,7 @@ Temp paragraph text.
 
 Temp sub-paragraph text.
 
-## ⭐️ Social
+## Social ⭐️
 
 If you want to say **thank you** or/and support active development of `Vite Builder DAO`:
 
@@ -76,10 +91,10 @@ If you want to say **thank you** or/and support active development of `Vite Buil
 
 Together, we can make the DeFi revolution **reality**! 💖
 
-## 📖 Acknowledgments
+## Acknowledgments 📖
 
 Temp paragraph text.
 
-## ⚖️ License
+## License ⚖️
 
 `Vite Builder DAO` is free and open-source software licensed under the [M.I.T. License](https://github.com/ViteBuilderDAO/vite-builder-dao/blob/master/LICENSE.txt).
