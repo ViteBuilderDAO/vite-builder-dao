@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="https://raw.githubusercontent.com/ViteBuilderDAO/vite-builder-dao/master/src/assets/img/logos/vite-cover-milltay-2.png" height="420px" width="590px"/><br/>
+  <img src="https://raw.githubusercontent.com/ViteBuilderDAO/vite-builder-dao/master/src/assets/img/logos/vite-cover-milltay-2.png" height="420px" width="750px"/><br/>
   Vite Builder DAO
 </h1>
 <p align="center">Important decisions need to be made and governed on the Vite network, with votes made by VITE<br/>holders using their VITE via a DAO. Similarly, key decisions for ViteX require voting by VX holders.<br/>Introduce Vite Builder DAOshboard (DAO Dashboard):</p>
