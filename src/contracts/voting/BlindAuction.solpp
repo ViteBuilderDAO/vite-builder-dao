@@ -16,7 +16,7 @@ contract BlindAuction
     uint public revealEnd;
     bool public ended;
 
-    mapping(address => Bid[]) public bids;
+    mapping(address => Bid[]) bids;
 
     address public highestBidder;
     uint public highestBid;

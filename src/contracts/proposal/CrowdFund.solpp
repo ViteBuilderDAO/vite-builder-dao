@@ -5,8 +5,6 @@ pragma soliditypp >=0.8.0 <0.9.0;
 
 contract Crowdfunding
 {
-    using SafeMath for uint256;
-
     // List of existing projects
     Project[] private projects;
 
@@ -73,7 +71,7 @@ contract Project {
     string public title;
     string public description;
     State public state = State.Fundraising; // initialize on create
-    mapping (address => uint) public contributions;
+    mapping (address => uint) contributions;
 
     // Event that will be emitted whenever funding will be received
     event FundingReceived(address contributor, uint amount, uint currentTotal);
@@ -99,7 +97,7 @@ contract Project {
         string memory projectDesc,
         uint fundRaisingDeadline,
         uint goalAmount
-    ) public {
+    ) {
         creator = projectStarter;
         title = projectTitle;
         description = projectDesc;
@@ -120,7 +118,7 @@ contract Project {
 
     /** @dev Function to change the project state depending on conditions.
       */
-    function checkIfFundingCompleteOrExpired() public {
+    function checkIfFundingCompleteOrExpired() {
         if (currentBalance >= amountGoal) {
             state = State.Successful;
             payOut();
@@ -149,7 +147,7 @@ contract Project {
 
     /** @dev Function to retrieve donated amount when a project expires.
       */
-    function getRefund() public inState(State.Expired) returns (bool) {
+    function getRefund() inState(State.Expired) returns (bool) {
         require(contributions[msg.sender] > 0);
 
         uint amountToRefund = contributions[msg.sender];
@@ -168,7 +166,7 @@ contract Project {
     /** @dev Function to get specific information about the project.
       * @return Returns all the project's details
       */
-    function getDetails() public view returns 
+    function getDetails() view returns 
     (
         address payable projectStarter,
         string memory projectTitle,

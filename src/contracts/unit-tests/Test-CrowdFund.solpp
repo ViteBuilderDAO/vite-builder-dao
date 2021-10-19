@@ -1,5 +1,6 @@
 // Declare the contract is written in soliditypp 0.4.3. Backwards compatibility is guaranteed for generating the same compiling result.
-pragma soliditypp ^0.4.3;
+// SPDX-License-Identifier: GPL-3.0
+pragma soliditypp >=0.8.0 <0.9.0;
 
 contract TestCrowdFund
 {

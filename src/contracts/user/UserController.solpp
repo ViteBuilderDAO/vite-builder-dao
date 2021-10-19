@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0
+pragma soliditypp >=0.8.0 <0.9.0;
+
 // Credit to https://www.ludu.co/course/ethereum/metamask-authentication
 
 contract UserController is BaseController
@@ -9,7 +12,7 @@ contract UserController is BaseController
     bytes32 _lastName,
     string memory _bio,
     string memory _gravatarEmail
-  ) public returns(uint)
+  ) returns(uint)
   {
     ContractManager _manager = ContractManager(managerAddr);
 

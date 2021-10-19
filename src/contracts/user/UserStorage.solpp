@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0
+pragma soliditypp >=0.8.0 <0.9.0;
+
 // Credit to https://www.ludu.co/course/ethereum/metamask-authentication
 
 contract UserStorage is BaseStorage
@@ -5,18 +8,18 @@ contract UserStorage is BaseStorage
 
   // ...
 
-  function createUser(
+  function createUser (
     address _address,
     bytes32 _userName,
     bytes32 _firstName,
     bytes32 _lastName,
     string memory _bio,
     string memory _gravatarEmail
-  ) public onlyController returns(uint)
+  ) onlyController returns(uint)
   {
     latestUserId++;  
 
-    profiles[latestUserId] = Profile(
+    profiles[latestUserId] = Profile (
       latestUserId, 
       _userName,
       _firstName,

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0
+pragma soliditypp >=0.8.0 <0.9.0;
+
 import "./ownable.sol";
 
 // Credit to https://github.com/sloganking/Solidity-Domain-Name-Service
@@ -89,7 +92,7 @@ contract DNS is Ownable{
     //
 
     /** @notice Set the owner to the creator of this contract */
-    constructor() public {
+    constructor() {
         numberOfClaimedNames = 0;
         circuitBroken = false;
     }
@@ -114,7 +117,6 @@ contract DNS is Ownable{
         @param _name name of the domain which is attempting to be claimed
      */
     function claimNewName(string memory _name)
-        public
         circuitNotBroken()
         notClaimed(_name)
     {
@@ -133,7 +135,6 @@ contract DNS is Ownable{
         @param _address IP Address which will be stored under specified name.
      */
     function setNamesIPAddress(string memory _name, string memory _address)
-        public
         circuitNotBroken()
         isClaimed(_name)
         ownsName(_name)
@@ -151,7 +152,6 @@ contract DNS is Ownable{
         @return string The IP address of the given name
     */
     function viewNamesIPAddress(string memory _name)
-        public
         view
         isClaimed(_name)
         returns(string memory)
@@ -201,7 +201,6 @@ contract DNS is Ownable{
         @param _receiver address you are transfering ownership of name to
     */
     function transferOwnershipForFree(string memory _name, address payable _receiver)
-        public
         circuitNotBroken()
         ownsName(_name)
     {
@@ -215,7 +214,6 @@ contract DNS is Ownable{
         @param _name Name who's offerStatus is being changed
     */
     function makeNameNotOffered(string memory _name)
-        public
         circuitNotBroken()
         isClaimed(_name)
         ownsName(_name)
@@ -229,7 +227,6 @@ contract DNS is Ownable{
         @param _wei The amount of Wei required for transfer of ownership
     */
     function makeNamePrivatlyOffered(string memory _name, address _address, uint _wei)
-        public
         circuitNotBroken()
         isClaimed(_name)
         ownsName(_name)
@@ -244,7 +241,6 @@ contract DNS is Ownable{
         @param _name Name who's ownership is being transfered
     */
     function acceptPrivateOffer(string memory _name)
-        public
         payable
         circuitNotBroken()
         offerStateOfNameIs(_name, OfferState.PrivateOffering)   //make sure OfferState of name is PriavateOffering
@@ -264,7 +260,6 @@ contract DNS is Ownable{
         @param _wei The amount of Wei required for transfer of ownership
     */
     function makeNamePubliclyOffered(string memory _name, uint _wei)
-        public
         circuitNotBroken()
         isClaimed(_name)
         ownsName(_name)
@@ -278,7 +273,6 @@ contract DNS is Ownable{
         @param _name Name who's ownership is being transfered
     */
     function acceptPublicOffer(string memory _name)
-        public
         payable
         circuitNotBroken()
         offerStateOfNameIs(_name, OfferState.PublicOffering)   //make sure OfferState of name is PublicOffering
