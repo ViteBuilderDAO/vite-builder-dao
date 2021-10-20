@@ -1,37 +1,28 @@
 <template>
   <div>
-    <el-row
-      type="flex"
-      align="middle"
-      class="row"
-    >
-      <el-col
-        class="key-col col no-border label"
-        :span="5"
-      >
-        Wallet Address
-      </el-col>
-      <el-col
-        class="key-col col no-border"
-        :span="16"
-      >
-        {{ account.address }}
-      </el-col>
-    </el-row>
+    <p class="subtitle-2 account-info-text">
+      Wallet Address<br />
+      {{ selectedAddress }}
+    </p>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
 
 export default {
   computed: {
-    ...mapState([
-      'accounts',
-    ]),
+    selectedAddress: {
+      get() {
+        return this.$store.state.selectedAddress
+      },
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
+.account-info-text {
+  margin-top: 5px;
+  text-align: center;
+}
 </style>

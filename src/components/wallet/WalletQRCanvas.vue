@@ -1,32 +1,16 @@
 <template>
-  <QRCanvas
-    :options="options"
-    @beforeUpdate="onBeforeUpdate"
-    @updated="onUpdated"
-  />
+  <canvas ref="qrcode"></canvas>
 </template>
 
 <script>
-import { QRCanvas } from 'qrcanvas-vue'
+import QRCode from 'qrcode'
 import { getWalletConnectURI, getVbInstance } from '@/utils/vite-helpers/walletClient'
 import WalletAccount from '@/utils/vite-helpers/walletAccount'
 
 export default {
-  components: {
-    QRCanvas,
-  },
-  data() {
-    return {
-      options: {
-        data: {
-          initQRCode() {
-            return getWalletConnectURI()
-          },
-        },
-      },
-    }
-  },
   async mounted() {
+    const uri = await getWalletConnectURI()
+    this.generateQRCode(uri)
     const vbInst = getVbInstance()
     vbInst.on('connect', (err, payload) => {
       if (err) {
@@ -43,11 +27,8 @@ export default {
     })
   },
   methods: {
-    onBeforeUpdate() {
-      console.log('beforeUpdate')
-    },
-    onUpdated() {
-      console.log('updated')
+    generateQRCode(uri) {
+      QRCode.toCanvas(this.$refs.qrcode, uri)
     },
   },
 }

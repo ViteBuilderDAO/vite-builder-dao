@@ -15,10 +15,7 @@
       <v-btn
         v-if="!walletConnected"
         color="error"
-        class="wallet-connect-card"
-        href="#"
-        target="_blank"
-        rel="nofollow"
+        class="connect-wallet-btn"
         v-bind="attrs"
         v-on="on"
       >
@@ -27,10 +24,7 @@
       <v-btn
         v-else
         color="success"
-        class="wallet-connect-card"
-        href="#"
-        target="_blank"
-        rel="nofollow"
+        class="wallet-connected"
         v-bind="attrs"
         v-on="on"
       >
@@ -40,7 +34,7 @@
 
     <v-card
       class="elevation-0"
-      max-width="400"
+      max-width="500"
     >
       <wallet-qr-canvas
         v-if="!walletConnected"
@@ -50,6 +44,7 @@
       </wallet-qr-canvas>
       <wallet-account-info
         v-else
+        class="wallet-connected-card-style"
       >
       </wallet-account-info>
       <v-card-title
@@ -66,7 +61,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import WalletQrCanvas from './WalletQRCanvas.vue'
 import WalletAccountInfo from './WalletAccountInfo.vue'
 
@@ -76,20 +70,22 @@ export default {
     WalletAccountInfo,
   },
   computed: {
-    ...mapState([
-      'accounts',
-    ]),
+    walletConnected: {
+      get() {
+        return this.$store.state.walletConnected
+      },
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.wallet-connect-card {
+.connect-wallet-btn {
     position: absolute;
     left: 15px;
     bottom: 25px;
 }
-.wallet-connect-card {
+.connect-wallet-btn {
   .v-application &.v-btn.v-btn--is-elevated {
     box-shadow: 0 1px 20px 1px #ff4c51 !important;
     &:hover {
@@ -98,7 +94,25 @@ export default {
   }
 }
 .wallet-card-qr-style {
-    margin-left: 35px;
-    margin-top: 15px;
+    margin-left: 50px;
+}
+.wallet-connected {
+    position: absolute;
+    left: 15px;
+    bottom: 25px;
+}
+.wallet-connected {
+  .v-application &.v-btn.v-btn--is-elevated {
+    box-shadow: 0 1px 18px 1px #4DFFF9 !important;
+    &:hover {
+      box-shadow: none !important;
+    }
+  }
+}
+.wallet-connected-card-style {
+  overflow: hidden;
+  height: 75px;
+  width: 500px;
+  font-size: 10px;
 }
 </style>
