@@ -13,6 +13,7 @@
   >
     <template #activator="{ on, attrs }">
       <v-btn
+        v-if="!walletConnected"
         color="error"
         class="wallet-connect-card"
         href="#"
@@ -23,6 +24,18 @@
       >
         Connect Vite Wallet
       </v-btn>
+      <v-btn
+        v-else
+        color="success"
+        class="wallet-connect-card"
+        href="#"
+        target="_blank"
+        rel="nofollow"
+        v-bind="attrs"
+        v-on="on"
+      >
+        Wallet Connected
+      </v-btn>
     </template>
 
     <v-card
@@ -30,30 +43,42 @@
       max-width="400"
     >
       <wallet-qr-canvas
+        v-if="!walletConnected"
         class="wallet-card-qr-style"
         height="300px"
       >
       </wallet-qr-canvas>
-      <v-spacer></v-spacer>
-      <v-card-title class="font-weight-semibold">
+      <wallet-account-info
+        v-else
+      >
+      </wallet-account-info>
+      <v-card-title
+        v-if="!walletConnected"
+        class="font-weight-semibold"
+      >
         Connect with the Vite app to login
       </v-card-title>
-      <v-card-text>
-        The most developer friendly &amp; highly customizable DAO Dashboard using Vite protocol based governance.
+      <v-card-text v-if="!walletConnected">
+        The most developer friendly &amp;   highly customizable DAO Dashboard using Vite protocol based governance.
       </v-card-text>
     </v-card>
   </v-menu>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import WalletQrCanvas from './WalletQRCanvas.vue'
+import WalletAccountInfo from './WalletAccountInfo.vue'
 
 export default {
   components: {
     WalletQrCanvas,
+    WalletAccountInfo,
   },
-  setup() {
-    return {}
+  computed: {
+    ...mapState([
+      'accounts',
+    ]),
   },
 }
 </script>

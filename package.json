@@ -9,11 +9,13 @@
   },
   "dependencies": {
     "@mdi/js": "^5.9.55",
+    "@vite/connector": "^0.0.2",
     "@vite/vitejs": "^2.3.15",
     "@vite/vitejs-ws": "^2.3.15",
     "@vue/composition-api": "1.0.4",
     "@vuetify/cli-plugin-utils": "^0.0.9",
     "apexcharts": "^3.27.3",
+    "bignumber.js": "^9.0.1",
     "core-js": "^3.6.5",
     "qrcanvas-vue": "^2.1.0",
     "vue": "^2.6.11",

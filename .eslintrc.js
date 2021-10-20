@@ -17,6 +17,12 @@ module.exports = {
     // Disable max-len
     'max-len': 'off',
 
+    'no-underscore-dangle': 'off',
+
+    'no-plusplus': 'off',
+  
+    'object-shorthand': 'off',
+  
     // we don't want it
     semi: ['error', 'never'],
 

@@ -56,19 +56,19 @@
 </template>
 
 <script>
-const DemoSimpleTableBasic = () => import('./demos/DemoSimpleTableBasic.vue')
-const DemoSimpleTableDark = () => import('./demos/DemoSimpleTableDark.vue')
-const DemoSimpleTableDense = () => import('./demos/DemoSimpleTableDense.vue')
-const DemoSimpleTableHeight = () => import('./demos/DemoSimpleTableHeight.vue')
-const DemoSimpleTableFixedHeader = () => import('./demos/DemoSimpleTableFixedHeader.vue')
+const DemoTablesBasic = () => import('./demos/DemoSimpleTableBasic.vue')
+const DemoTablesDark = () => import('./demos/DemoSimpleTableDark.vue')
+const DemoTablesDense = () => import('./demos/DemoSimpleTableDense.vue')
+const DemoTablesHeight = () => import('./demos/DemoSimpleTableHeight.vue')
+const DemoTablesFixedHeader = () => import('./demos/DemoSimpleTableFixedHeader.vue')
 
 export default {
   components: {
-    DemoSimpleTableBasic,
-    DemoSimpleTableDark,
-    DemoSimpleTableDense,
-    DemoSimpleTableHeight,
-    DemoSimpleTableFixedHeader,
+    DemoTablesBasic,
+    DemoTablesDark,
+    DemoTablesDense,
+    DemoTablesHeight,
+    DemoTablesFixedHeader,
   },
   setup() {
     return {}
