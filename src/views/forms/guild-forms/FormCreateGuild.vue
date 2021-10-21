@@ -20,22 +20,12 @@
     ></v-text-field>
 
     <v-text-field
-      v-model="mobile"
+      v-model="guildicon"
       :prepend-inner-icon="icons.mdiDiamondOutline"
       label="Guild Icon"
       outlined
       dense
       placeholder="Guild Icon"
-    ></v-text-field>
-
-    <v-text-field
-      v-model="password"
-      :prepend-inner-icon="icons.mdiLockOutline"
-      label="Password"
-      outlined
-      dense
-      type="password"
-      placeholder="password"
     ></v-text-field>
 
     <v-btn color="primary">
@@ -61,13 +51,11 @@ export default {
     const guildname = ref('')
     const guildAdminEmail = ref('')
     const guildicon = ref()
-    const password = ref()
 
     return {
       guildname,
       guildAdminEmail,
       guildicon,
-      password,
 
       // icons
       icons: {

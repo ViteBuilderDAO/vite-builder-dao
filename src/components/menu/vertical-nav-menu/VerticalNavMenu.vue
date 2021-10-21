@@ -55,6 +55,25 @@
           :to="{ name: 'create-guild' }"
         ></nav-menu-link>
       </nav-menu-group>
+      <nav-menu-section-title title="Contract Demos"></nav-menu-section-title>
+      <nav-menu-group
+        title="Proposals"
+        :icon="icons.mdiFileOutline"
+      >
+        <nav-menu-link
+          title="Create Proposal Demo"
+          :to="{ name: 'create-proposal' }"
+        ></nav-menu-link>
+      </nav-menu-group>
+      <nav-menu-group
+        title="Voting"
+        :icon="icons.mdiFileOutline"
+      >
+        <nav-menu-link
+          title="View/Vote for Proposal Demo"
+          :to="{ name: 'view-proposal' }"
+        ></nav-menu-link>
+      </nav-menu-group>
       <nav-menu-section-title title="Demo UI"></nav-menu-section-title>
       <nav-menu-link
         title="Typography"

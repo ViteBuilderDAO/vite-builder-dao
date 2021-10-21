@@ -10,11 +10,13 @@ import { useRouter } from '@/utils'
 
 const LayoutBlank = () => import('@/layouts/Blank.vue')
 const LayoutContent = () => import('@/layouts/Content.vue')
+const LayoutGuild = () => import('@/layouts/GuildLayout.vue')
 
 export default {
   components: {
     LayoutBlank,
     LayoutContent,
+    LayoutGuild,
   },
   setup() {
     const { route } = useRouter()
@@ -23,9 +25,10 @@ export default {
       // Handles initial route
       if (route.value.name === null) return null
 
-      if (route.value.meta.layout === 'blank') return 'layout-blank'
+      if (route.value.meta.layout === 'content') return 'layout-content'
+      if (route.value.meta.layout === 'guild') return 'layout-guild'
 
-      return 'layout-content'
+      return 'layout-blank'
     })
 
     return {

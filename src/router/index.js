@@ -12,36 +12,57 @@ const routes = [
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('@/views/dashboard/Dashboard.vue'),
+    meta: {
+      layout: 'content',
+    },
   },
   {
     path: '/typography',
     name: 'typography',
     component: () => import('@/views/typography/Typography.vue'),
+    meta: {
+      layout: 'content',
+    },
   },
   {
     path: '/icons',
     name: 'icons',
     component: () => import('@/views/icons/Icons.vue'),
+    meta: {
+      layout: 'content',
+    },
   },
   {
     path: '/cards',
     name: 'cards',
     component: () => import('@/components/cards/Card.vue'),
+    meta: {
+      layout: 'content',
+    },
   },
   {
     path: '/tables',
     name: 'tables',
     component: () => import('@/views/tables/SimpleTable.vue'),
+    meta: {
+      layout: 'content',
+    },
   },
   {
     path: '/forms',
     name: 'forms',
     component: () => import('@/views/forms/FormLayouts.vue'),
+    meta: {
+      layout: 'content',
+    },
   },
   {
     path: '/pages/user-settings',
     name: 'pages-user-settings',
     component: () => import('@/views/pages/user-settings/UserSettings.vue'),
+    meta: {
+      layout: 'content',
+    },
   },
   {
     path: '/pages/login',
@@ -63,11 +84,41 @@ const routes = [
     path: '/explore-guilds',
     name: 'explore-guilds',
     component: () => import('@/views/guilds/ExploreGuilds.vue'),
+    meta: {
+      layout: 'content',
+    },
   },
   {
     path: '/create-guild',
     name: 'create-guild',
     component: () => import('@/views/guilds/CreateGuild.vue'),
+    meta: {
+      layout: 'content',
+    },
+  },
+  {
+    path: '/guild-home',
+    name: 'guild-home',
+    component: () => import('@/views/guilds/GuildHome.vue'),
+    meta: {
+      layout: 'guild',
+    },
+  },
+  {
+    path: '/create-proposal',
+    name: 'create-proposal',
+    component: () => import('@/views/proposals/CreateProposal.vue'),
+    meta: {
+      layout: 'content',
+    },
+  },
+  {
+    path: '/view-proposal',
+    name: 'view-proposal',
+    component: () => import('@/views/proposals/ViewProposal.vue'),
+    meta: {
+      layout: 'content',
+    },
   },
   {
     path: '/error-404',
