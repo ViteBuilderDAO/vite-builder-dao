@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
 import WalletQrCanvas from './WalletQRCanvas.vue'
 import WalletAccountInfo from './WalletAccountInfo.vue'
 
@@ -70,11 +71,10 @@ export default {
     WalletAccountInfo,
   },
   computed: {
-    walletConnected: {
-      get() {
-        return this.$store.state.walletConnected
-      },
-    },
+    ...mapState([
+      'walletConnected',
+    ]),
+    ...mapGetters(['getIsWalletConnected']),
   },
 }
 </script>

@@ -9,10 +9,27 @@ export default new Vuex.Store({
   state: {
     // Wallet Connection Status
     walletConnected: false,
-    mnemonics: {},
-    accounts: [],
-    selectedAddress: {},
-    accountStates: {},
+    mnemonics: '',
+    connectedAccounts: [],
+    connectedWalletAddr: '',
+    accountStates: '',
+  },
+  getters: {
+    getIsWalletConnected(state) {
+      return state.walletConnected
+    },
+    getWalletMnemonics(state) {
+      return state.mnemonics
+    },
+    getConnectedAccounts(state) {
+      return state.connectedAccounts
+    },
+    getConnectedWalletAddr(state) {
+      return state.connectedWalletAddr || {}
+    },
+    getaccountStatesr(state) {
+      return state.accountStates
+    },
   },
   mutations: {
     // Set Wallet Connection Status
@@ -24,15 +41,15 @@ export default new Vuex.Store({
     },
 
     addAccount(state, { account }) {
-      state.accounts = state.accounts.concat([account])
+      state.connectedAccounts = state.connectedAccounts.concat([account])
     },
 
     setAccounts(state, accounts) {
-      state.accounts = accounts
+      state.connectedAccounts = accounts
     },
 
     setSelectedAddress(state, address) {
-      state.selectedAddress = address
+      state.connectedWalletAddr = address
     },
 
     updateAccountState(state, { address, accountState }) {

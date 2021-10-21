@@ -2,19 +2,24 @@
   <div>
     <p class="subtitle-2 account-info-text">
       Wallet Address<br />
-      {{ selectedAddress }}
+      {{ connectedWalletAddr }}
     </p>
   </div>
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   computed: {
-    selectedAddress: {
-      get() {
-        return this.$store.state.selectedAddress
-      },
+    ...mapState([
+      'connectedWalletAddr',
+    ]),
+    ...mapGetters(['getConnectedWalletAddr']),
+    getWalletBalance() {
+      const { walletAddr } = this.connectedWalletAddr
+
+      return walletAddr && walletAddr.balance
     },
   },
 }
