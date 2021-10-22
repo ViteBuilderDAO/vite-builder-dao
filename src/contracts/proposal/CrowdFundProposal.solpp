@@ -1,0 +1,146 @@
+pragma soliditypp ^0.4.3;
+
+import "./proposal-libs/SafeMath.solpp";
+
+contract CrowdFundProposal
+{
+  using SafeMath for uint256;
+
+  // Various states that a proposal can be in
+  enum State
+  {
+    Fundraising,
+    Complete
+  }
+
+  // Proposal Type Obj and it's map container
+  // mapping from numberofProposals to ProposalObj
+  mapping(uint256 => ProposalObj) proposalsMap;
+  struct ProposalObj
+  {
+    address m_creator;
+    string m_title;
+    string m_description;
+    uint m_raiseUntil;
+    uint256 m_balance;
+    State m_state;
+    bytes32 m_payoutHash;
+    mapping (address => uint) m_contributions;
+  }
+
+  // Number of proposals currently active
+  uint256 public g_currNumProposals = 0;
+  // Address of the contract creator
+  address g_contractOwner;
+
+  // Event that will be emitted whenever a new proposal is started
+  event ProposalStartedEvent(address proposalStarter, string proposalTitle, string proposalDesc, uint256 proposalDeadline, uint256 proposalID);
+  // Event that will be emitted whenever a proposal ends
+  event ProposalEndedEvent(uint256 proposalID, uint proposalEndTime);
+  // Event emitted whenever a proposal receives a vote (funding)
+  event ProposalVotedOnEvent(uint256 proposalID, address proposalContributor, uint contributedAmount, uint currentTotal);
+  // Event emitted when a proposal has ended and was paid
+  event ProposalPaidEvent(uint256 paidProposalID, address paidProposalRecipient);
+
+  /** @dev Contract Constructor
+    */
+  constructor() public payable
+  {
+    g_contractOwner = msg.sender;
+  }
+
+  /** @dev Function to start a new proposal.
+    * @param _title Title of the proposal to be created
+    * @param _description Brief description about the proposal
+    * @param _durationInDays Proposal deadline in days
+    */
+  onMessage startProposal(address creator, string calldata title, string calldata description, uint durationInDays)
+  {
+    uint raiseUntil = now.add(durationInDays.mul(1 days));
+    proposalsMap[++g_currNumProposals] = ProposalObj(creator, title, description, raiseUntil, 0, State.Fundraising, 0);
+
+    emit ProposalStartedEvent(creator, title, description, raiseUntil, g_currNumProposals);
+  }                                                                                                                              
+
+  /** @dev Function to fund a certain proposal.
+    */
+  function contribute(uint256 proposalID, uint256 amountValue) public
+  {
+    uint256 index = proposalID - 1;
+    require(msg.sender != proposalsMap[index].m_creator);
+    uint256 prevContributions = proposalsMap[index].m_contributions[msg.sender];
+    proposalsMap[index].m_contributions[msg.sender] = prevContributions.add(amountValue);
+    proposalsMap[index].m_balance = proposalsMap[index].m_balance.add(amountValue);
+    requestPayOutOnComplete(proposalID);
+
+    emit ProposalVotedOnEvent(proposalID, msg.sender, amountValue, proposalsMap[index].m_balance);
+  }
+
+  /** @dev Function to change the proposal state depending on conditions.
+    */
+  function requestPayOutOnComplete(uint256 proposalID) public
+  {
+    // FIX ME - HARDCODED - ZD
+    uint256 index = proposalID - 1;
+    require(proposalsMap[index].m_creator == msg.sender);
+    if (now > proposalsMap[index].m_raiseUntil)
+    {
+        proposalsMap[index].m_state = State.Complete;
+        payOut(index, "tti_5649544520544f4b454e6e40");
+    }
+
+    emit ProposalEndedEvent(proposalID, now);
+  }
+
+  /** @dev Function to give the received funds to proposal starter.
+    */
+  function payOut(uint256 _proposalID, tokenId _tokenId) internal
+  {
+    uint256 index = _proposalID - 1;
+    address proposalCreator = proposalsMap[index].m_creator;
+    require(proposalsMap[index].m_state == State.Complete);
+    require(proposalCreator != address(0), 'transfer to zero address');
+    uint256 totalRaised = proposalsMap[index].m_balance;
+    proposalsMap[index].m_balance = 0;
+    proposalsMap[index].m_state = State.Complete;
+    proposalCreator.transfer(_tokenId, totalRaised);
+
+    emit ProposalPaidEvent(_proposalID, proposalCreator);
+  }
+
+  /** @dev Function to get specific information about the proposal.
+    * @return Returns all the proposal's details
+    */
+  function getProposalInfo(uint256 proposalID) public view returns(
+    address proposalCreator,
+    string memory proposalTitle,
+    string memory proposalDesc,
+    uint256 proposalDeadline,
+    State proposalCurrState,
+    uint256 proposalCurrAmount)
+  {
+    uint256 index = proposalID - 1;
+    proposalCreator = proposalsMap[index].m_creator;
+    proposalTitle = proposalsMap[index].m_title;
+    proposalDesc = proposalsMap[index].m_description;
+    proposalDeadline = proposalsMap[index].m_raiseUntil;
+    proposalCurrState = proposalsMap[index].m_state;
+    proposalCurrAmount = proposalsMap[index].m_balance;
+  }
+
+  /** @dev Function to get specific information about the proposal.
+    * @return Returns all the proposal's details
+    */
+  function getNumProposals() public view returns(uint256 currNumberOfProposals)
+  {
+    currNumberOfProposals = g_currNumProposals;
+  }
+
+  /** @dev Function to get all proposals' contract addresses.
+    * @return A list of all proposals' contract addreses
+    */
+  //getter returnAllProposals() returns(ProposalObj memory)
+  //{
+  //    return proposalsMap;
+  //}
+}
