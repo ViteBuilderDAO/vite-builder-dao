@@ -119,14 +119,15 @@ contract Project
       * @param _durationInDays Project deadline in days
       */
     onMessage startProject(
+        address _creator,
         string calldata _title,
         string calldata _description,
         uint _durationInDays)
     {
         uint raiseUntil = now.add(_durationInDays.mul(1 days));
-        projectsMap[++currNumberOfProposals] = ProjectObj(msg.sender, _title, _description, raiseUntil, 0, State.Fundraising, 0);
+        projectsMap[++currNumberOfProposals] = ProjectObj(_creator, _title, _description, raiseUntil, 0, State.Fundraising, 0);
         emit ProjectStarted(
-            msg.sender,
+            _creator,
             _title,
             _description,
             raiseUntil,
