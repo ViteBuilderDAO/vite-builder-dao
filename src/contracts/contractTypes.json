@@ -1,0 +1,4 @@
+[
+  { "value": "multiple_choice", "label": "Multiple Choice" },
+  { "value": "crowdfund", "label": "Crowdfund" }
+]

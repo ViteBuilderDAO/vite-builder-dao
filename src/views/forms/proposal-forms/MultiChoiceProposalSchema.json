@@ -1,0 +1,32 @@
+[
+  {
+    "label": "Proposal Title",
+    "name": "name",
+    "validation": "required"
+  },
+  {
+    "label": "Proposal URL",
+    "name": "url",
+    "validation": "required"
+  },
+  {
+    "label": "Proposal Keywords",
+    "name": "name",
+    "validation": "required"
+  },
+  {
+    "type": "textarea",
+    "v-model": "value",
+    "label": "Description"
+  },
+  {
+    "type": "file",
+    "name": "file",
+    "label": "Select your documents to upload",
+    "help": "Select one or more files to upload",
+    "multiple": true
+  },
+  {
+    "type": "submit"
+  }
+]

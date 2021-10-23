@@ -1,13 +1,30 @@
 <template>
-  <!-- Proposal Social Media -->
-  <FormulateForm
-    v-model="formResponses"
-    :schema="createProposalFormSchema"
-    @submit="submitHandler"
-  />
+  <FormulateForm>
+    <FormulateForm
+      v-model="templateSelected"
+      :schema="selectProposalTypeSchema"
+      class="proposalDropdownStyle"
+    />
+    <FormulateForm
+      v-if="templateSelected.proposalType === 'crowdfund'"
+      v-model="formResponses"
+      :schema="crowdfundProposalSchema"
+      @submit="submitHandler"
+    />
+    <FormulateForm
+      v-if="templateSelected.proposalType === 'multiple_choice'"
+      v-model="formResponses"
+      :schema="multiChoiceProposalSchema"
+      @submit="submitHandler"
+    />
+  </FormulateForm>
 </template>
 
 <script>
+import proposalTypes from '@/contracts/contractTypes.json'
+import crowdfundTemplate from './CrowdFundProposalSchema.json'
+import multiChoiceTemplate from './MultiChoiceProposalSchema.json'
+
 export default {
   setup() {
     return {
@@ -16,69 +33,17 @@ export default {
   data() {
     return {
       formResponses: {},
-      createProposalFormSchema: [
+      templateSelected: {},
+      selectProposalTypeSchema: [
         {
-          label: 'Proposal Title',
-          name: 'name',
-          validation: 'required',
-        },
-        {
-          label: 'Proposal URL',
-          name: 'url',
-          validation: 'required',
-        },
-        {
-          label: 'Proposal Keywords',
-          name: 'name',
-          validation: 'required',
-        },
-        {
-          type: 'textarea',
-          'v-model': 'value',
-          label: 'Description',
-
-          // validation: 'required|max:50,length',
-          // :help='`Keep it under 50 characters. ${50 - value.length} left.`',
-        },
-        {
-          type: 'group',
-          name: 'accounts',
-          validation: 'min:2,length',
-          repeatable: true,
-          'add-label': '+ Add platform',
-          value: [{}],
-          children: [
-            {
-              type: 'select',
-              name: 'platform',
-              label: 'Social Platform',
-              placeholder: 'Select one',
-              options: {
-                twitter: 'Twitter',
-                facebook: 'Facebook',
-                instagram: 'Instagram',
-                linkedin: 'LinkedIn',
-              },
-            },
-            {
-              type: 'text',
-              name: 'url',
-              label: 'Profile URL',
-              validation: 'required|url',
-            },
-          ],
-        },
-        {
-          type: 'file',
-          name: 'file',
-          label: 'Select your documents to upload',
-          help: 'Select one or more files to upload',
-          multiple: true,
-        },
-        {
-          type: 'submit',
+          type: 'select',
+          name: 'proposalType',
+          label: 'Proposal Type',
+          options: proposalTypes,
         },
       ],
+      crowdfundProposalSchema: crowdfundTemplate,
+      multiChoiceProposalSchema: multiChoiceTemplate,
     }
   },
   methods: {
@@ -100,5 +65,23 @@ export default {
       color: white;
     }
   }
+}
+.proposalDropdownStyle {
+  margin-bottom: 20px;
+  max-width: 200px !important;
+  margin-left: 0 !important;
+}
+#formulate--create-proposal-1 {
+  color: white;
+}
+.formulate-input .formulate-input-element {
+  max-width: 40em;
+  margin-left: auto;
+  margin-right: auto;
+}
+.v-card.v-sheet[data-v-14f11f54] {
+  width: 40%;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

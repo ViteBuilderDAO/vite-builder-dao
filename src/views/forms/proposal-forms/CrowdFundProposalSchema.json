@@ -1,0 +1,60 @@
+[
+  {
+    "label": "Proposal Title",
+    "name": "name",
+    "validation": "required"
+  },
+  {
+    "label": "Proposal URL",
+    "name": "url",
+    "validation": "required"
+  },
+  {
+    "label": "Proposal Keywords",
+    "name": "name",
+    "validation": "required"
+  },
+  {
+    "type": "textarea",
+    "v-model": "value",
+    "label": "Description"
+  },
+  {
+    "type": "group",
+    "name": "accounts",
+    "validation": "min:2,length",
+    "repeatable": true,
+    "add-label": "+ Add platform",
+    "value": [{}],
+    "children": [
+      {
+        "type": "select",
+        "name": "platform",
+        "label": "Social Platform",
+        "placeholder": "Select one",
+        "options": {
+          "twitter": "Twitter",
+          "facebook": "Facebook",
+          "instagram": "Instagram",
+          "linkedin": "LinkedIn"
+        }
+      },
+      {
+        "type": "text",
+        "name": "url",
+        "label": "Profile URL",
+        "validation": "required|url"
+      }
+    ]
+  },
+  {
+    "type": "file",
+    "name": "file",
+    "label": "Select your documents to upload",
+    "help": "Select one or more files to upload",
+    "multiple": true
+  },
+  {
+    "type": "submit"
+  }
+]
