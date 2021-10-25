@@ -50,9 +50,9 @@ contract CrowdFundProposal
   }
 
   /** @dev Function to start a new proposal.
-    * @param _title Title of the proposal to be created
-    * @param _description Brief description about the proposal
-    * @param _durationInDays Proposal deadline in days
+    * @param title Title of the proposal to be created
+    * @param description Brief description about the proposal
+    * @param durationInDays Proposal deadline in days
     */
   onMessage startProposal(address creator, string calldata title, string calldata description, uint durationInDays)
   {
@@ -64,16 +64,16 @@ contract CrowdFundProposal
 
   /** @dev Function to fund a certain proposal.
     */
-  function contribute(uint256 proposalID, uint256 amountValue) public
+  function contribute(address contributor, uint256 proposalID, uint256 amountValue) public
   {
     uint256 index = proposalID - 1;
-    require(msg.sender != proposalsMap[index].m_creator);
-    uint256 prevContributions = proposalsMap[index].m_contributions[msg.sender];
-    proposalsMap[index].m_contributions[msg.sender] = prevContributions.add(amountValue);
+    require(contributor != proposalsMap[index].m_creator);
+    uint256 prevContributions = proposalsMap[index].m_contributions[contributor];
+    proposalsMap[index].m_contributions[contributor] = prevContributions.add(amountValue);
     proposalsMap[index].m_balance = proposalsMap[index].m_balance.add(amountValue);
     requestPayOutOnComplete(proposalID);
 
-    emit ProposalVotedOnEvent(proposalID, msg.sender, amountValue, proposalsMap[index].m_balance);
+    emit ProposalVotedOnEvent(proposalID, contributor, amountValue, proposalsMap[index].m_balance);
   }
 
   /** @dev Function to change the proposal state depending on conditions.

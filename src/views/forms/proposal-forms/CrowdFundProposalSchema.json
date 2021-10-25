@@ -1,7 +1,7 @@
 [
   {
     "label": "Proposal Title",
-    "name": "name",
+    "name": "title",
     "validation": "required"
   },
   {
@@ -11,17 +11,17 @@
   },
   {
     "label": "Proposal Keywords",
-    "name": "name",
+    "name": "keywords",
     "validation": "required"
   },
   {
     "type": "textarea",
-    "v-model": "value",
+    "v-model": "description",
     "label": "Description"
   },
   {
     "type": "group",
-    "name": "accounts",
+    "name": "social_accounts",
     "validation": "min:2,length",
     "repeatable": true,
     "add-label": "+ Add platform",
@@ -29,7 +29,7 @@
     "children": [
       {
         "type": "select",
-        "name": "platform",
+        "name": "social_platform",
         "label": "Social Platform",
         "placeholder": "Select one",
         "options": {
@@ -41,7 +41,7 @@
       },
       {
         "type": "text",
-        "name": "url",
+        "name": "social_url",
         "label": "Profile URL",
         "validation": "required|url"
       }
@@ -49,12 +49,13 @@
   },
   {
     "type": "file",
-    "name": "file",
+    "name": "attached_files",
     "label": "Select your documents to upload",
     "help": "Select one or more files to upload",
     "multiple": true
   },
   {
-    "type": "submit"
+    "type": "submit",
+    ":disabled": "!walletConnected"
   }
 ]

@@ -1,4 +1,4 @@
 [
-  { "value": "multiple_choice", "label": "Multiple Choice" },
-  { "value": "crowdfund", "label": "Crowdfund" }
+  { "value": "crowdfund", "label": "Crowdfund" },
+  { "value": "multiple_choice", "label": "Multiple Choice" }
 ]

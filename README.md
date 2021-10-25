@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/ViteBuilderDAO/vite-builder-dao/master/src/assets/img/logos/vite-cover-milltay-1.jpg" width="1060px"/><br/>
   Vite Builder DAO
 </h1>
-<p align="center">Important decisions need to be made and governed on the Vite network, with votes made by VITE<br/>holders using their VITE via a DAO. Similarly, key decisions for ViteX require voting by VX holders.<br/>Introduce Vite Builder DAOshboard (DAO Dashboard):</p>
+<p align="center">Important decisions need to be made and governed on the Vite network, with votes made by VITE holders using their VITE via a DAO. Similarly, key decisions for ViteX require voting by VX holders. Introduce Vite Builder DAOshboard (DAO Dashboard):</p>
 
 <p align="center"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License" />&nbsp;<img src="https://img.shields.io/tokei/lines/github/vitebuilderdao/vite-builder-dao?logoColor=purple" alt="Lines of Code" /><br><img src="https://img.shields.io/badge/version-v0.0.0-green?style=for-the-badge&logo=none" alt="Vite Builder DAO Version" /></a><a href="https://twitter.com/vitelabs" target="_blank">&nbsp;<img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/vitelabs"></a>
 
@@ -69,7 +69,7 @@ Temp paragraph text.
 ## Screenshots 📸
 
 <p align="center">
-  <img height="750" width="985" src="https://raw.githubusercontent.com/ViteBuilderDAO/vite-builder-dao/master/src/assets/img/misc/vbd-screenshot_10-18.png">
+  <img max-width="1000px" src="https://raw.githubusercontent.com/ViteBuilderDAO/vite-builder-dao/master/src/assets/img/misc/vbd-screenshot_10-18.png">
 </p>
 
 ## Configuration ⚙️

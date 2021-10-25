@@ -34,12 +34,12 @@
 
     <v-card
       class="elevation-0"
-      max-width="500"
+      max-width="300"
     >
       <wallet-qr-canvas
         v-if="!walletConnected"
         class="wallet-card-qr-style"
-        height="300px"
+        height="350px"
       >
       </wallet-qr-canvas>
       <wallet-account-info
@@ -94,7 +94,8 @@ export default {
   }
 }
 .wallet-card-qr-style {
-    margin-left: 50px;
+    margin-left: 35px;
+    margin-top: 15px;
 }
 .wallet-connected {
     position: absolute;
@@ -112,7 +113,7 @@ export default {
 .wallet-connected-card-style {
   overflow: hidden;
   height: 75px;
-  width: 500px;
+  width: 350px;
   font-size: 10px;
 }
 </style>

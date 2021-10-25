@@ -1,73 +1,101 @@
-export async function getProjects() {
-  //crowdfundInstance.methods.returnAllProjects().call().then((projects) =>
-  //{
-  //    projects.forEach((projectAddress) =>
-  //    {
-  //        const projectInst = crowdfundProject(projectAddress)
-  //        projectInst.methods.getDetails().call().then((projectData) =>
-  //        {
-  //            const projectInfo = projectData;
-  //            projectInfo.isLoading = false;
-  //            projectInfo.contract = projectInst;
-  //            this.projectData.push(projectInfo);
-  //        });
-  //    });
-  //});
+import CROWDFUND_CONTRACT from '@/utils/contract-interfaces/proposal/crowdfundContractInfo'
+
+const { WS_RPC } = require('@vite/vitejs-ws')
+const { ViteAPI, constant, accountBlock } = require('@vite/vitejs')
+
+const { viteTokenId } = constant
+const connection = new WS_RPC('ws://localhost:23457')
+const provider = new ViteAPI(connection, () => {
+  console.log('client connected')
+})
+
+/**
+ *
+ * @param {Address} creator
+ * @param {String} title
+ * @param {String} description
+ * @param {Uint} durationInDays
+ */
+export async function startProposal(creator, title, description, durationInDays) {
+  const ab = accountBlock.createAccountBlock('vmdebug_callContract', {
+    address: CROWDFUND_CONTRACT.acctAddr,
+    abi: CROWDFUND_CONTRACT.abi,
+    toAddress: CROWDFUND_CONTRACT.address,
+    amount: '0',
+    tokenId: viteTokenId,
+    method: 'startProposal',
+    params: [creator, title, description, durationInDays],
+  }).setProvider(provider).setPrivateKey(CROWDFUND_CONTRACT.acctPrivKey)
+  await ab.autoSetPreviousAccountBlock()
+  const startProposalCallResult = await ab.sign().send()
+  console.log('startProposal call result: ', startProposalCallResult)
+  let startProposalEvent
+  try {
+    startProposalEvent = await provider.subscribeToEvent(CROWDFUND_CONTRACT.address, 'ProposalStartedEvent')
+  } catch (err) {
+    console.log(err)
+  }
+  console.log('ProposalStartedEvent response: ', JSON.stringify(startProposalEvent))
 }
 
-export async function startProject() {
-  //this.newProject.isLoading = true
-  //crowdfundInstance.methods.startProject(
-  //    this.newProject.title,
-  //    this.newProject.description,
-  //    this.newProject.duration,
-  //    web3.utils.toWei(this.newProject.amountGoal, 'ether'),
-  //).send({
-  //  from: this.account,
-  //}).then((res) => {
-  //    const projectInfo = res.events.ProjectStarted.returnValues;
-  //    projectInfo.isLoading = false;
-  //    projectInfo.currentAmount = 0;
-  //    projectInfo.currentState = 0;
-  //    projectInfo.contract = crowdfundProject(projectInfo.contractAddress);
-  //    this.startProjectDialog = false;
-  //    this.newProject = { isLoading: false };
-  //});
+/**
+ *
+ * @param {Address} contributor
+ * @param {Uint256} proposalID
+ * @param {Uint256} amountValue
+ */
+export async function contributeToProposal(contributor, proposalID, amountValue) {
+  const ab = accountBlock.createAccountBlock('vmdebug_callContract', {
+    address: CROWDFUND_CONTRACT.acctAddr,
+    abi: CROWDFUND_CONTRACT.abi,
+    toAddress: CROWDFUND_CONTRACT.address,
+    amount: '0',
+    tokenId: viteTokenId,
+    method: 'contribute',
+    params: [contributor, proposalID, amountValue],
+  }).setProvider(provider).setPrivateKey(CROWDFUND_CONTRACT.acctPrivKey)
+  await ab.autoSetPreviousAccountBlock()
+  const contributeToProposalCallResult = await ab.sign().send()
+  console.log('contributeToProposal call result: ', contributeToProposalCallResult)
+  let contributeToProposalEvent
+  try {
+    contributeToProposalEvent = await provider.subscribeToEvent(CROWDFUND_CONTRACT.address, 'ProposalContributionEvent')
+  } catch (err) {
+    console.log(err)
+  }
+  console.log('ProposalContributionEvent response: ', JSON.stringify(contributeToProposalEvent))
 }
 
-export async function fundProject(index) {
-  //if (!this.projectData[index].fundAmount)
-  //{
-  //    return;
-  //}
-
-  //const projectContract = this.projectData[index].contract
-  //this.projectData[index].isLoading = true
-  //projectContract.methods.contribute().send(
-  //{
-  //    from: this.account,
-  //    //value: web3.utils.toWei(this.projectData[index].fundAmount, 'ether'),
-  //}).then((res) =>
-  //{
-  //    const newTotal = parseInt(res.events.FundingReceived.returnValues.currentTotal, 10);
-  //    const projectGoal = parseInt(this.projectData[index].goalAmount, 10);
-  //    this.projectData[index].currentAmount = newTotal;
-  //    this.projectData[index].isLoading = false;
-
-  //    // Set project state to success
-  //    if (newTotal >= projectGoal) {
-  //      this.projectData[index].currentState = 2;
-  //    }
-  //});
+/**
+ *
+ * @param {Uint256} proposalID
+ */
+export async function requestPayOutOnProposal(proposalID) {
+  const ab = accountBlock.createAccountBlock('vmdebug_callContract', {
+    address: CROWDFUND_CONTRACT.acctAddr,
+    abi: CROWDFUND_CONTRACT.abi,
+    toAddress: CROWDFUND_CONTRACT.address,
+    amount: '0',
+    tokenId: viteTokenId,
+    method: 'requestPayOutOnComplete',
+    params: [proposalID],
+  }).setProvider(provider).setPrivateKey(CROWDFUND_CONTRACT.acctPrivKey)
+  await ab.autoSetPreviousAccountBlock()
+  const requestPayOutOnCompleteCallResult = await ab.sign().send()
+  console.log('requestPayOutOnComplete call result: ', requestPayOutOnCompleteCallResult)
+  let requestPayOutOnCompleteEvent
+  try {
+    requestPayOutOnCompleteEvent = await provider.subscribeToEvent(CROWDFUND_CONTRACT.address, 'ProposalPaidEvent')
+  } catch (err) {
+    console.log(err)
+  }
+  console.log('ProposalPaidEvent response: ', JSON.stringify(requestPayOutOnCompleteEvent))
 }
 
-export async function getRefund (index) {
-  //this.projectData[index].isLoading = true
-  //this.projectData[index].contract.methods.getRefund().send(
-  //{
-  //    from: this.account,
-  //}).then(() =>
-  //{
-  //    this.projectData[index].isLoading = false;
-  //});
-}
+// const ab = accountBlock.createAccountBlock('send', {
+//   address: account.address,
+//   toAddress: address,
+//   amount
+// }).setProvider(provider).setPrivateKey(account.privateKey)
+// await ab.autoSetPreviousAccountBlock()
+// const result = await ab.sign().send()

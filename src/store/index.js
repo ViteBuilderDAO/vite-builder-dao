@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import * as viteClient from '@/utils/vite-helpers/viteClient'
-import * as storage from '@/utils/storage/storage'
+
+// import * as viteClient from '@/utils/vite-helpers/viteClient'
+// import * as storage from '@/utils/storage/storage'
 
 Vue.use(Vuex)
 
@@ -13,6 +14,7 @@ export default new Vuex.Store({
     connectedAccounts: [],
     connectedWalletAddr: '',
     accountStates: '',
+    currActiveProposals: [],
   },
   getters: {
     getIsWalletConnected(state) {
@@ -27,8 +29,11 @@ export default new Vuex.Store({
     getConnectedWalletAddr(state) {
       return state.connectedWalletAddr || {}
     },
-    getaccountStatesr(state) {
+    getAccountStates(state) {
       return state.accountStates
+    },
+    getCurrActiveProposals(state) {
+      return state.currActiveProposals
     },
   },
   mutations: {
@@ -58,21 +63,17 @@ export default new Vuex.Store({
         [address]: accountState,
       }
     },
+    addNewProposal(state, { data }) {
+      state.currActiveProposals = state.currActiveProposals.concat([data])
+    },
   },
   actions: {
     addAccount({ commit }, newAccount) {
       commit('addAccount', { account: newAccount })
       commit('setSelectedAddress', newAccount.address)
     },
-    importWallet({ commit, state }, payload) {
-      if (payload === state.mnemonics) {
-        return
-      }
-      commit('setMnemonics', payload)
-      storage.set('mnemonics', payload)
-      const newAccount = viteClient.createAccount(payload, 0)
-      commit('setAccounts', [newAccount])
-      commit('setSelectedAddress', newAccount.address)
+    addNewProposal({ commit }, newData) {
+      commit('addNewProposal', { data: newData })
     },
   },
   modules: {},

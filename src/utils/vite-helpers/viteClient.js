@@ -1,6 +1,5 @@
 import WS_RPC from '@vite/vitejs-ws'
-import { ViteAPI, abi as abiutils, wallet } from '@vite/vitejs'
-import WalletAccount from '@/utils/vite-helpers/walletAccount'
+import { ViteAPI, abi as abiutils } from '@vite/vitejs'
 
 const BigNumber = require('bignumber.js')
 
@@ -8,7 +7,6 @@ const VITE_TOKEN_ID = 'tti_5649544520544f4b454e6e40'
 const WS_SERVER = 'ws://localhost:23457'
 
 let viteClient
-let mnemonicsDeriveIndex = 0
 
 export function setupNode(inputServer, cb) {
   const server = inputServer || WS_SERVER
@@ -24,19 +22,6 @@ export function setupNode(inputServer, cb) {
 
 export function getVite() {
   return viteClient
-}
-
-export function createAccount(mnemonics, index = mnemonicsDeriveIndex) {
-  const { privateKey } = wallet.deriveAddress({
-    mnemonics,
-    index,
-  })
-  const account = new WalletAccount({
-    privateKey,
-  })
-  mnemonicsDeriveIndex = index + 1
-
-  return account
 }
 
 export async function createContract(

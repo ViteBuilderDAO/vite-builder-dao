@@ -21,9 +21,11 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
 import proposalTypes from '@/contracts/contractTypes.json'
 import crowdfundTemplate from './CrowdFundProposalSchema.json'
 import multiChoiceTemplate from './MultiChoiceProposalSchema.json'
+import { startProposal } from '@/utils/contract-interfaces/proposal/crowdFundController'
 
 export default {
   setup() {
@@ -46,11 +48,17 @@ export default {
       multiChoiceProposalSchema: multiChoiceTemplate,
     }
   },
+  computed: {
+    ...mapState([
+      'walletConnected',
+    ]),
+    ...mapGetters(['getIsWalletConnected']),
+  },
   methods: {
     async submitHandler(data) {
       if (data) {
-
-        // data
+        this.$store.dispatch('addNewProposal', data)
+        startProposal(data.creator, data.title, data.description, data.durationInDays)
       }
     },
   },
@@ -71,7 +79,7 @@ export default {
   max-width: 200px !important;
   margin-left: 0 !important;
 }
-#formulate--create-proposal-1 {
+.formulate-input[data-classification=select] select {
   color: white;
 }
 .formulate-input .formulate-input-element {
