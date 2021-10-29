@@ -5,12 +5,17 @@
     <FormulateForm
       v-model="votingTypeSelected"
       :schema="selectVotingTypeSchema"
-      class="voteTypeDropdownStyle"
+      class="proposalDropdownStyle"
     />
     <FormulateForm
       v-model="templateSelected"
       :schema="selectProposalTypeSchema"
-      class="proposalTypeDropdownStyle"
+      class="proposalDropdownStyle"
+    />
+    <FormulateForm
+      v-model="tokensSelectedData"
+      :schema="selectTokenSchema"
+      class="proposalDropdownStyle"
     />
     <FormulateInput
       v-for="item in templateSelected.proposalType === 'default' ? defaultProposalSchema : multiChoiceProposalSchema"
@@ -45,6 +50,7 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+import { getTokenList, startProposal } from '@/utils/contract/proposal/proposalController'
 import singleChoice from '@/utils/contract/voting/singleChoice'
 import approval from '@/utils/contract/voting/approval'
 import quadratic from '@/utils/contract/voting/quadratic'
@@ -52,8 +58,6 @@ import weighted from '@/utils/contract/voting/weighted'
 import proposalTypes from '@/contracts/contractTypes.json'
 import defaultProposalTemplate from './DefaultProposalSchema.json'
 import multiChoiceTemplate from './MultiChoiceProposalSchema.json'
-
-// import { startProposal } from '@/utils/contract/proposal/proposalController'
 
 export default {
   setup() {
@@ -90,7 +94,7 @@ export default {
       multiChoiceSchema: [
         {
           type: 'group',
-          name: 'multiple_choice_data',
+          name: 'multiChoiceGroup',
           repeatable: true,
           'add-label': '+ Add Choice',
           validation: 'required',
@@ -106,6 +110,25 @@ export default {
               type: 'file',
               name: 'choice_file',
               label: 'File',
+            },
+          ],
+        },
+      ],
+      tokensSelectedData: {},
+      selectTokenSchema: [
+        {
+          type: 'group',
+          name: 'tokenGroup',
+          label: 'Voting Token(s)',
+          repeatable: true,
+          'add-label': '+ Add Token',
+          validation: 'required',
+          value: [{}],
+          children: [
+            {
+              type: 'select',
+              name: 'tokenTTI',
+              options: this.getTokenList(),
             },
           ],
         },
@@ -131,11 +154,15 @@ export default {
   methods: {
     async submitHandler(data) {
       if (data) {
+        console.log(this.votingTypeSelected.votingType)
+        console.log(this.multiChoiceData.multiChoiceGroup.choice_title)
+        console.log(this.tokensSelectedData.tokenGroup.tokenTTI)
         console.log(this.connectedWalletAddr)
+        console.log(data.title)
         console.log(data.description)
         console.log(data.durationInDays)
 
-        // const proposalID = startProposal(this.connectedWalletAddr, this.formResponses.title, this.formResponses.description, this.formResponses.durationInDays)
+        // const proposalID = startProposal(this.connectedWalletAddr, this.viteTokenId, this.formResponses.title, this.formResponses.description, this.formResponses.durationInDays)
         // this.$store.dispatch('addNewProposal', proposal, proposalID)
       }
     },
@@ -152,8 +179,7 @@ export default {
     }
   }
 }
-.voteTypeDropdownStyle,
-.proposalTypeDropdownStyle {
+.proposalDropdownStyle {
   margin-bottom: 20px;
   max-width: 200px !important;
   margin-left: 0 !important;

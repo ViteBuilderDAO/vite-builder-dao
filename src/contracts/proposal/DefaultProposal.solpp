@@ -2,7 +2,7 @@ pragma soliditypp ^0.4.3;
 
 import "./proposal-libs/SafeMath.solpp";
 
-contract CrowdFundProposal
+contract DefaultProposal
 {
   using SafeMath for uint256;
 
@@ -64,48 +64,15 @@ contract CrowdFundProposal
 
   /** @dev Function to fund a certain proposal.
     */
-  function contribute(address contributor, uint256 proposalID, uint256 amountValue) public
+  function voteOnProposal(address contributor, uint256 proposalID, uint256 amountValue) public
   {
-    uint256 index = proposalID - 1;
-    require(contributor != proposalsMap[index].m_creator);
-    uint256 prevContributions = proposalsMap[index].m_contributions[contributor];
-    proposalsMap[index].m_contributions[contributor] = prevContributions.add(amountValue);
-    proposalsMap[index].m_balance = proposalsMap[index].m_balance.add(amountValue);
-    requestPayOutOnComplete(proposalID);
+    require(contributor != proposalsMap[proposalID].m_creator);
+    uint256 prevContributions = proposalsMap[proposalID].m_contributions[contributor];
+    proposalsMap[proposalID].m_contributions[contributor] = prevContributions.add(amountValue);
+    proposalsMap[proposalID].m_balance = proposalsMap[proposalID].m_balance.add(amountValue);
+    _requestPayOutOnComplete(proposalID);
 
-    emit ProposalVotedOnEvent(proposalID, contributor, amountValue, proposalsMap[index].m_balance);
-  }
-
-  /** @dev Function to change the proposal state depending on conditions.
-    */
-  function requestPayOutOnComplete(uint256 proposalID) public
-  {
-    // FIX ME - HARDCODED - ZD
-    uint256 index = proposalID - 1;
-    require(proposalsMap[index].m_creator == msg.sender);
-    if (now > proposalsMap[index].m_raiseUntil)
-    {
-        proposalsMap[index].m_state = State.Complete;
-        payOut(index, "tti_5649544520544f4b454e6e40");
-    }
-
-    emit ProposalEndedEvent(proposalID, now);
-  }
-
-  /** @dev Function to give the received funds to proposal starter.
-    */
-  function payOut(uint256 _proposalID, tokenId _tokenId) internal
-  {
-    uint256 index = _proposalID - 1;
-    address proposalCreator = proposalsMap[index].m_creator;
-    require(proposalsMap[index].m_state == State.Complete);
-    require(proposalCreator != address(0), 'transfer to zero address');
-    uint256 totalRaised = proposalsMap[index].m_balance;
-    proposalsMap[index].m_balance = 0;
-    proposalsMap[index].m_state = State.Complete;
-    proposalCreator.transfer(_tokenId, totalRaised);
-
-    emit ProposalPaidEvent(_proposalID, proposalCreator);
+    emit ProposalVotedOnEvent(proposalID, contributor, amountValue, proposalsMap[proposalID].m_balance);
   }
 
   /** @dev Function to get specific information about the proposal.
@@ -119,13 +86,12 @@ contract CrowdFundProposal
     State proposalCurrState,
     uint256 proposalCurrAmount)
   {
-    uint256 index = proposalID - 1;
-    proposalCreator = proposalsMap[index].m_creator;
-    proposalTitle = proposalsMap[index].m_title;
-    proposalDesc = proposalsMap[index].m_description;
-    proposalDeadline = proposalsMap[index].m_raiseUntil;
-    proposalCurrState = proposalsMap[index].m_state;
-    proposalCurrAmount = proposalsMap[index].m_balance;
+    proposalCreator = proposalsMap[proposalID].m_creator;
+    proposalTitle = proposalsMap[proposalID].m_title;
+    proposalDesc = proposalsMap[proposalID].m_description;
+    proposalDeadline = proposalsMap[proposalID].m_raiseUntil;
+    proposalCurrState = proposalsMap[proposalID].m_state;
+    proposalCurrAmount = proposalsMap[proposalID].m_balance;
   }
 
   /** @dev Function to get specific information about the proposal.
@@ -143,4 +109,46 @@ contract CrowdFundProposal
   //{
   //    return proposalsMap;
   //}
+
+
+  /** @dev Function to change the proposal state depending on conditions.
+  */
+  function stopProposalEarly(uint256 proposalID) public
+  {
+    // FIX ME - HARDCODED TOKEN - ZD
+    proposalsMap[proposalID].m_state = State.Complete;
+    _payOut(proposalID, "tti_5649544520544f4b454e6e40");
+
+    emit ProposalEndedEvent(proposalID, now);
+  }
+
+  /** @dev Function to change the proposal state depending on conditions.
+    */
+  function _requestPayOutOnComplete(uint256 proposalID) internal
+  {
+    // FIX ME - HARDCODED TOKEN - ZD
+    require(proposalsMap[proposalID].m_creator == msg.sender);
+    if (now > proposalsMap[proposalID].m_raiseUntil)
+    {
+        proposalsMap[proposalID].m_state = State.Complete;
+        _payOut(proposalID, "tti_5649544520544f4b454e6e40");
+    }
+
+    emit ProposalEndedEvent(proposalID, now);
+  }
+
+  /** @dev Function to give the received funds to proposal starter.
+    */
+  function _payOut(uint256 proposalID, tokenId tokenID) internal
+  {
+    address proposalCreator = proposalsMap[proposalID].m_creator;
+    require(proposalsMap[proposalID].m_state == State.Complete);
+    require(proposalCreator != address(0), 'transfer to zero address');
+    uint256 totalRaised = proposalsMap[proposalID].m_balance;
+    proposalsMap[proposalID].m_balance = 0;
+    proposalsMap[proposalID].m_state = State.Complete;
+    proposalCreator.transfer(tokenID, totalRaised);
+
+    emit ProposalPaidEvent(proposalID, proposalCreator);
+  }
 }

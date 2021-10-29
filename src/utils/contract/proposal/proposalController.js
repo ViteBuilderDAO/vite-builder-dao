@@ -1,9 +1,19 @@
 import PROPOSAL_CONTRACT from '@/utils/contract/proposal/proposalContractInfo'
 
 const { WS_RPC } = require('@vite/vitejs-ws')
-const { ViteAPI, constant, accountBlock } = require('@vite/vitejs')
+const { ViteAPI, accountBlock } = require('@vite/vitejs')
 
-const { viteTokenId } = constant
+/**
+ *
+ */
+ export async function getTokenList() {
+  const connection = new WS_RPC('ws://localhost:23457')
+  const provider = new ViteAPI(connection, () => {
+    console.log('client connected')
+  })
+
+  return JSON.stringify(await provider.request('contract_getTokenInfoList', 0, 1000))
+}
 
 /**
  *
@@ -12,7 +22,7 @@ const { viteTokenId } = constant
  * @param {String} description
  * @param {Uint} durationInDays
  */
-export async function startProposal(creator, title, description, durationInDays) {
+export async function startProposal(creator, tokenID, title, description, durationInDays) {
   const connection = new WS_RPC('ws://localhost:23457')
   const provider = new ViteAPI(connection, () => {
     console.log('client connected')
@@ -22,7 +32,7 @@ export async function startProposal(creator, title, description, durationInDays)
     abi: PROPOSAL_CONTRACT.abi,
     toAddress: PROPOSAL_CONTRACT.address,
     amount: '0',
-    tokenId: viteTokenId,
+    tokenId: tokenID,
     methodName: 'startProposal',
     params: [creator, title, description, durationInDays],
   }).setProvider(provider).setPrivateKey(PROPOSAL_CONTRACT.acctPrivKey)
@@ -46,7 +56,7 @@ export async function startProposal(creator, title, description, durationInDays)
  * @param {Uint256} proposalID
  * @param {Uint256} amountValue
  */
-export async function contributeToProposal(contributor, proposalID, amountValue) {
+export async function voteOnProposal(contributor, tokenID, proposalID, amountValue) {
   const connection = new WS_RPC('ws://localhost:23457')
   const provider = new ViteAPI(connection, () => {
     console.log('client connected')
@@ -56,27 +66,27 @@ export async function contributeToProposal(contributor, proposalID, amountValue)
     abi: PROPOSAL_CONTRACT.abi,
     toAddress: PROPOSAL_CONTRACT.address,
     amount: '0',
-    tokenId: viteTokenId,
-    methodName: 'contribute',
+    tokenId: tokenID,
+    methodName: 'voteOnProposal',
     params: [contributor, proposalID, amountValue],
   }).setProvider(provider).setPrivateKey(PROPOSAL_CONTRACT.acctPrivKey)
   await ab.autoSetPreviousAccountBlock()
-  const contributeToProposalCallResult = await ab.sign().send()
-  console.log('contributeToProposal call result: ', contributeToProposalCallResult)
-  let contributeToProposalEvent
+  const voteOnProposalCallResult = await ab.sign().send()
+  console.log('voteOnProposal call result: ', voteOnProposalCallResult)
+  let voteOnProposalEvent
   try {
-    contributeToProposalEvent = JSON.stringify(await provider.subscribeToEvent(PROPOSAL_CONTRACT.address, 'ProposalContributionEvent'))
+    voteOnProposalEvent = JSON.stringify(await provider.subscribeToEvent(PROPOSAL_CONTRACT.address, 'ProposalContributionEvent'))
   } catch (err) {
     console.log(err)
   }
-  console.log('ProposalContributionEvent response: ', contributeToProposalEvent)
+  console.log('ProposalContributionEvent response: ', voteOnProposalEvent)
 }
 
 /**
  *
  * @param {Uint256} proposalID
  */
-export async function requestPayOutOnProposal(proposalID) {
+export async function stopProposalEarly(proposalID, tokenID) {
   const connection = new WS_RPC('ws://localhost:23457')
   const provider = new ViteAPI(connection, () => {
     console.log('client connected')
@@ -86,20 +96,20 @@ export async function requestPayOutOnProposal(proposalID) {
     abi: PROPOSAL_CONTRACT.abi,
     toAddress: PROPOSAL_CONTRACT.address,
     amount: '0',
-    tokenId: viteTokenId,
-    methodName: 'requestPayOutOnComplete',
+    tokenId: tokenID,
+    methodName: 'stopProposalEarly',
     params: [proposalID],
   }).setProvider(provider).setPrivateKey(PROPOSAL_CONTRACT.acctPrivKey)
   await ab.autoSetPreviousAccountBlock()
-  const requestPayOutOnCompleteCallResult = await ab.sign().send()
-  console.log('requestPayOutOnComplete call result: ', requestPayOutOnCompleteCallResult)
-  let requestPayOutOnCompleteEvent
+  const stopProposalEarlyResult = await ab.sign().send()
+  console.log('stopProposalEarly call result: ', stopProposalEarlyResult)
+  let stopProposalEarlyEvent
   try {
-    requestPayOutOnCompleteEvent = JSON.stringify(await provider.subscribeToEvent(PROPOSAL_CONTRACT.address, 'ProposalPaidEvent'))
+    stopProposalEarlyEvent = JSON.stringify(await provider.subscribeToEvent(PROPOSAL_CONTRACT.address, 'ProposalEndedEvent'))
   } catch (err) {
     console.log(err)
   }
-  console.log('ProposalPaidEvent response: ', requestPayOutOnCompleteEvent)
+  console.log('ProposalEndedEvent response: ', stopProposalEarlyEvent)
 }
 
 // const ab = accountBlock.createAccountBlock('send', {
