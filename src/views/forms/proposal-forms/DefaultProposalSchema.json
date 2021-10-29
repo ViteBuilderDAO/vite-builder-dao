@@ -10,6 +10,12 @@
     "validation": "required"
   },
   {
+    "label": "Voting Period",
+    "name": "durationInDays",
+    "help": "Please use duration in days (e.g. 1)",
+    "validation": "required"
+  },
+  {
     "label": "Proposal Keywords",
     "name": "keywords"
   },
@@ -27,5 +33,12 @@
     "single": true,
     "validation": "required",
     "validation-name": "Cover Photo"
+  },
+  {
+    "type": "file",
+    "name": "attached_files",
+    "label": "Select your documents to upload",
+    "help": "Select one or more files to upload",
+    "multiple": true
   }
 ]

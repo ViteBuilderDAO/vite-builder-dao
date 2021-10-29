@@ -4,8 +4,8 @@
 
 <script>
 import QRCode from 'qrcode'
-import { getWalletConnectURI, getVbInstance } from '@/utils/vite-helpers/walletClient'
-import WalletAccount from '@/utils/vite-helpers/walletAccount'
+import { getWalletConnectURI, getVbInstance } from '@/utils/client/walletClient'
+import WalletAccount from '@/utils/client/walletAccount'
 
 export default {
   async mounted() {

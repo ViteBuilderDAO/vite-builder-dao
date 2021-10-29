@@ -71,7 +71,7 @@
       >
         <nav-menu-link
           title="View/Vote for Proposal Demo"
-          :to="{ name: 'view-proposal' }"
+          :to="{ name: 'proposal-gallery' }"
         ></nav-menu-link>
       </nav-menu-group>
       <nav-menu-section-title title="Demo UI"></nav-menu-section-title>

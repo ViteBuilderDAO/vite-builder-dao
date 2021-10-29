@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-// import * as viteClient from '@/utils/vite-helpers/viteClient'
 // import * as storage from '@/utils/storage/storage'
 
 Vue.use(Vuex)
@@ -63,8 +62,8 @@ export default new Vuex.Store({
         [address]: accountState,
       }
     },
-    addNewProposal(state, { data }) {
-      state.currActiveProposals = state.currActiveProposals.concat([data])
+    addNewProposal(state, { proposal, proposalID }) {
+      state.currActiveProposals[proposalID] = proposal
     },
   },
   actions: {

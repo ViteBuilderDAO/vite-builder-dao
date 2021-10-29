@@ -121,6 +121,14 @@ const routes = [
     },
   },
   {
+    path: '/proposal-gallery',
+    name: 'proposal-gallery',
+    component: () => import('@/views/proposals/ProposalGallery.vue'),
+    meta: {
+      layout: 'content',
+    },
+  },
+  {
     path: '/error-404',
     name: 'error-404',
     component: () => import('@/views/Error.vue'),
