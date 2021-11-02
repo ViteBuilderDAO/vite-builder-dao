@@ -34,7 +34,8 @@
 
     <v-card
       class="elevation-0"
-      max-width="300"
+      :width="!walletConnected ? '300' : '460'"
+      :max-width="!walletConnected ? '300' : '460'"
     >
       <wallet-qr-canvas
         v-if="!walletConnected"
@@ -113,7 +114,6 @@ export default {
 .wallet-connected-card-style {
   overflow: hidden;
   height: 75px;
-  width: 350px;
   font-size: 10px;
 }
 </style>

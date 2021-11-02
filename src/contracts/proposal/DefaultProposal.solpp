@@ -9,42 +9,59 @@ contract DefaultProposal
   // Various states that a proposal can be in
   enum State
   {
-    Fundraising,
+    Active,
     Complete
   }
 
+  struct ProposalVote
+  {
+    uint256 m_voteToken;
+    uint256 m_votePower;
+  }
+
+  struct ProposalOption
+  {
+    uint256 m_optionID;
+    uint256 m_optionVotePower;
+    uint256 m_optionTotalVotes;
+    mapping(uint256 => ProposalVote) m_voteMap;
+  }
+
   // Proposal Type Obj and it's map container
-  // mapping from numberofProposals to ProposalObj
-  mapping(uint256 => ProposalObj) proposalsMap;
   struct ProposalObj
   {
+    uint256 m_id;
     address m_creator;
     string m_title;
     string m_description;
-    uint m_raiseUntil;
-    uint256 m_balance;
+    uint m_deadline;
+    uint256[] m_tokens;
+    uint m_numOptions;
+    mapping(uint256 => ProposalOption) m_optionsMap;
+    uint256 m_totalVotingPower;
+    uint256 m_totalVotes;
     State m_state;
-    bytes32 m_payoutHash;
-    mapping (address => uint) m_contributions;
   }
 
+  mapping(uint256 => ProposalObj) proposalsMap;
+
   // Number of proposals currently active
-  uint256 public g_currNumProposals = 0;
+  uint256 g_currNumProposals = 0;
   // Address of the contract creator
   address g_contractOwner;
 
-  // Event that will be emitted whenever a new proposal is started
-  event ProposalStartedEvent(address proposalStarter, string proposalTitle, string proposalDesc, uint256 proposalDeadline, uint256 proposalID);
+  // Event that will be emitted whenever a new proposal is created
+  event ProposalStartedEvent(uint256 proposalID, address proposalStarter, string proposalTitle, string proposalDesc, uint256 proposalDeadline);
   // Event that will be emitted whenever a proposal ends
   event ProposalEndedEvent(uint256 proposalID, uint proposalEndTime);
-  // Event emitted whenever a proposal receives a vote (funding)
-  event ProposalVotedOnEvent(uint256 proposalID, address proposalContributor, uint contributedAmount, uint currentTotal);
-  // Event emitted when a proposal has ended and was paid
-  event ProposalPaidEvent(uint256 paidProposalID, address paidProposalRecipient);
+  // Event emitted whenever a proposal receives a vote
+  event ProposalVotedOnEvent(uint256 proposalID, address proposalVoter, uint votingPower, uint256 proposalTotalVotingPower, uint256 proposalTotalVotes);
+  // Event emitted when a proposal has ended and results are calculated
+  event ProposalResultsCalculated(uint256 proposalID, address proposalCreator, uint256 winningOptionVotes, uint256 totalVotes, uint256 totalVotingPower);
 
   /** @dev Contract Constructor
     */
-  constructor() public payable
+  constructor() public
   {
     g_contractOwner = msg.sender;
   }
@@ -54,53 +71,81 @@ contract DefaultProposal
     * @param description Brief description about the proposal
     * @param durationInDays Proposal deadline in days
     */
-  onMessage startProposal(address creator, string calldata title, string calldata description, uint durationInDays)
+  onMessage startProposal(address creator, string calldata title, string calldata description, uint256[] calldata tokens, uint numOptions, uint durationInDays)
   {
-    uint raiseUntil = now.add(durationInDays.mul(1 days));
-    proposalsMap[++g_currNumProposals] = ProposalObj(creator, title, description, raiseUntil, 0, State.Fundraising, 0);
+    uint proposalDeadline = now.add(durationInDays.mul(1 days));
+    uint256 proposalID = ++g_currNumProposals;
+    proposalsMap[proposalID] = ProposalObj(proposalID, creator, title, description, proposalDeadline, tokens, numOptions, 0, 0, State.Active);
+    for(uint i = 0; i < proposalsMap[proposalID].m_numOptions; ++i)
+    {
+      proposalsMap[proposalID].m_optionsMap[i] = ProposalOption(i, 0, 0);
+    }
 
-    emit ProposalStartedEvent(creator, title, description, raiseUntil, g_currNumProposals);
+    for(uint i = 0; i < tokens.length; ++i)
+    {
+      uint256 tokenID = tokens[i];
+      proposalsMap[proposalID].m_tokens[i] = tokenID;
+      for(uint j = 0; j < numOptions; ++j)
+      {
+        proposalsMap[proposalID].m_optionsMap[j].m_voteMap[tokenID] = ProposalVote(tokenID, 0);
+      }
+    }
+
+    emit ProposalStartedEvent(proposalID, creator, title, description, proposalDeadline);
   }                                                                                                                              
 
-  /** @dev Function to fund a certain proposal.
+  /** @dev Function to vote on a given proposal.
     */
-  function voteOnProposal(address contributor, uint256 proposalID, uint256 amountValue) public
+  onMessage voteOnProposal(address voter, uint256 proposalID, uint256 voteToken, uint256 voterPower, uint optionNumber)
   {
-    require(contributor != proposalsMap[proposalID].m_creator);
-    uint256 prevContributions = proposalsMap[proposalID].m_contributions[contributor];
-    proposalsMap[proposalID].m_contributions[contributor] = prevContributions.add(amountValue);
-    proposalsMap[proposalID].m_balance = proposalsMap[proposalID].m_balance.add(amountValue);
-    _requestPayOutOnComplete(proposalID);
+    //require(proposalsMap[proposalID].m_creator != voter);
 
-    emit ProposalVotedOnEvent(proposalID, contributor, amountValue, proposalsMap[proposalID].m_balance);
+    proposalsMap[proposalID].m_optionsMap[optionNumber].m_voteMap[voteToken].m_votePower = proposalsMap[proposalID].m_optionsMap[optionNumber].m_voteMap[voteToken].m_votePower.add(voterPower);
+    proposalsMap[proposalID].m_optionsMap[optionNumber].m_optionVotePower = proposalsMap[proposalID].m_optionsMap[optionNumber].m_optionVotePower.add(voterPower);
+    proposalsMap[proposalID].m_totalVotingPower = proposalsMap[proposalID].m_totalVotingPower.add(voterPower);
+    _checkIsComplete(proposalID);
+
+    emit ProposalVotedOnEvent(proposalID, voter, voterPower, proposalsMap[proposalID].m_totalVotingPower, ++proposalsMap[proposalID].m_totalVotes);
   }
 
   /** @dev Function to get specific information about the proposal.
     * @return Returns all the proposal's details
     */
-  function getProposalInfo(uint256 proposalID) public view returns(
-    address proposalCreator,
-    string memory proposalTitle,
-    string memory proposalDesc,
-    uint256 proposalDeadline,
-    State proposalCurrState,
-    uint256 proposalCurrAmount)
-  {
-    proposalCreator = proposalsMap[proposalID].m_creator;
-    proposalTitle = proposalsMap[proposalID].m_title;
-    proposalDesc = proposalsMap[proposalID].m_description;
-    proposalDeadline = proposalsMap[proposalID].m_raiseUntil;
-    proposalCurrState = proposalsMap[proposalID].m_state;
-    proposalCurrAmount = proposalsMap[proposalID].m_balance;
-  }
+  //function getProposalInfo(uint256 proposalID) offchain view returns(
+  //  address proposalCreator,
+  //  string memory proposalTitle,
+  //  string memory proposalDesc,
+  //  uint256 proposalDeadline,
+  //  State proposalCurrState,
+  //  uint proposalNumOptions,
+  //  uint256 proposalTotalVotingPower,
+  //  uint256 proposalTotalVotes)
+  //{
+  //  // m_creator
+  //  proposalCreator = proposalsMap[proposalID].m_creator;
+  //  // m_title
+  //  proposalTitle = proposalsMap[proposalID].m_title;
+  //  // m_description
+  //  proposalDesc = proposalsMap[proposalID].m_description;
+  //  // m_deadline
+  //  proposalDeadline = proposalsMap[proposalID].m_deadline;
+  //  // m_state
+  //  proposalCurrState = proposalsMap[proposalID].m_state;
+  //  // m_numOptions
+  //  proposalNumOptions = proposalsMap[proposalID].m_numOptions;
+  //  // m_totalVotingPower
+  //  proposalTotalVotingPower = proposalsMap[proposalID].m_deadline;
+  //  // m_totalVotes
+  //  proposalTotalVotes = proposalsMap[proposalID].m_totalVotes;
+  //}
 
   /** @dev Function to get specific information about the proposal.
     * @return Returns all the proposal's details
     */
-  function getNumProposals() public view returns(uint256 currNumberOfProposals)
-  {
-    currNumberOfProposals = g_currNumProposals;
-  }
+  //function getNumProposals() offchain view returns(uint256 currNumberOfProposals)
+  //{
+  //  currNumberOfProposals = g_currNumProposals;
+  //}
 
   /** @dev Function to get all proposals' contract addresses.
     * @return A list of all proposals' contract addreses
@@ -111,44 +156,59 @@ contract DefaultProposal
   //}
 
 
-  /** @dev Function to change the proposal state depending on conditions.
+  /** @dev Stop the proposal early if desired (mostly for testing purposes)
   */
-  function stopProposalEarly(uint256 proposalID) public
+  onMessage stopProposalEarly(uint256 proposalID)
   {
-    // FIX ME - HARDCODED TOKEN - ZD
+    require(proposalsMap[proposalID].m_creator == msg.sender);
+
     proposalsMap[proposalID].m_state = State.Complete;
-    _payOut(proposalID, "tti_5649544520544f4b454e6e40");
+    _calculateResults(proposalID);
 
     emit ProposalEndedEvent(proposalID, now);
   }
 
   /** @dev Function to change the proposal state depending on conditions.
     */
-  function _requestPayOutOnComplete(uint256 proposalID) internal
+  function _checkIsComplete(uint256 proposalID) internal
   {
-    // FIX ME - HARDCODED TOKEN - ZD
-    require(proposalsMap[proposalID].m_creator == msg.sender);
-    if (now > proposalsMap[proposalID].m_raiseUntil)
+    // require(proposalsMap[proposalID].m_creator == msg.sender);
+
+    if (now > proposalsMap[proposalID].m_deadline)
     {
         proposalsMap[proposalID].m_state = State.Complete;
-        _payOut(proposalID, "tti_5649544520544f4b454e6e40");
+        _calculateResults(proposalID);
+        emit ProposalEndedEvent(proposalID, now);
     }
-
-    emit ProposalEndedEvent(proposalID, now);
   }
 
-  /** @dev Function to give the received funds to proposal starter.
+  /** @dev Function to calculate results of proposal when complete
     */
-  function _payOut(uint256 proposalID, tokenId tokenID) internal
+  function _calculateResults(uint256 proposalID) internal
   {
-    address proposalCreator = proposalsMap[proposalID].m_creator;
     require(proposalsMap[proposalID].m_state == State.Complete);
-    require(proposalCreator != address(0), 'transfer to zero address');
-    uint256 totalRaised = proposalsMap[proposalID].m_balance;
-    proposalsMap[proposalID].m_balance = 0;
-    proposalsMap[proposalID].m_state = State.Complete;
-    proposalCreator.transfer(tokenID, totalRaised);
 
-    emit ProposalPaidEvent(proposalID, proposalCreator);
+    // Proposal creator
+    address proposalCreator = proposalsMap[proposalID].m_creator;
+
+    // Winning option and num votes
+    ProposalOption memory winningOption = proposalsMap[proposalID].m_optionsMap[0];
+    for(uint i = 1; i < proposalsMap[proposalID].m_numOptions; ++i)
+    {
+      if (winningOption.m_optionVotePower < proposalsMap[proposalID].m_optionsMap[i].m_optionVotePower)
+        winningOption = proposalsMap[proposalID].m_optionsMap[i];
+    }
+    uint256 winningOptionVotes = winningOption.m_optionTotalVotes;
+
+    // Total votes
+    uint256 totalVotes = proposalsMap[proposalID].m_totalVotes;
+
+    // Total voting power
+    uint256 totalVotingPower = proposalsMap[proposalID].m_totalVotingPower;
+
+    // Set the proposal state to complete (may already be set, but just in case)
+    proposalsMap[proposalID].m_state = State.Complete;
+
+    emit ProposalResultsCalculated(proposalID, proposalCreator, winningOptionVotes, totalVotes, totalVotingPower);
   }
 }

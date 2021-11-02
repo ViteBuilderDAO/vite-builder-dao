@@ -7,8 +7,15 @@ import vuetify from './plugins/vuetify'
 import router from './router'
 import store from './store'
 
+const UniqueId = require('vue-unique-id')
+
 Vue.config.productionTip = false
+
+// VueFormulate forms plugin
 Vue.use(VueFormulate)
+
+// VueUniqueID uid plugin
+Vue.use(UniqueId)
 
 new Vue({
   router,

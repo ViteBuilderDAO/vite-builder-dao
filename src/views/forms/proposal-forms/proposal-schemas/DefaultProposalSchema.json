@@ -6,8 +6,7 @@
   },
   {
     "label": "Proposal URL",
-    "name": "url",
-    "validation": "required"
+    "name": "urlLink"
   },
   {
     "label": "Voting Period",
@@ -22,13 +21,12 @@
   {
     "type": "textarea",
     "name": "description",
-    "label": "Description",
-    "validation": "required"
+    "label": "Description"
   },
   {
     "type": "file",
-    "name": "cover_photo",
-    "label": "Upload a photo to be used as cover",
+    "name": "coverImage",
+    "label": "Upload a photo to be used as a cover",
     "help": "Select one image to upload",
     "single": true,
     "validation": "required",
@@ -36,8 +34,8 @@
   },
   {
     "type": "file",
-    "name": "attached_files",
-    "label": "Select your documents to upload",
+    "name": "attachedFiles",
+    "label": "Select your files to upload",
     "help": "Select one or more files to upload",
     "multiple": true
   }

@@ -27,7 +27,7 @@ export default {
 
 <style lang="scss" scoped>
 .account-info-text {
-  margin-top: 5px;
+  margin-top: 10px;
   text-align: center;
 }
 </style>

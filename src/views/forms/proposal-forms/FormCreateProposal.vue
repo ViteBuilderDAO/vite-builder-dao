@@ -14,16 +14,37 @@
     />
     <FormulateForm
       v-model="tokensSelectedData"
-      :schema="selectTokenSchema"
-      class="proposalDropdownStyle"
-    />
-    <FormulateInput
-      v-for="item in templateSelected.proposalType === 'default' ? defaultProposalSchema : multiChoiceProposalSchema"
-      :key="item.name"
-      v-bind="item"
-    />
+    >
+      <FormulateInput
+        v-for="tokenChoiceItem in selectTokenSchema"
+        :key="tokenChoiceItem.name"
+        v-bind="tokenChoiceItem"
+        class="proposalDropdownStyle"
+      >
+        <FormulateInput
+          v-for="childItem in tokenChoiceItem.children"
+          :key="childItem.name"
+          v-bind="childItem"
+          placeholder="Select a token"
+          :options="tokenList ? tokenList : ''"
+          validation="required"
+          validation-name="Token type"
+          class="proposalDropdownStyle"
+        />
+      </FormulateInput>
+    </FormulateForm>
+    <FormulateForm
+      v-model="formResponses"
+    >
+      <FormulateInput
+        v-for="item in templateSelected.proposalType === 'default' ? defaultProposalSchema : multiChoiceProposalSchema"
+        :key="item.name"
+        v-bind="item"
+      />
+    </FormulateForm>
     <FormulateForm
       v-if="templateSelected.proposalType === 'multiple_choice'"
+      v-model="multiChoiceData"
     >
       <FormulateInput
         v-for="multiChoiceItem in multiChoiceSchema"
@@ -44,28 +65,40 @@
       :disabled="!walletConnected"
       class="submitFormButtonStyle"
       help="Note: Vite wallet must be connected to submit."
+      :label="isLoading ? 'Loading...' : 'Submit'"
     />
   </FormulateForm>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import { getTokenList, startProposal } from '@/utils/contract/proposal/proposalController'
-import singleChoice from '@/utils/contract/voting/singleChoice'
-import approval from '@/utils/contract/voting/approval'
-import quadratic from '@/utils/contract/voting/quadratic'
-import weighted from '@/utils/contract/voting/weighted'
+import { getTokenList } from '@/utils/contract/contractHelpers'
+import { startProposal } from '@/utils/contract/proposal/proposalController'
 import proposalTypes from '@/contracts/contractTypes.json'
-import defaultProposalTemplate from './DefaultProposalSchema.json'
-import multiChoiceTemplate from './MultiChoiceProposalSchema.json'
+import { defaultProposalTemplate, multiChoiceTemplate } from './proposal-schemas/proposalSchemas'
+import { singleChoice, approval, quadratic, weighted } from '@/utils/voting/votingInterface'
 
 export default {
-  setup() {
-    return {
-    }
-  },
   data() {
     return {
+      isLoading: false,
+      tokenList: Array / Object / String / Number,
+      proposalParams: {
+        proposalID: Number,
+        creator: Object,
+        title: String,
+        urlLink: String,
+        keywords: String,
+        description: String,
+        options: Array / Object / String / Number,
+        coverImage: Array / Object / String / Number,
+        attachedFiles: Array / Object / String / Number,
+        votingType: String,
+        votingPeriod: Number,
+        votingTokens: Array,
+        publishDate: Object / String,
+        isActive: false,
+      },
       formResponses: {},
       votingTypeSelected: {},
       selectVotingTypeSchema: [
@@ -94,7 +127,7 @@ export default {
       multiChoiceSchema: [
         {
           type: 'group',
-          name: 'multiChoiceGroup',
+          name: 'multipleChoiceGroup',
           repeatable: true,
           'add-label': '+ Add Choice',
           validation: 'required',
@@ -102,13 +135,13 @@ export default {
           children: [
             {
               type: 'text',
-              name: 'choice_title',
+              name: 'optionTitle',
               label: 'Title',
               validation: 'required',
             },
             {
               type: 'file',
-              name: 'choice_file',
+              name: 'optionFile',
               label: 'File',
             },
           ],
@@ -127,8 +160,7 @@ export default {
           children: [
             {
               type: 'select',
-              name: 'tokenTTI',
-              options: this.getTokenList(),
+              name: 'tokenSelected',
             },
           ],
         },
@@ -140,31 +172,109 @@ export default {
   computed: {
     ...mapState([
       'walletConnected',
-      'connectedWalletAddr',
+      'connectedAccounts',
+      'currActiveProposals',
+      'currProposalID',
     ]),
     ...mapGetters([
       'getIsWalletConnected',
-      'getNumActiveProposals',
-    ]),
-    ...mapState([
-      'connectedWalletAddr',
-      'getConnectedWalletAddr',
+      'getConnectedAccounts',
+      'getCurrActiveProposals',
+      'getCurrProposalID',
     ]),
   },
+  mounted() {
+    this.onMounted()
+  },
   methods: {
-    async submitHandler(data) {
-      if (data) {
-        console.log(this.votingTypeSelected.votingType)
-        console.log(this.multiChoiceData.multiChoiceGroup.choice_title)
-        console.log(this.tokensSelectedData.tokenGroup.tokenTTI)
-        console.log(this.connectedWalletAddr)
-        console.log(data.title)
-        console.log(data.description)
-        console.log(data.durationInDays)
 
-        // const proposalID = startProposal(this.connectedWalletAddr, this.viteTokenId, this.formResponses.title, this.formResponses.description, this.formResponses.durationInDays)
-        // this.$store.dispatch('addNewProposal', proposal, proposalID)
+    /**
+     *
+     */
+    async submitHandler() {
+      // console.log(this.votingTypeSelected.votingType)
+      // console.log(this.templateSelected.proposalType)
+      // this.tokensSelectedData.tokenGroup.forEach(tokenObj => {
+      //   console.log(tokenObj.tokenSelected)
+      // })
+      // console.log(this.connectedAccounts[0])
+      // console.log(this.formResponses.title)
+      // console.log(this.formResponses.description)
+      // console.log(this.formResponses.durationInDays)
+
+      console.log('VBDAO - submitHandler Proposal Started')
+
+      this.isLoading = true
+
+      let optionGroup = {}
+      switch (this.templateSelected.proposalType) {
+        case 'multiple_choice':
+          optionGroup = this.multiChoiceData
+          break
+        default:
+          optionGroup = [this.formResponses.title]
+          break
       }
+
+      const tokensSelected = {}
+      this.tokensSelectedData.tokenGroup.forEach((tokenObj, index) => {
+        tokensSelected[index] = tokenObj.tokenSelected
+      })
+
+      this.proposalParams = {
+        proposalID: this.currProposalID + 1,
+        creator: this.connectedAccounts[0],
+        title: this.formResponses.title,
+        urlLink: this.formResponses.urlLink,
+        keywords: this.formResponses.keywords,
+        description: this.formResponses.description,
+        options: optionGroup,
+        coverImage: this.formResponses.coverPhoto,
+        attachedFiles: this.formResponses.attachedFiles,
+        votingType: this.votingTypeSelected.votingType,
+        votingPeriod: this.formResponses.durationInDays,
+        votingTokens: tokensSelected,
+        publishTimestamp: new Date(),
+        isActive: true,
+      }
+
+      startProposal([
+        this.proposalParams.creator.address,
+        this.proposalParams.title,
+        this.proposalParams.description,
+        this.proposalParams.options.length,
+        this.proposalParams.votingPeriod,
+      ], this.onProposalStartEvent).then(block => {
+        this.onProposalStartEvent(block)
+      })
+    },
+
+    /**
+     *
+     */
+    async onMounted() {
+      this.tokenList = await getTokenList()
+    },
+
+    /**
+     * ProposalStartedEvent(
+     *  uint256 proposalID,
+     *  address proposalStarter,
+     *  string proposalTitle,
+     *  string proposalDesc,
+     *  uint256 proposalDeadline
+     * )
+     *
+     * @param {Array} block
+     */
+    async onProposalStartEvent(block) {
+      console.log('VBDAO: CALL TO CONTRACT SUCCESS', block)
+
+      this.proposalParams.proposalID = block.hash
+      this.$store.dispatch('addNewProposal', this.proposalParams)
+
+      this.isLoading = false
+      this.$router.push('proposal-gallery')
     },
   },
 }
@@ -185,13 +295,13 @@ export default {
   margin-left: 0 !important;
 }
 .submitFormButtonStyle {
-  margin-top: 20px;
+  margin-top: 40px;
 }
 .formulate-input[data-classification=select] select {
   color: white;
   line-height: unset !important;
 }
-#formulate--create-proposal-231 {
+.formulate-input-element--textarea textarea {
   color: white;
 }
 .formulate-input .formulate-input-element {
@@ -211,5 +321,11 @@ export default {
 }
 .formulate-input-help.formulate-input-help {
   font-size: 0.85em;
+}
+.formulate-input-label {
+  margin-top: 20px;
+}
+.formulate-input-help {
+  margin-bottom: 20px;
 }
 </style>

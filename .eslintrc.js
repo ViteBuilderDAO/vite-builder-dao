@@ -17,6 +17,14 @@ module.exports = {
     // Disable max-len
     'max-len': 'off',
 
+    // Disable dot-notation
+    'dot-notation': 0,
+
+    // Disable quote prop errors for contract json abi
+    'quote-props': 0,
+
+    'object-curly-newline': 0,
+
     'no-underscore-dangle': 'off',
 
     'no-plusplus': 'off',

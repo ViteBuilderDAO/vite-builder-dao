@@ -14,6 +14,7 @@ export default new Vuex.Store({
     connectedWalletAddr: '',
     accountStates: '',
     currActiveProposals: [],
+    currProposalID: 0,
   },
   getters: {
     getIsWalletConnected(state) {
@@ -33,6 +34,12 @@ export default new Vuex.Store({
     },
     getCurrActiveProposals(state) {
       return state.currActiveProposals
+    },
+    getNumActiveProposals(state) {
+      return state.currActiveProposals.length
+    },
+    getCurrProposalID(state) {
+      return state.currProposalID
     },
   },
   mutations: {
@@ -62,8 +69,9 @@ export default new Vuex.Store({
         [address]: accountState,
       }
     },
-    addNewProposal(state, { proposal, proposalID }) {
-      state.currActiveProposals[proposalID] = proposal
+    addNewProposal(state, { proposal }) {
+      ++state.currProposalID
+      state.currActiveProposals.push(proposal)
     },
   },
   actions: {
