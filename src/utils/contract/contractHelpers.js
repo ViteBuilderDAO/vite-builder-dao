@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import { getVbInstance } from '@/utils/client/walletClient'
 
 const { WS_RPC } = require('@vite/vitejs-ws')
@@ -7,6 +8,34 @@ const TEST_WS_NET = 'wss://buidl.vite.net/gvite/ws'
 const LIVE_WS_NET = 'wss://node.vite.net/gvite/ws'
 
 const VITE_WSS = process.env.NODE_ENV === 'production' ? LIVE_WS_NET : TEST_WS_NET
+
+/**
+ *
+ */
+export async function getWalletBalanceByToken(walletAcct, voteTokenId) {
+  console.log('VBDAO: GET WALLET BALANCE BY TOKEN REQUEST')
+  const connection = new WS_RPC(VITE_WSS)
+  const provider = new ViteAPI(connection, () => {
+    console.log('VBDAO: getWalletBalanceByToken() client connected')
+  })
+
+  let tokenBalance = 0
+
+  if (walletAcct && voteTokenId !== '') {
+    walletAcct.getBalance(provider).then(({ balance, unreceived }) => {
+      console.log('balance: ', balance, unreceived)
+      console.log('balanceInfoMap: ', balance.balanceInfoMap)
+      Object.values(balance.balanceInfoMap).forEach(val => {
+        console.log(val)
+        tokenBalance += parseInt(BigNumber(val.balance).dividedBy(`1e${val.tokenInfo.decimals}`).toFixed(), 10)
+      })
+
+      console.log('tokenBalance: ', tokenBalance)
+    })
+  }
+
+  return tokenBalance
+}
 
 /**
  *

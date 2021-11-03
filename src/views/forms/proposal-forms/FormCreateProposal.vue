@@ -76,29 +76,13 @@ import { getTokenList } from '@/utils/contract/contractHelpers'
 import { startProposal } from '@/utils/contract/proposal/proposalController'
 import proposalTypes from '@/contracts/contractTypes.json'
 import { defaultProposalTemplate, multiChoiceTemplate } from './proposal-schemas/proposalSchemas'
-import { singleChoice, approval, quadratic, weighted } from '@/utils/voting/votingInterface'
+import votingTypes from '@/utils/voting/votingInterface'
 
 export default {
   data() {
     return {
       isLoading: false,
       tokenList: Array / Object / String / Number,
-      proposalParams: {
-        proposalID: Number,
-        creator: Object,
-        title: String,
-        urlLink: String,
-        keywords: String,
-        description: String,
-        options: Array / Object / String / Number,
-        coverImage: Array / Object / String / Number,
-        attachedFiles: Array / Object / String / Number,
-        votingType: String,
-        votingPeriod: Number,
-        votingTokens: Array,
-        publishDate: Object / String,
-        isActive: false,
-      },
       formResponses: {},
       votingTypeSelected: {},
       selectVotingTypeSchema: [
@@ -106,12 +90,7 @@ export default {
           type: 'select',
           name: 'votingType',
           label: 'Voting Type',
-          options: [
-            { value: weighted, label: 'Weighted' },
-            { value: singleChoice, label: 'Single-Choice' },
-            { value: approval, label: 'Approval' },
-            { value: quadratic, label: 'Quadratic' },
-          ],
+          options: votingTypes,
         },
       ],
       templateSelected: {},
@@ -173,7 +152,7 @@ export default {
     ...mapState([
       'walletConnected',
       'connectedAccounts',
-      'currActiveProposals',
+      'proposalsMap',
       'currProposalID',
     ]),
     ...mapGetters([
@@ -221,7 +200,7 @@ export default {
         tokensSelected[index] = tokenObj.tokenSelected
       })
 
-      this.proposalParams = {
+      const proposalParams = {
         proposalID: this.currProposalID + 1,
         creator: this.connectedAccounts[0],
         title: this.formResponses.title,
@@ -239,13 +218,18 @@ export default {
       }
 
       startProposal([
-        this.proposalParams.creator.address,
-        this.proposalParams.title,
-        this.proposalParams.description,
-        this.proposalParams.options.length,
-        this.proposalParams.votingPeriod,
+        proposalParams.creator.address,
+        proposalParams.title,
+        proposalParams.description,
+        proposalParams.options.length,
+        proposalParams.votingPeriod,
       ], this.onProposalStartEvent).then(block => {
-        this.onProposalStartEvent(block)
+        if (block && proposalParams) {
+          this.$store.dispatch('addNewProposal', proposalParams)
+          console.log('VBDAO: CALL TO CONTRACT SUCCESS', block)
+          this.isLoading = false
+          this.$router.push('proposal-gallery')
+        }
       })
     },
 
@@ -257,24 +241,11 @@ export default {
     },
 
     /**
-     * ProposalStartedEvent(
-     *  uint256 proposalID,
-     *  address proposalStarter,
-     *  string proposalTitle,
-     *  string proposalDesc,
-     *  uint256 proposalDeadline
-     * )
      *
-     * @param {Array} block
+     * @param {Array} eventLog
      */
-    async onProposalStartEvent(block) {
-      console.log('VBDAO: CALL TO CONTRACT SUCCESS', block)
-
-      this.proposalParams.proposalID = block.hash
-      this.$store.dispatch('addNewProposal', this.proposalParams)
-
-      this.isLoading = false
-      this.$router.push('proposal-gallery')
+    async onProposalStartEvent(eventLog) {
+      console.log('VBDAO: onProposalStartEvent', eventLog)
     },
   },
 }
@@ -306,7 +277,7 @@ export default {
 }
 .formulate-input .formulate-input-element {
   max-width: 40em;
-  margin-left: auto;
+  margin-left: 0 !important;
   margin-right: auto;
 }
 .v-card.v-sheet[data-v-14f11f54] {

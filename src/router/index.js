@@ -6,11 +6,11 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    redirect: 'dashboard',
+    redirect: '/home',
   },
   {
-    path: '/dashboard',
-    name: 'dashboard',
+    path: '/home',
+    name: 'home',
     component: () => import('@/views/dashboard/Dashboard.vue'),
     meta: {
       layout: 'content',

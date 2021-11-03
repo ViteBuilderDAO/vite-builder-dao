@@ -64,11 +64,6 @@
           title="Create Proposal Demo"
           :to="{ name: 'create-proposal' }"
         ></nav-menu-link>
-      </nav-menu-group>
-      <nav-menu-group
-        title="Voting"
-        :icon="icons.mdiFileOutline"
-      >
         <nav-menu-link
           title="View/Vote for Proposal Demo"
           :to="{ name: 'proposal-gallery' }"
