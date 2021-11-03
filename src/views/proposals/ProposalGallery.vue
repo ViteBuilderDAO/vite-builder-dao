@@ -114,13 +114,13 @@
                         :key="votingTokenSelected.name"
                         :options="proposal.votingTokens"
                         class="voting-token-dropdown"
-                        name="tokenTTI"
+                        name="tokenIndex"
                         type="select"
                         label="Vote Token"
                       />
                     </FormulateForm>
                     <v-card-text>
-                      Selected Token ID: {{ proposal.votingTokens[votingTokenGroup.tokenTTI] }}
+                      Selected Token ID: {{ proposal.votingTokens[votingTokenGroup.tokenIndex] }}
                     </v-card-text>
                     <FormulateInput
                       type="submit"
@@ -145,6 +145,7 @@ import {
   mdiChevronUp,
   mdiChevronDown,
 } from '@mdi/js'
+import BigNumber from 'bignumber.js'
 import { getWalletBalanceByToken } from '@/utils/contract/contractHelpers'
 import { voteOnProposal, stopProposalEarly } from '@/utils/contract/proposal/proposalController'
 
@@ -206,13 +207,21 @@ export default {
 
       this.isLoading = true
 
-      const voteToken = proposal.votingTokens[this.votingTokenSelected.tokenTTI]
+      const voteToken = proposal.votingTokens[this.votingTokenGroup.tokenIndex]
 
       // Get the balance of connected wallet by tokenId
-      const balance = getWalletBalanceByToken(this.connectedAccounts[0], voteToken)
+      let tokenBalance = 0
+      await getWalletBalanceByToken(this.connectedAccounts[0]).then(({ balance, unreceived }) => {
+        console.log('balance: ', balance, unreceived)
+        console.log('balanceInfoMap: ', balance.balanceInfoMap)
+        Object.values(balance.balanceInfoMap).forEach(val => {
+          console.log(val)
+          tokenBalance += parseInt(BigNumber(val.balance).dividedBy(`1e${val.tokenInfo.decimals}`).toFixed(), 10)
+        })
+      })
 
       // FIX ME - Using the balance and voting type to calculate the weight of this vote
-      const voteWeight = balance
+      const voteWeight = tokenBalance
 
       const voteParams = {
         voter: this.connectedAccounts[0],
@@ -225,7 +234,7 @@ export default {
 
       console.log('VBDAO VOTE PARAM - voter: ', voteParams.voter)
       console.log('VBDAO VOTE PARAM - proposalID: ', voteParams.proposalID)
-      console.log('VBDAO VOTE PARAM - votingToken: ', voteToken)
+      console.log('VBDAO VOTE PARAM - votingToken: ', voteParams.voteToken)
       console.log('VBDAO VOTE PARAM - voterPower: ', voteParams.voterPower)
       console.log('VBDAO VOTE PARAM - optionNumber: ', voteParams.optionNumber)
       console.log('VBDAO VOTE PARAM - voteTimestamp: ', voteParams.voteTimestamp)
@@ -234,7 +243,7 @@ export default {
         voteParams.voter.address,
         voteParams.proposalID,
         voteParams.voteToken,
-        voteWeight,
+        voteParams.voterPower,
         voteParams.optionNumber,
       ], this.onProposalVoteEvent).then(block => {
         if (block && voteParams && voteParams.proposalID) {
@@ -255,7 +264,6 @@ export default {
 
         return
       }
-      await stopProposalEarly(proposalID, this.onProposalEndEvent, this.onProposalResultsEvent)
 
       console.log('VBDAO STOP PROPOSAL PARAM - proposalID: ', proposalID)
       console.log('VBDAO STOP PROPOSAL PARAM - onProposalEndEvent: ', this.onProposalEndEvent)

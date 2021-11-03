@@ -15,7 +15,7 @@ contract DefaultProposal
 
   struct ProposalVote
   {
-    uint256 m_voteToken;
+    string m_voteToken;
     uint256 m_votePower;
   }
 
@@ -24,7 +24,7 @@ contract DefaultProposal
     uint256 m_optionID;
     uint256 m_optionVotePower;
     uint256 m_optionTotalVotes;
-    mapping(uint256 => ProposalVote) m_voteMap;
+    mapping(string => ProposalVote) m_voteMap;
   }
 
   // Proposal Type Obj and it's map container
@@ -68,6 +68,7 @@ contract DefaultProposal
   event ProposalVotedOnEvent(
     uint256 indexed proposalID,
     address indexed proposalVoter,
+    string votingToken,
     uint votingPower,
     uint256 proposalTotalVotingPower,
     uint256 proposalTotalVotes
@@ -110,7 +111,7 @@ contract DefaultProposal
 
   /** @dev Function to vote on a given proposal.
     */
-  onMessage voteOnProposal(address voter, uint256 proposalID, uint256 voteToken, uint256 voterPower, uint optionNumber)
+  onMessage voteOnProposal(address voter, uint256 proposalID, string calldata voteToken, uint256 voterPower, uint optionNumber)
   {
     //require(proposalsMap[proposalID].m_creator != voter);
 
@@ -119,7 +120,19 @@ contract DefaultProposal
     proposalsMap[proposalID].m_totalVotingPower = proposalsMap[proposalID].m_totalVotingPower.add(voterPower);
     _checkIsComplete(proposalID);
 
-    emit ProposalVotedOnEvent(proposalID, voter, voterPower, proposalsMap[proposalID].m_totalVotingPower, ++proposalsMap[proposalID].m_totalVotes);
+    emit ProposalVotedOnEvent(proposalID, voter, voteToken, voterPower, proposalsMap[proposalID].m_totalVotingPower, ++proposalsMap[proposalID].m_totalVotes);
+  }
+
+  /** @dev Stop the proposal early if desired (mostly for testing purposes)
+  */
+  onMessage stopProposalEarly(uint256 proposalID)
+  {
+    require(proposalsMap[proposalID].m_creator == msg.sender);
+
+    proposalsMap[proposalID].m_state = State.Complete;
+    _calculateResults(proposalID);
+
+    emit ProposalEndedEvent(proposalID, now);
   }
 
   /** @dev Function to get specific information about the proposal.
@@ -169,22 +182,14 @@ contract DefaultProposal
   //    return proposalsMap;
   //}
 
-
-  /** @dev Stop the proposal early if desired (mostly for testing purposes)
-  */
-  onMessage stopProposalEarly(uint256 proposalID)
+  function getIsPropopsalComplete(uint256 proposalID) public returns(bool)
   {
-    require(proposalsMap[proposalID].m_creator == msg.sender);
-
-    proposalsMap[proposalID].m_state = State.Complete;
-    _calculateResults(proposalID);
-
-    emit ProposalEndedEvent(proposalID, now);
+    return _checkIsComplete(proposalID);
   }
 
   /** @dev Function to change the proposal state depending on conditions.
     */
-  function _checkIsComplete(uint256 proposalID) internal
+  function _checkIsComplete(uint256 proposalID) internal returns(bool)
   {
     // require(proposalsMap[proposalID].m_creator == msg.sender);
 
@@ -193,7 +198,10 @@ contract DefaultProposal
         proposalsMap[proposalID].m_state = State.Complete;
         _calculateResults(proposalID);
         emit ProposalEndedEvent(proposalID, now);
+        return true;
     }
+
+    return false;
   }
 
   /** @dev Function to calculate results of proposal when complete

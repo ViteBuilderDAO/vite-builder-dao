@@ -39,7 +39,7 @@
     >
       <nav-menu-link
         title="Dashboard"
-        :to="{ name: 'dashboard' }"
+        :to="{ name: 'home' }"
         :icon="icons.mdiHomeOutline"
       ></nav-menu-link>
       <nav-menu-group
