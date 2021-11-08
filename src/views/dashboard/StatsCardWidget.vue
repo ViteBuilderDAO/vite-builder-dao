@@ -1,28 +1,27 @@
 <template>
   <v-card>
-    <v-card-title class="align-start">
-      <span class="font-weight-semibold">Statistics Card</span>
-      <v-spacer></v-spacer>
-      <v-btn
-        icon
-        small
-        class="me-n3 mt-n2"
-      >
-        <v-icon>
-          {{ icons.mdiDotsVertical }}
-        </v-icon>
-      </v-btn>
-    </v-card-title>
-
-    <v-card-subtitle class="mb-8 mt-n5">
-      <span class="font-weight-semibold text--primary me-1">Total 48.5% Growth</span>
-      <span>😎 this month</span>
-    </v-card-subtitle>
-
+    <div class="w-full">
+      <div class="d-flex align-center mx-6 mb-9 pt-6">
+        <h2>
+          Proposals
+        </h2>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          class="create-proposal-btn"
+          @click="createProposalHandler()"
+        >
+          Create Proposal
+        </v-btn>
+      </div>
+    </div>
+    <v-divider></v-divider>
     <v-card-text>
-      <v-row>
+      <v-row
+        class="pt-3"
+      >
         <v-col
-          v-for="data in statisticsData"
+          v-for="data in proposalStatsData"
           :key="data.title"
           cols="6"
           md="3"
@@ -30,16 +29,16 @@
         >
           <v-avatar
             size="44"
-            :color="resolveStatisticsIconVariation (data.title).color"
+            :color="resolveIconVariation (data.title).color"
             rounded
-            class="elevation-1"
+            class="elevation-1 ms-15"
           >
             <v-icon
               dark
               color="white"
               size="30"
             >
-              {{ resolveStatisticsIconVariation (data.title).icon }}
+              {{ resolveIconVariation (data.title).icon }}
             </v-icon>
           </v-avatar>
           <div class="ms-3">
@@ -58,51 +57,100 @@
 
 <script>
 // eslint-disable-next-line object-curly-newline
-import { mdiAccountOutline, mdiCurrencyUsd, mdiTrendingUp, mdiDotsVertical, mdiLabelOutline } from '@mdi/js'
+import {
+  mdiAlert,
+  mdiTrendingUp,
+  mdiChevronUp,
+  mdiChevronDown,
+} from '@mdi/js'
+import {
+  getNumActiveProposals,
+  getNumApprovedProposals,
+  getNumRejectedProposals,
+  getNumCancelledProposals,
+} from '@/utils/proposal/proposalController'
 
 export default {
   setup() {
-    const statisticsData = [
-      {
-        title: 'Funding',
-        total: '245k',
+    const proposalStatsData = {
+      Active: {
+        title: 'Active',
+        total: 0,
       },
-      {
-        title: 'Members',
-        total: '12.5k',
+      Approved: {
+        title: 'Approved',
+        total: 0,
       },
-      {
-        title: 'Proposal',
-        total: '1.54k',
+      Rejected: {
+        title: 'Rejected',
+        total: 0,
       },
-      {
-        title: 'Revenue',
-        total: '$88k',
+      Cancelled: {
+        title: 'Cancelled',
+        total: 0,
       },
-    ]
+    }
 
-    const resolveStatisticsIconVariation = data => {
-      if (data === 'Funding') return { icon: mdiTrendingUp, color: 'primary' }
-      if (data === 'Members') return { icon: mdiAccountOutline, color: 'success' }
-      if (data === 'Proposal') return { icon: mdiLabelOutline, color: 'warning' }
-      if (data === 'Revenue') return { icon: mdiCurrencyUsd, color: 'info' }
+    const resolveIconVariation = data => {
+      if (data === 'Active') return { icon: mdiTrendingUp, color: 'primary' }
+      if (data === 'Approved') return { icon: mdiChevronUp, color: 'success' }
+      if (data === 'Rejected') return { icon: mdiChevronDown, color: 'error' }
+      if (data === 'Cancelled') return { icon: mdiAlert, color: 'info' }
 
-      return { icon: mdiAccountOutline, color: 'success' }
+      return { icon: mdiAlert, color: 'warning' }
     }
 
     return {
-      statisticsData,
-      resolveStatisticsIconVariation,
+      proposalStatsData,
+      resolveIconVariation,
 
       // icons
       icons: {
-        mdiDotsVertical,
         mdiTrendingUp,
-        mdiAccountOutline,
-        mdiLabelOutline,
-        mdiCurrencyUsd,
+        mdiAlert,
+        mdiChevronUp,
+        mdiChevronDown,
       },
     }
   },
+  mounted() {
+    this.onMounted()
+  },
+  methods: {
+    async onMounted() {
+      this.proposalStatsData.Active.total = await getNumActiveProposals()
+      this.proposalStatsData.Approved.total = await getNumApprovedProposals()
+      this.proposalStatsData.Rejected.total = await getNumRejectedProposals()
+      this.proposalStatsData.Cancelled.total = await getNumCancelledProposals()
+    },
+
+    hasMissingParams() {
+      if (!this.walletConnected) {
+        return true
+      }
+
+      return false
+    },
+
+    /**
+     *
+     */
+    async createProposalHandler() {
+      // if (this.hasMissingParams()) {
+      //   console.log('VBDAO - Missing Required Parameter')
+
+      //   return
+      // }
+
+      this.$store.commit('setProposalMode', 'create')
+    },
+
+  },
 }
 </script>
+
+<style lang="scss" scoped>
+.create-proposal-btn {
+  box-shadow: 0 1px 20px 1px #127bf0 !important;
+}
+</style>

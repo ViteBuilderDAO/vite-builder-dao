@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/ViteBuilderDAO/vite-builder-dao/master/src/assets/img/logos/vite-cover-milltay-1.jpg" width="1060px"/><br/>
   Vite Builder DAO
 </h1>
-<p align="center">Important decisions need to be made and governed on the Vite network, with votes made by VITE holders using their VITE via a DAO. Similarly, key decisions for ViteX require voting by VX holders. Introduce Vite Builder DAOshboard (DAO Dashboard):</p>
+<p align="center">Important decisions need to be made and governed on the Vite network, with votes made by VITE holders using their VITE via a DAO. Similarly, key decisions for ViteX require voting by VX holders.</p>
 
 <p align="center"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License" />&nbsp;<img src="https://img.shields.io/tokei/lines/github/vitebuilderdao/vite-builder-dao?logoColor=purple" alt="Lines of Code" /><br><img src="https://img.shields.io/badge/version-v0.0.0-green?style=for-the-badge&logo=none" alt="Vite Builder DAO Version" /></a><a href="https://twitter.com/vitelabs" target="_blank">&nbsp;<img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/vitelabs"></a>
 
@@ -12,7 +12,6 @@
 - ✔️ Ability to submit proposals.
 - 🗳️ Customize voting parameters for proposals including specifing the token(s) to be used such as VITE, VX, or any other token issued on Vite.
 - 📈 Voting results displayed after completed polls.
-- ✨ Guild branding with custom color schemes, domain name and more.
 - 📖 Docs: https://vite-builder-dao.gitbook.io/docs/
 
 ## Installation ⚒️
@@ -58,13 +57,9 @@
 
 That's all it takes to get started! 🎉
 
-## Documentation 📖
-
-Temp paragraph text.
-
 ## Demo Video 📽️
 
-Temp paragraph text.
+Demo video placeholder
 
 ## Screenshots 📸
 
@@ -74,11 +69,7 @@ Temp paragraph text.
 
 ## Configuration ⚙️
 
-Temp paragraph text.
-
-### Sub Heading Temp
-
-Temp sub-paragraph text.
+Configuration placeholder text
 
 ## Social ⭐️
 
@@ -90,10 +81,6 @@ If you want to say **thank you** or/and support active development of `Vite Buil
 - Find Vite related announcements on [on Twitter](https://twitter.com/vitelabs).
 
 Together, we can make the DeFi revolution **reality**! 💖
-
-## Acknowledgments 📖
-
-Temp paragraph text.
 
 ## License ⚖️
 

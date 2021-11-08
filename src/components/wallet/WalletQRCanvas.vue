@@ -4,8 +4,8 @@
 
 <script>
 import QRCode from 'qrcode'
-import { getWalletConnectURI, getVbInstance } from '@/utils/client/walletClient'
-import WalletAccount from '@/utils/client/walletAccount'
+import { getWalletConnectURI, getVbInstance } from '@/utils/wallet/walletClient'
+import WalletAccount from '@/utils/wallet/walletAccount'
 
 export default {
   async mounted() {

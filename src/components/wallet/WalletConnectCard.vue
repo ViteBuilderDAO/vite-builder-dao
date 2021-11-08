@@ -1,15 +1,15 @@
 <template>
   <v-menu
-    top
+    bottom
     offset-y
     content-class="elevation-9"
     open-on-hover
-    close-delay="750"
+    close-delay="500"
     :close-on-content-click="false"
     eager
     transition="slide-y-reverse-transition"
-    left
-    nudge-top="15"
+    right
+    nudge-bottom="15"
   >
     <template #activator="{ on, attrs }">
       <v-btn
@@ -52,11 +52,8 @@
         v-if="!walletConnected"
         class="font-weight-semibold"
       >
-        Connect with the Vite app to login
+        Connect with the Vite app
       </v-card-title>
-      <v-card-text v-if="!walletConnected">
-        The most developer friendly &amp;   highly customizable DAO Dashboard using Vite protocol based governance.
-      </v-card-text>
     </v-card>
   </v-menu>
 </template>
@@ -82,13 +79,9 @@ export default {
 
 <style lang="scss" scoped>
 .connect-wallet-btn {
-    position: absolute;
-    left: 15px;
-    bottom: 25px;
-}
-.connect-wallet-btn {
+  transform: scale(90%);
   .v-application &.v-btn.v-btn--is-elevated {
-    box-shadow: 0 1px 20px 1px #ff4c51 !important;
+    box-shadow: 0 1px 20px 1px #8655fd!important;
     &:hover {
       box-shadow: none !important;
     }

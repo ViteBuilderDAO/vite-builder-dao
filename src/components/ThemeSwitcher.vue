@@ -4,7 +4,7 @@
       :key="$vuetify.theme.dark"
       @click="$vuetify.theme.dark = !$vuetify.theme.dark"
     >
-      {{ $vuetify.theme.dark ? icons.mdiWeatherSunny : icons.mdiWeatherNight }}
+      {{ $vuetify.theme.dark ? icons.mdiWeatherNight : icons.mdiWeatherSunny }}
     </v-icon>
   </v-fade-transition>
 </template>

@@ -1,4 +1,4 @@
-import { getVbInstance } from '@/utils/client/walletClient'
+import { getVbInstance } from '@/utils/wallet/walletClient'
 
 const { WS_RPC } = require('@vite/vitejs-ws')
 const { ViteAPI, accountBlock, abi } = require('@vite/vitejs')
@@ -12,7 +12,7 @@ const VITE_WSS = process.env.NODE_ENV === 'production' ? TEST_WS_NET : TEST_WS_N
 /**
  *
  */
-export function getWalletBalanceByToken(walletAcct) {
+export function getWalletBalanceInfo(walletAcct) {
   console.log('VBDAO: GET WALLET BALANCE BY TOKEN REQUEST')
   const connection = new WS_RPC(VITE_WSS)
   const provider = new ViteAPI(connection, () => {
@@ -75,6 +75,35 @@ export async function callContract(contract, methodName, inputParams, amount) {
   const callContractBlock = block.accountBlock
 
   return sendVcTx(vbInstance, { block: callContractBlock, abi: contract.abi })
+}
+
+export async function callContractOffChain(contract, methodName, inputParams) {
+  console.log('VBDAO: ATTEMPTING OFF-CHAIN CALL TO CONTRACT')
+  const connection = new WS_RPC(VITE_WSS)
+  const provider = new ViteAPI(connection, () => {
+    console.log('VBDAO: callContractOffChain() client connected')
+  })
+
+  const encodedFuncCall = abi.encodeFunctionCall(contract.abi, inputParams, methodName)
+  const dataBuf= Buffer.from(encodedFuncCall, 'hex').toString('base64')
+  const code = Buffer.from(contract.offChain, 'hex').toString('base64')
+
+  const offchainResult = await provider.request('contract_callOffChainMethod', {
+    address: contract.address,
+    code,
+    data: dataBuf
+  }).then((result) => {
+    console.warn('VBDAO: SUCCESS - OFF-CHAIN CONTRACT CALL: ', result)
+    return result
+  }).catch((err) => {
+    console.warn('VBDAO: ERROR - OFF-CHAIN CONTRACT CALL: ', err)
+  })
+
+  const resultDataBuf = Buffer.from(offchainResult, 'base64').toString('hex');
+  const abiOutputs = contract.abi.find(x => x.name === methodName).outputs
+  let decodedParams = null
+  decodedParams = abi.decodeParameters(abiOutputs, resultDataBuf);
+  return decodedParams;
 }
 
 /**

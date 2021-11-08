@@ -13,17 +13,12 @@ export function quadraticMath(i, choice, balance) {
 
 export default class QuadraticVoting {
   proposal
-
   votes
-
-  strategies
-
   selected
 
-  constructor(proposal, votes, strategies, selected) {
+  constructor(proposal, votes, selected) {
     this.proposal = proposal
     this.votes = votes
-    this.strategies = strategies
     this.selected = selected
   }
 }

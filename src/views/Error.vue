@@ -22,13 +22,6 @@
         we couldn't find the page you are looking for
       </p>
 
-      <div class="misc-character d-flex justify-center">
-        <v-img
-          max-width="700"
-          src="@/assets/img/misc/error.png"
-        ></v-img>
-      </div>
-
       <v-btn
         color="primary"
         to="/"

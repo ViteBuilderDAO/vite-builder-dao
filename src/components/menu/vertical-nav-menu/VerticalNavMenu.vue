@@ -14,7 +14,7 @@
         to="/"
         class="d-flex align-center text-decoration-none"
       >
-        <v-img
+        <!-- <v-img
           :src="require('@/assets/img/logos/logo.svg')"
           max-height="30px"
           max-width="30px"
@@ -22,7 +22,7 @@
           contain
           eager
           class="app-logo me-3"
-        ></v-img>
+        ></v-img> -->
         <v-slide-x-transition>
           <h2 class="app-title text--primary">
             VITE BUILDER DAO
@@ -42,6 +42,7 @@
         :to="{ name: 'home' }"
         :icon="icons.mdiHomeOutline"
       ></nav-menu-link>
+      <!--
       <nav-menu-group
         title="Guilds"
         :icon="icons.mdiFileOutline"
@@ -55,74 +56,62 @@
           :to="{ name: 'create-guild' }"
         ></nav-menu-link>
       </nav-menu-group>
-      <nav-menu-section-title title="Contract Demos"></nav-menu-section-title>
+      -->
       <nav-menu-group
         title="Proposals"
         :icon="icons.mdiFileOutline"
       >
         <nav-menu-link
-          title="Create Proposal Demo"
+          title="Create Proposal"
           :to="{ name: 'create-proposal' }"
+          :icon="icons.mdiFileOutline"
         ></nav-menu-link>
         <nav-menu-link
-          title="View/Vote for Proposal Demo"
-          :to="{ name: 'proposal-gallery' }"
+          title="View Proposals"
+          :to="{ name: 'view-proposals' }"
+          :icon="icons.mdiEyeOutline"
         ></nav-menu-link>
+        <!--<nav-menu-group
+          title="Proposal UI Test"
+          :icon="icons.mdiFileOutline"
+        >
+          <nav-menu-link
+            title="Gallery"
+            :to="{ name: 'gallery-test' }"
+            :icon="icons.mdiFileOutline"
+          ></nav-menu-link>
+          <nav-menu-link
+            title="View Proposal"
+            :to="{ name: 'view-proposal-test' }"
+            :icon="icons.mdiEyeOutline"
+          ></nav-menu-link>
+        </nav-menu-group>-->
       </nav-menu-group>
-      <nav-menu-section-title title="Demo UI"></nav-menu-section-title>
-      <nav-menu-link
-        title="Typography"
-        :to="{ name: 'typography' }"
-        :icon="icons.mdiAlphaTBoxOutline"
-      ></nav-menu-link>
-      <nav-menu-link
-        title="Icons"
-        :to="{ name: 'icons' }"
-        :icon="icons.mdiEyeOutline"
-      ></nav-menu-link>
-      <nav-menu-link
-        title="Cards"
-        :to="{ name: 'cards' }"
-        :icon="icons.mdiCreditCardOutline"
-      ></nav-menu-link>
-      <nav-menu-link
-        title="Tables"
-        :to="{ name: 'tables' }"
-        :icon="icons.mdiTable"
-      ></nav-menu-link>
-      <nav-menu-link
-        title="Form Layouts"
-        :to="{ name: 'forms' }"
-        :icon="icons.mdiFormSelect"
-      ></nav-menu-link>
     </v-list>
-    <wallet-connect-card class="vite-wallet"></wallet-connect-card>
+    <nav-menu-link
+      title="About"
+      :to="{ name: 'about' }"
+      :icon="icons.mdiHelpCircleOutline"
+    ></nav-menu-link>
   </v-navigation-drawer>
 </template>
+
 <script>
-// eslint-disable-next-line object-curly-newline
 import {
   mdiHomeOutline,
-  mdiAlphaTBoxOutline,
   mdiEyeOutline,
-  mdiCreditCardOutline,
-  mdiTable,
   mdiFileOutline,
-  mdiFormSelect,
-  mdiAccountCogOutline,
+  mdiHelpCircleOutline,
 } from '@mdi/js'
-import NavMenuSectionTitle from './NavMenuSectionTitle.vue'
 import NavMenuGroup from './NavMenuGroup.vue'
 import NavMenuLink from './NavMenuLink.vue'
 
-const WalletConnectCard = () => import('@/components/wallet/WalletConnectCard.vue')
+// import NavMenuSectionTitle from './NavMenuSectionTitle.vue'
 
 export default {
   components: {
-    NavMenuSectionTitle,
-    NavMenuGroup,
     NavMenuLink,
-    WalletConnectCard,
+    NavMenuGroup,
   },
   props: {
     isDrawerOpen: {
@@ -134,13 +123,9 @@ export default {
     return {
       icons: {
         mdiHomeOutline,
-        mdiAlphaTBoxOutline,
         mdiEyeOutline,
-        mdiCreditCardOutline,
-        mdiTable,
         mdiFileOutline,
-        mdiFormSelect,
-        mdiAccountCogOutline,
+        mdiHelpCircleOutline,
       },
     }
   },
@@ -157,7 +142,6 @@ export default {
   letter-spacing: 0.3px;
 }
 
-// ? Adjust this `translateX` value to keep logo in center when vertical nav menu is collapsed (Value depends on your logo)
 .app-logo {
   transition: all 0.18s ease-in-out;
   .v-navigation-drawer--mini-variant & {
@@ -180,4 +164,5 @@ export default {
     }
   }
 }
+
 </style>

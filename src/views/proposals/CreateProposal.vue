@@ -16,7 +16,7 @@
 </template>
 
 <script>
-const CreateProposalForm = () => import('@/views/forms/proposal-forms/FormCreateProposal.vue')
+const CreateProposalForm = () => import('./forms/FormCreateProposal.vue')
 
 export default {
   components: {

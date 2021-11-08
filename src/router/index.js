@@ -6,10 +6,10 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    redirect: '/home',
+    redirect: '/#',
   },
   {
-    path: '/home',
+    path: '/#',
     name: 'home',
     component: () => import('@/views/dashboard/Dashboard.vue'),
     meta: {
@@ -17,113 +17,25 @@ const routes = [
     },
   },
   {
-    path: '/typography',
-    name: 'typography',
-    component: () => import('@/views/typography/Typography.vue'),
+    path: '/about',
+    name: 'about',
+    component: () => import('@/views/landing/About.vue'),
     meta: {
       layout: 'content',
     },
   },
   {
-    path: '/icons',
-    name: 'icons',
-    component: () => import('@/views/icons/Icons.vue'),
+    path: '/gallery-test',
+    name: 'gallery-test',
+    component: () => import('@/views/proposals/test/GalleryTest.vue'),
     meta: {
       layout: 'content',
     },
   },
   {
-    path: '/cards',
-    name: 'cards',
-    component: () => import('@/components/cards/Card.vue'),
-    meta: {
-      layout: 'content',
-    },
-  },
-  {
-    path: '/tables',
-    name: 'tables',
-    component: () => import('@/views/tables/SimpleTable.vue'),
-    meta: {
-      layout: 'content',
-    },
-  },
-  {
-    path: '/forms',
-    name: 'forms',
-    component: () => import('@/views/forms/FormLayouts.vue'),
-    meta: {
-      layout: 'content',
-    },
-  },
-  {
-    path: '/pages/user-settings',
-    name: 'pages-user-settings',
-    component: () => import('@/views/pages/user-settings/UserSettings.vue'),
-    meta: {
-      layout: 'content',
-    },
-  },
-  {
-    path: '/pages/login',
-    name: 'pages-login',
-    component: () => import('@/views/pages/Login.vue'),
-    meta: {
-      layout: 'blank',
-    },
-  },
-  {
-    path: '/pages/register',
-    name: 'pages-register',
-    component: () => import('@/views/pages/Register.vue'),
-    meta: {
-      layout: 'blank',
-    },
-  },
-  {
-    path: '/explore-guilds',
-    name: 'explore-guilds',
-    component: () => import('@/views/guilds/ExploreGuilds.vue'),
-    meta: {
-      layout: 'content',
-    },
-  },
-  {
-    path: '/create-guild',
-    name: 'create-guild',
-    component: () => import('@/views/guilds/CreateGuild.vue'),
-    meta: {
-      layout: 'content',
-    },
-  },
-  {
-    path: '/guild-home',
-    name: 'guild-home',
-    component: () => import('@/views/guilds/GuildHome.vue'),
-    meta: {
-      layout: 'guild',
-    },
-  },
-  {
-    path: '/create-proposal',
-    name: 'create-proposal',
-    component: () => import('@/views/proposals/CreateProposal.vue'),
-    meta: {
-      layout: 'content',
-    },
-  },
-  {
-    path: '/view-proposal',
-    name: 'view-proposal',
-    component: () => import('@/views/proposals/ViewProposal.vue'),
-    meta: {
-      layout: 'content',
-    },
-  },
-  {
-    path: '/proposal-gallery',
-    name: 'proposal-gallery',
-    component: () => import('@/views/proposals/ProposalGallery.vue'),
+    path: '/view-proposal-test',
+    name: 'view-proposal-test',
+    component: () => import('@/views/proposals/test/ViewProposalTest.vue'),
     meta: {
       layout: 'content',
     },
