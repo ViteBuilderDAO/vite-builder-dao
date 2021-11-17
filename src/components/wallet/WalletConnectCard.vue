@@ -8,7 +8,6 @@
     :close-on-content-click="false"
     eager
     transition="slide-y-reverse-transition"
-    right
     nudge-bottom="15"
   >
     <template #activator="{ on, attrs }">
@@ -90,11 +89,6 @@ export default {
 .wallet-card-qr-style {
     margin-left: 35px;
     margin-top: 15px;
-}
-.wallet-connected {
-    position: absolute;
-    left: 15px;
-    bottom: 25px;
 }
 .wallet-connected {
   .v-application &.v-btn.v-btn--is-elevated {

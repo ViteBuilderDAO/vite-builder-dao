@@ -1,0 +1,20 @@
+pragma soliditypp ^0.4.3;
+
+contract ProposalTimer
+{
+  mapping(string => uint) g_timersMap;
+
+  message stopProposal(string proposalID);
+
+  onMessage startTimer(string calldata proposalID, uint deadline)
+  {
+    g_timersMap[proposalID] = 0;
+
+    while (now < deadline)
+    {
+      g_timersMap[proposalID]++;
+    }
+
+    send(msg.sender, stopProposal(proposalID));
+  }
+}

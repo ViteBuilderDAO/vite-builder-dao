@@ -1,46 +1,54 @@
-import firebase from 'firebase/app'
-import 'firebase/firestore'
-import 'firebase/auth'
-import 'firebase/storage'
-import 'firebase/database'
-import 'firebase/performance'
-import firebaseCredentials from './firebaseCredentials';
+import { initializeApp } from 'firebase/app'
+import {
+  getFirestore,
+  collection,
+  doc,
+  addDoc,
+  getDocs,
+  getDoc,
+  updateDoc,
+} from 'firebase/firestore'
+import { getDatabase } from 'firebase/database'
+import firebaseCredentials from './firebaseCredentials'
+
+// const jc = require('json-cycle')
 
 // Initialize Firebase
-firebase.initializeApp(firebaseCredentials.config);
-export const firestore = firebase.firestore();
-export const auth = firebase.auth();
-export const storage = firebase.storage();
-export const perf = firebase.performance();
-export const db = firebase.database();
-export default firebase;
+const app = initializeApp(firebaseCredentials.config)
 
-//// Github Auth
-//export const githubProvider = new firebase.auth.GithubAuthProvider();
-//export const loginWithGithub = () =>
-//{
-//	//auth.signInWithPopup(githubProvider).catch(alert);
-//	auth.signInWithRedirect(githubProvider);
-//}
-//
-//// Store our user auth info
-//export const CreateUserProfileDocument = () =>
-//{
-//	const userRef = firestore.collection('users').doc(auth.currentUser.uid);
-//	userRef.set(
-//	{
-//        // peerMeta['name'];
-//		userName: auth.currentUser.displayName,
-//        // peerMeta['url'];
-//		userURL: auth.currentUser.email,
-//        // peerMeta['description'];
-//		userAddress: auth.currentUser.phoneNumber,
-//        // peerMeta['icons'];
-//		userIcons: auth.currentUser.photoURL,
-//        // Timestamp
-//		createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-//        // Roles (admin, agent, user, etc)
-//		roles:{}
-//
-//	},{merge:true})
-//}
+export const database = getDatabase()
+export const firestoreDB = getFirestore()
+
+export const proposalsFirestore = collection(firestoreDB, 'proposals')
+export const votesFirestore = collection(firestoreDB, 'votes')
+export const resultsFirestore = collection(firestoreDB, 'results')
+
+// export async function writeData(path, data) {
+//   return set(ref(database, path), data)
+// }
+
+// export async function readData(path, callbackHandle) {
+//   const readRef = ref(database, path);
+//   onValue(readRef, snapshot => {
+//     const data = snapshot.val()
+//     callbackHandle(data)
+//   })
+// }
+
+export async function addNewDoc(storeCollection, data) {
+  return addDoc(storeCollection, data)
+}
+
+export async function getAllData(storeCollection) {
+  return getDocs(storeCollection)
+}
+
+export async function getDataById(storeCollection, docID) {
+  return getDoc(doc(storeCollection, docID))
+}
+
+export async function updateDocData(storeCollection, docID, newData) {
+  return updateDoc(doc(storeCollection, docID), newData)
+}
+
+export default app

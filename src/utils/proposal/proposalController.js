@@ -1,7 +1,7 @@
+import { query, orderBy } from 'firebase/firestore'
 import PROPOSAL_CONTRACT from './proposalContractInfo'
 import { callContract, subscribeToEvent, callContractOffChain } from '../contract/contractHelpers'
-
-const { abi } = require('@vite/vitejs')
+import { proposalsFirestore, getAllData } from '@/firebase/firebase'
 
 /**
  *
@@ -65,46 +65,66 @@ export async function getIsProposalComplete(proposalID) {
 /**
  *
  */
+export async function checkIfVotedPreviously(voter, proposalID) {
+  return callContractOffChain(PROPOSAL_CONTRACT, 'checkIfVotedPreviously', [voter, proposalID])
+}
+
+/**
+ *
+ */
+export async function getAllProposalStats() {
+  return callContractOffChain(PROPOSAL_CONTRACT, 'getProposalStats', [])
+}
+
+/**
+ *
+ */
+export async function getProposalVotingStats(proposalID) {
+  return callContractOffChain(PROPOSAL_CONTRACT, 'getProposalVotingStats', [proposalID])
+}
+
+/**
+ *
+ */
+export async function getProposalStatus(docId) {
+  let status
+  await getProposalByID(docId).then(proposal => {
+    if (proposal) {
+      // console.log('proposal', proposal)
+      // console.log('proposalsFirestore', proposalObj)
+      // console.log('proposal[0]', proposal[0])
+      // proposalObj.publishDate = proposal[2].value
+      // proposalObj.deadline = proposal[3].value
+      // proposalObj.blocksSinceCreation = proposal[4].value
+      // proposalObj.totalVotingPower = proposal[5]
+      // proposalObj.totalVotes = proposal[6]
+      status = proposal[6]
+    }
+    console.log('status', status)
+
+    return status
+  })
+}
+
+/**
+ *
+ */
 export async function getAllProposals() {
   const proposals = []
-  getTotalNumProposals().then(numProposals => {
-    if (numProposals) {
-      console.log('VBDAO: TOTAL NUM PROPOSALS = ', numProposals.toString())
-      for (let i = 0; i < numProposals; ++i) {
-        getProposalByID(i).then(proposalObj => {
-          if (proposalObj) {
-            const decodedProposalObj = abi.decodeParameters(['address', 'string', 'string', 'string', 'string', 'uint', 'uint256[]', 'uint256[]', 'uint256[]', 'string', 'uint256[]', 'string', 'string', 'uint', 'uint256[]', 'uint256', 'uint256', 'string'], proposalObj)
-            decodedProposalObj.proposalID = i
-            proposals.push(decodedProposalObj)
-          }
-        })
-      }
-    }
+  const sortedQuery = query(proposalsFirestore, orderBy('publishDate'))
+  await getAllData(sortedQuery).then(allProposals => {
+    allProposals.forEach(doc => {
+      proposals.push({ data: doc.data(), id: doc.id })
+
+      // if (new Date() < doc.data().endDate) {
+      //   proposals.push({ data: doc.data(), id: doc.id })
+      // }
+      // else {
+      //
+      //   proposals.push({ data: doc.data(), id: doc.id })
+      // }
+    })
   })
 
   return proposals
-}
-
-export async function getNumActiveProposals() {
-  const numProposals = 0
-
-  return numProposals
-}
-
-export async function getNumApprovedProposals() {
-  const numProposals = 0
-
-  return numProposals
-}
-
-export async function getNumRejectedProposals() {
-  const numProposals = 0
-
-  return numProposals
-}
-
-export async function getNumCancelledProposals() {
-  const numProposals = 0
-
-  return numProposals
 }

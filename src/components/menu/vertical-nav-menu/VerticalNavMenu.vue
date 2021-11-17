@@ -71,21 +71,6 @@
           :to="{ name: 'view-proposals' }"
           :icon="icons.mdiEyeOutline"
         ></nav-menu-link>
-        <!--<nav-menu-group
-          title="Proposal UI Test"
-          :icon="icons.mdiFileOutline"
-        >
-          <nav-menu-link
-            title="Gallery"
-            :to="{ name: 'gallery-test' }"
-            :icon="icons.mdiFileOutline"
-          ></nav-menu-link>
-          <nav-menu-link
-            title="View Proposal"
-            :to="{ name: 'view-proposal-test' }"
-            :icon="icons.mdiEyeOutline"
-          ></nav-menu-link>
-        </nav-menu-group>-->
       </nav-menu-group>
     </v-list>
     <nav-menu-link

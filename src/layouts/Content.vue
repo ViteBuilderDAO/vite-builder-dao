@@ -2,26 +2,25 @@
   <v-app>
     <!-- <vertical-nav-menu :is-drawer-open.sync="isDrawerOpen"></vertical-nav-menu> -->
     <!-- Navigation Header -->
-    <div class="vertical-nav-header d-flex items-center ps-6 pe-5 pt-5 pb-2">
-      <router-link
-        to="/"
-        class="d-flex align-center text-decoration-none"
-      >
-        <!-- <v-img
-          :src="require('@/assets/img/logos/logo.svg')"
-          max-height="30px"
-          max-width="30px"
-          alt="logo"
-          contain
-          eager
-          class="app-logo me-3"
-        ></v-img> -->
-        <v-slide-x-transition>
-          <h2 class="app-title text--primary">
-            VITE BUILDER DAO
-          </h2>
-        </v-slide-x-transition>
-      </router-link>
+    <div
+      class="d-flex items-center ps-6 pe-5 pt-5 pb-2"
+    >
+      <v-img
+        :src="require('@/assets/img/logos/DylanTullbergLogo.png')"
+        max-height="30px"
+        max-width="30px"
+        alt="logo"
+        contain
+        eager
+        class="app-logo me-3"
+      ></v-img>
+      <v-slide-x-transition>
+        <h2
+          class="app-title text--primary"
+        >
+          VITE BUILDER DAO
+        </h2>
+      </v-slide-x-transition>
     </div>
     <v-app-bar
       app
@@ -75,11 +74,10 @@
               <v-list>
                 <v-list-item
                   to="/"
-                  @click="$store.commit('setProposalMode', 'gallery')"
+                  @click="$store.commit('setProposalMode', 'gallery', false)"
                 >
                   <v-list-item-icon>
                     <v-icon
-                      :class="{'alternate-icon-small': !icon}"
                       class="mx-auto"
                     >
                       {{ icons.mdiHomeOutline }}
@@ -91,11 +89,10 @@
                 </v-list-item>
                 <v-list-item
                   to="about"
-                  @click="$store.commit('setProposalMode', 'gallery')"
+                  @click="$store.commit('setProposalMode', 'gallery', false)"
                 >
                   <v-list-item-icon>
                     <v-icon
-                      :class="{'alternate-icon-small': !icon}"
                       class="mx-auto"
                     >
                       {{ icons.mdiHelpCircleOutline }}
@@ -113,7 +110,6 @@
                 >
                   <v-list-item-icon>
                     <v-icon
-                      :class="{'alternate-icon-small': !icon}"
                       class="mx-auto"
                     >
                       {{ icons.mdiBookOpenBlankVariant }}
@@ -131,7 +127,6 @@
                 >
                   <v-list-item-icon>
                     <v-icon
-                      :class="{'alternate-icon-small': !icon}"
                       class="mx-auto"
                     >
                       {{ icons.mdiGithub }}
@@ -149,7 +144,6 @@
                 >
                   <v-list-item-icon>
                     <v-icon
-                      :class="{'alternate-icon-small': !icon}"
                       class="mx-auto"
                     >
                       {{ icons.mdiEyeOutline }}

@@ -1,11 +1,13 @@
 export default class ApprovalVoting {
-  proposal
-  votes
-  selected
+  votingPower
+  option
 
-  constructor(proposal, votes, selected) {
-    this.proposal = proposal
-    this.votes = votes
-    this.selected = selected
+  constructor(votingPower, option) {
+    this.votingPower = votingPower
+    this.option = option
   }
 }
+
+// Each voter may select "approve" on any number of choices.
+// Each selected choice will receive equal voting power.
+ 

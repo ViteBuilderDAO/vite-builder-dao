@@ -1,4 +1,4 @@
-export default class proposalParams {
+export default class votingParams {
   constructor(name, year) {
     this.name = name
     this.year = year

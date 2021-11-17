@@ -51,6 +51,9 @@ export async function getTokenList() {
   return tokenList
 }
 
+/**
+ *
+ */
 function sendVcTx(vbInstance, ...args) {
   return vbInstance
     .sendCustomRequest({ method: 'vite_signAndSendTx', params: args })
@@ -64,6 +67,22 @@ export async function callContract(contract, methodName, inputParams, amount) {
   console.log('VBDAO: ATTEMPTING CALL TO CONTRACT')
 
   const vbInstance = getVbInstance()
+
+  // const quotaInfo = getQuotaByAccount()
+  // let currentQuota = 0
+  // let stakeAmount = 0
+  // quotaInfo.forEach(value => {
+  //   currentQuota = value.currentQuota
+  //   console.log('VBDAO: getQuotaByAccount - currentQuota: ', currentQuota)
+  //   console.log('VBDAO: getQuotaByAccount - maxQuota: ', value.maxQuota)
+  //   stakeAmount = value.stakeAmount
+  //   console.log('VBDAO: getQuotaByAccount - stakeAmount: ', stakeAmount)
+  // })
+
+  // if (stakeAmount <= 0) {
+  //   stakeQuotaForContract(vbInstance, contract, 134)
+  // }
+
   const block = await accountBlock.createAccountBlock('callContract', {
     address: vbInstance.accounts[0],
     abi: contract.abi,
@@ -77,6 +96,9 @@ export async function callContract(contract, methodName, inputParams, amount) {
   return sendVcTx(vbInstance, { block: callContractBlock, abi: contract.abi })
 }
 
+/**
+ *
+ */
 export async function callContractOffChain(contract, methodName, inputParams) {
   console.log('VBDAO: ATTEMPTING OFF-CHAIN CALL TO CONTRACT')
   const connection = new WS_RPC(VITE_WSS)
@@ -85,25 +107,27 @@ export async function callContractOffChain(contract, methodName, inputParams) {
   })
 
   const encodedFuncCall = abi.encodeFunctionCall(contract.abi, inputParams, methodName)
-  const dataBuf= Buffer.from(encodedFuncCall, 'hex').toString('base64')
+  const dataBuf = Buffer.from(encodedFuncCall, 'hex').toString('base64')
   const code = Buffer.from(contract.offChain, 'hex').toString('base64')
 
   const offchainResult = await provider.request('contract_callOffChainMethod', {
     address: contract.address,
     code,
-    data: dataBuf
-  }).then((result) => {
-    console.warn('VBDAO: SUCCESS - OFF-CHAIN CONTRACT CALL: ', result)
+    data: dataBuf,
+  }).then(result => {
+    console.log('VBDAO: SUCCESS - OFF-CHAIN CONTRACT CALL: ', result)
+
     return result
-  }).catch((err) => {
-    console.warn('VBDAO: ERROR - OFF-CHAIN CONTRACT CALL: ', err)
+  }).catch(err => {
+    console.log('VBDAO: ERROR - OFF-CHAIN CONTRACT CALL: ', err)
   })
 
-  const resultDataBuf = Buffer.from(offchainResult, 'base64').toString('hex');
+  const resultDataBuf = Buffer.from(offchainResult, 'base64').toString('hex')
   const abiOutputs = contract.abi.find(x => x.name === methodName).outputs
   let decodedParams = null
-  decodedParams = abi.decodeParameters(abiOutputs, resultDataBuf);
-  return decodedParams;
+  decodedParams = abi.decodeParameters(abiOutputs, resultDataBuf)
+
+  return decodedParams
 }
 
 /**
@@ -134,6 +158,61 @@ export async function subscribeToEvent(contract, eventName, functor) {
 
   return subscription
 }
+
+/**
+ *
+ */
+// async function getContractInfo(address) {
+//   console.log('VBDAO: GET TOKEN INFO REQUEST')
+//   const connection = new WS_RPC(VITE_WSS)
+//   const provider = new ViteAPI(connection, () => {
+//     console.log('VBDAO: getContractInfo() client connected')
+//   })
+//
+//   return await provider.request('contract_getContractInfo', address)
+// }
+
+// /**
+//  *
+//  */
+// async function getQuotaByAccount(address) {
+//   console.log('VBDAO: GET TOKEN INFO REQUEST')
+//   const connection = new WS_RPC(VITE_WSS)
+//   const provider = new ViteAPI(connection, () => {
+//     console.log('VBDAO: getQuotaByAccount() client connected')
+//   })
+//
+//   return await provider.request('contract_getQuotaByAccount', address)
+// }
+
+/**
+ *
+ */
+// export async function stakeQuotaForContract(vbInstance, contract, stakeAmount) {
+//   console.log('VBDAO: ATTEMPTING CALL TO CONTRACT')
+//
+//   const contractInfo = getContractInfo(contract.address)
+//   const quotaMult = 1
+//   contractInfo.forEach(value => {
+//     quotaMult = value.quotaMultiplier
+//   })
+//
+//   const stakeAmount = stakeAmount * quotaMult
+//   stakeQuotaForContract(vbInstance, contract, stakeAmount).then(result => {
+//     console.log('VBDAO: QUOTA STAKING SUCCESS: ', result)
+//   }).catch(err => {
+//     console.log('VBDAO: ERROR - QUOTA STAKING: ', err)
+//   })
+//
+//   const block = await accountBlock.createAccountBlock('stakeForQuota', {
+//     address: vbInstance.accounts[0],
+//     beneficiaryAddress: contract.address,
+//     amount: stakeAmount.toString()
+//   })
+//   const stakeQuotaBlock = block.accountBlock
+//
+//   return sendVcTx(vbInstance, { block: stakeQuotaBlock, abi: contract.abi })
+// }
 
 // /**
 //  *

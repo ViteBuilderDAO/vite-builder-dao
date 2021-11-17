@@ -19,6 +19,10 @@
   stroke: map-deep-get($material, 'cards');
 }
 
+.apexcharts-menu {
+  color: black;
+}
+
 .apexcharts-canvas {
   .apexcharts-series {
     path {

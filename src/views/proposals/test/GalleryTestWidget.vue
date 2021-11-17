@@ -1,77 +1,96 @@
 <template>
-  <v-card>
-    <v-data-table
-      :headers="headers"
-      :items="usreList"
-      item-key="full_name"
-      class="table-rounded"
-      hide-default-footer
-      disable-sort
+  <v-container
+    v-if="proposals.length > 0"
+    class="py-8 px-6"
+    fluid
+  >
+    <v-row
+      v-for="proposal in proposals.slice().reverse()"
+      :key="proposal.title"
     >
-      <!-- name -->
-      <template #[`item.full_name`]="{item}">
-        <div class="d-flex flex-column">
-          <span class="d-block font-weight-semibold text--primary text-truncate">{{ item.full_name }}</span>
-          <small>{{ item.post }}</small>
-        </div>
-      </template>
-      <template #[`item.salary`]="{item}">
-        {{ `$${item.salary}` }}
-      </template>
-      <!-- status -->
-      <template #[`item.status`]="{item}">
-        <v-chip
-          small
-          :color="statusColor[status[item.status]]"
-          class="font-weight-medium"
-        >
-          {{ status[item.status] }}
-        </v-chip>
-      </template>
-    </v-data-table>
-  </v-card>
+      <v-col
+        cols="12"
+      >
+        <v-card>
+          <v-list two-line>
+            <v-list-item
+              class="proposal-gallery-widget"
+              @click="viewProposalHandler(proposal)"
+            >
+              <v-list-item-avatar
+                color="grey darken-1"
+                class="proposal-icon-avatar"
+              >
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>{{ proposal.title }}</v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ proposal.description }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+              <v-chip
+                v-if="proposal.status"
+                small
+                label
+                :color="statusColor[proposal.status]"
+                class="font-weight-medium proposal-status-chip"
+              >
+                {{ proposal.status }}
+              </v-chip>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import { mdiSquareEditOutline, mdiDotsVertical } from '@mdi/js'
-import data from './widgetDataTable'
 
 export default {
+  props: {
+    proposals: { type: Array, default: null },
+  },
+
   setup() {
     const statusColor = {
-      /* eslint-disable key-spacing */
-      Pending: 'primary',
-      Success: 'success',
-      Fail: 'error',
-      Resigned: 'warning',
-      QuotaLow: 'info',
-      /* eslint-enable key-spacing */
+      'Active': 'primary',
+      'Approved': 'success',
+      'Rejected': 'red',
+      'Cancelled': 'grey',
     }
 
     return {
-      headers: [
-        { text: 'TRANSACTION', value: 'full_name' },
-        { text: 'ADDRESS', value: 'address' },
-        { text: 'DATE', value: 'start_date' },
-        { text: 'AMOUNT', value: 'salary' },
-        { text: 'ID', value: 'age' },
-        { text: 'STATUS', value: 'status' },
-      ],
-      usreList: data,
-      status: {
-        1: 'Pending',
-        2: 'Success',
-        3: 'Fail',
-        4: 'QuotaLow',
-      },
       statusColor,
-
-      // icons
-      icons: {
-        mdiSquareEditOutline,
-        mdiDotsVertical,
-      },
     }
   },
+
+  methods: {
+    async viewProposalHandler(proposal) {
+      this.$store.commit('setCurrProposal', proposal)
+      this.$store.commit('setProposalMode', 'view', false)
+    },
+  },
+
 }
+
 </script>
+
+<style lang="scss" scoped>
+.proposal-gallery-widget {
+  box-shadow: none !important;
+    &:hover {
+      box-shadow: 0 1px 10px 1px #06368b !important;
+    }
+}
+
+.proposal-icon-avatar {
+  margin-left: 10px;
+  margin-right: 15px;
+}
+
+.proposal-status-chip {
+  margin-left: 10px;
+  margin-right: 5px;
+}
+</style>

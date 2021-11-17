@@ -30,12 +30,16 @@ module.exports = {
     'no-plusplus': 'off',
   
     'object-shorthand': 'off',
+
+    'vue/attribute-hyphenation': 'off',
   
     // we don't want it
     semi: ['error', 'never'],
 
     // add parens ony when required in arrow function
     'arrow-parens': ['error', 'as-needed'],
+
+    'prefer-destructuring': ['error', { 'object': true, 'array': false }],
 
     // add new line above comment
     'lines-around-comment': [

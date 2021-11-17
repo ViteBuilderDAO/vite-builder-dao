@@ -1,10 +1,13 @@
 pragma soliditypp ^0.4.3;
 
 import "./proposal-libs/SafeMath.solpp";
+import "./proposal-libs/ProposalTimer.solpp";
 
 contract DefaultProposal
 {
-  using SafeMath for uint256;
+  using SafeMath for uint;
+
+  message startTimer(string proposalID, uint deadline);
 
   // Various states that a proposal can be in
   enum State
@@ -12,96 +15,71 @@ contract DefaultProposal
     Active,   // Blue (Vite blue)
     Approved, // Green
     Rejected, // Red
-    Cancelled // Gray
+    Cancelled // Grey
   }
 
-  struct ProposalVote
+  // Used for tracking individual option voting stats
+  // Stats are used at proposal completion to calculate results
+  struct OptionsVotingStats
   {
-    uint256 m_voteToken;
-    uint256 m_votePower;
+    uint m_optionTotalVotes;
+    uint m_optionVotingPower;
   }
 
-  struct ProposalOption
+  // Saves results of completed proposals
+  struct ProposalResults
   {
-    uint256 m_optionID;
-    uint256 m_optionTitle;
-    uint256 m_optionsVotePower;
-    uint256 m_optionsTotalVotes;
-    ProposalVote[] m_votingInfoArr;
-    mapping(uint256 => ProposalVote) m_voteMap;
+    uint m_winningOptionIndex;
+    uint m_winningOptionTotalVotes;
+    uint m_winningOptionVotingPower;
+    State m_finalState;
   }
 
   // Proposal Type Obj and it's map container
   struct ProposalObj
   {
-    uint256 m_id;
+    string m_id;
     address m_creator;
     string m_title;
-    string m_urlLink;
-    string m_keywords;
-    string m_description;
-    uint m_numOptions;
-    ProposalOption[] m_optionsArr;
-    string m_coverImage;
-    uint256[] m_attachedFiles;
-    string m_votingType;
-    string m_publishDate;
+    uint m_publishDate;
     uint m_deadline;
-    uint256[] m_votingTokens;
-    uint256 m_totalVotingPower;
-    uint256 m_totalVotes;
+    uint m_numOptions;
+    string[] m_castedVotes;
+    mapping(uint => OptionsVotingStats) m_optVoteStatsMap;
+    uint m_totalVotingPower;
+    uint m_totalVotes;
     State m_state;
+    mapping(address => bool) m_prevVotersMap;
   }
 
-  ProposalObj[] g_proposalsArr;
+  // Global proposals container
+  mapping(string => ProposalObj) g_ProposalsMap;
+  // Global proposal results container for saving after completion
+  mapping(string => ProposalResults) g_ProposalResultsMap;
 
-  // Number of proposals currently active
-  uint256 g_totalNumProposals = 0;
   // Address of the contract creator
   address g_contractOwner;
 
+  // Number of proposals total
+  uint g_TotalNumProposals;
+  // Number of proposals active
+  uint g_TotalActiveProposals;
+  // Number of proposals approved
+  uint g_TotalApprovedProposals;
+  // Number of proposals rejected
+  uint g_TotalRejectedProposals;
+  // Number of proposals cancelled
+  uint g_TotalCancelledProposals;
+
   // Event that will be emitted whenever a new proposal is created
-  event ProposalStartedEvent(
-    uint256 indexed proposalID,
-    address indexed proposalStarter,
-    string proposalTitle,
-    string proposalURL,
-    string proposalKeywords,
-    string proposalDesc,
-    uint numOptions,
-    uint256[] optionsArr,
-    string coverImage,
-    uint256[] attachedFiles,
-    string votingType,
-    string publishDate,
-    uint256 proposalDeadline,
-    uint256[] votingTokens
-  );
+  event ProposalStartedEvent(string proposalID, address proposalCreator, string proposalTitle, uint proposalDeadline, uint totalNumProposals, uint totalActiveProposals);
 
   // Event that will be emitted whenever a proposal ends
-  event ProposalEndedEvent(
-    uint256 indexed proposalID,
-    uint256 proposalEndTime
-  );
+  event ProposalEndedEvent(string proposalID, address proposalCreator, uint endDate, string proposalTitle, string proposalStatus);
 
   // Event emitted whenever a proposal receives a vote
-  event ProposalVotedOnEvent(
-    uint256 indexed proposalID,
-    address indexed proposalVoter,
-    uint256 votingToken,
-    uint256 votingPower,
-    uint256 proposalTotalVotingPower,
-    uint256 proposalTotalVotes
-  );
+  event ProposalVotedOnEvent(string proposalID, address proposalVoter, string dataHash, uint totalVotingPower, uint totalVotes);
 
-  // Event emitted when a proposal has ended and results are calculated
-  event ProposalResultsCalculated(
-    uint256 indexed proposalID,
-    address indexed proposalCreator,
-    uint256 winningOptionVotes,
-    uint256 totalVotes,
-    uint256 totalVotingPower
-  );
 
   /** @dev Contract Constructor
     */
@@ -110,181 +88,133 @@ contract DefaultProposal
     g_contractOwner = msg.sender;
   }
 
+
   /** @dev Function to start a new proposal.
     *
     */
-  onMessage startProposal(
-    address creator,
-    string calldata title,
-    string calldata urlLink,
-    string calldata keywords,
-    string calldata description,
-    uint numOptions,
-    uint256[] calldata optionsArr,
-    string calldata coverImage,
-    uint256[] calldata attachedFiles,
-    string calldata votingType,
-    string calldata publishDate,
-    uint durationInDays,
-    uint256[] calldata votingTokens)
+  onMessage startProposal(string calldata id, address creator, string calldata title, uint durationInDays, uint numOptions)
   {
     uint proposalDeadline = now.add(durationInDays.mul(1 days));
-    uint256 proposalID = ++g_totalNumProposals;
-    ProposalVote[] memory votesArr;
-    ProposalOption[] memory optsArr;
+
+    g_ProposalsMap[id] = (ProposalObj(id, creator, title, now, proposalDeadline, numOptions, new string[](0), 0, 0, State.Active));
+
     for (uint i = 0; i < numOptions; ++i)
     {
-      optsArr[i] = ProposalOption(i, optionsArr[i], 0, 0, votesArr);
+      g_ProposalsMap[id].m_optVoteStatsMap[i] = OptionsVotingStats(0, 0);
     }
 
-    g_proposalsArr.push(
-      ProposalObj(
-        proposalID,
-        creator,
-        title,
-        urlLink,
-        keywords,
-        description,
-        numOptions,
-        optsArr,
-        coverImage,
-        attachedFiles,
-        votingType,
-        publishDate,
-        proposalDeadline,
-        votingTokens,
-        0, 0,
-        State.Active
-      ));
+    ++g_TotalNumProposals;
+    ++g_TotalActiveProposals;
 
-    emit ProposalStartedEvent(
-      proposalID,
-      creator,
-      title,
-      urlLink,
-      keywords,
-      description,
-      numOptions,
-      optionsArr,
-      coverImage,
-      attachedFiles,
-      votingType,
-      publishDate,
-      proposalDeadline,
-      votingTokens
-    );
-  }                                                                                                                              
+    send(creator, startTimer(id, proposalDeadline));
+
+    emit ProposalStartedEvent(id, creator, title, proposalDeadline, g_TotalNumProposals, g_TotalActiveProposals);
+  }
+
 
   /** @dev Function to vote on a given proposal.
     *
     */
-  onMessage voteOnProposal(address voter, uint256 proposalID, uint256 voteToken, uint256 voterPower, uint optionNumber)
+  onMessage voteOnProposal(string calldata proposalID, address voter, uint voterPower, uint[] calldata optPowers, string calldata dataHash)
   {
-    //require(g_proposalsArr[proposalID].m_creator != voter);
+    require(!g_ProposalsMap[proposalID].m_prevVotersMap[voter]);
+    require(now < g_ProposalsMap[proposalID].m_deadline);
 
-    ++g_proposalsArr[proposalID].m_optionsArr[optionNumber].m_optionsTotalVotes;
-    g_proposalsArr[proposalID].m_optionsArr[optionNumber].m_votingInfoArr.push(ProposalVote(voteToken, voterPower));
-    g_proposalsArr[proposalID].m_optionsArr[optionNumber].m_optionsVotePower = g_proposalsArr[proposalID].m_optionsArr[optionNumber].m_optionsVotePower.add(voterPower);
-    g_proposalsArr[proposalID].m_totalVotingPower = g_proposalsArr[proposalID].m_totalVotingPower.add(voterPower);
-    g_proposalsArr[proposalID].m_optionsArr[optionNumber].m_voteMap[voteToken].m_votePower = g_proposalsArr[proposalID].m_optionsArr[optionNumber].m_voteMap[voteToken].m_votePower.add(voterPower);
+    uint proposalTotalPower = g_ProposalsMap[proposalID].m_totalVotingPower.add(voterPower);
+    uint proposalTotalVotes = ++g_ProposalsMap[proposalID].m_totalVotes;
+    g_ProposalsMap[proposalID].m_totalVotingPower = proposalTotalPower;
+    g_ProposalsMap[proposalID].m_prevVotersMap[voter] = true;
+    g_ProposalsMap[proposalID].m_castedVotes.push(dataHash);
 
-    emit ProposalVotedOnEvent(proposalID, voter, voteToken, voterPower, g_proposalsArr[proposalID].m_totalVotingPower, ++g_proposalsArr[proposalID].m_totalVotes);
+    for (uint i = 0; i < optPowers.length; ++i)
+    {
+      ++g_ProposalsMap[proposalID].m_optVoteStatsMap[i].m_optionTotalVotes;
+      g_ProposalsMap[proposalID].m_optVoteStatsMap[i].m_optionVotingPower = g_ProposalsMap[proposalID].m_optVoteStatsMap[i].m_optionVotingPower.add(optPowers[i]);
+    }
 
-    _checkIsComplete(proposalID);
+    emit ProposalVotedOnEvent(proposalID, voter, dataHash, proposalTotalPower, proposalTotalVotes);
   }
+
 
   /** @dev Stop the proposal (only if it is complete)
     * Should be used in pair with getIsProposalComplete()
     */
-  onMessage stopProposal(uint256 proposalID)
+  onMessage stopProposal(string calldata proposalID)
   {
     _checkIsComplete(proposalID);
   }
 
+
   /** @dev Stop the proposal early if desired (mostly for testing purposes)
     *
     */
-  onMessage stopProposalEarly(uint256 proposalID)
+  onMessage stopProposalEarly(string calldata proposalID)
   {
-    require(g_proposalsArr[proposalID].m_creator == msg.sender);
+    require(g_ProposalsMap[proposalID].m_creator == msg.sender);
 
-    g_proposalsArr[proposalID].m_state = State.Cancelled;
-    _calculateResults(proposalID);
+    g_ProposalsMap[proposalID].m_state = State.Cancelled;
 
-    emit ProposalEndedEvent(proposalID, now);
+    _calcResults(proposalID);
+
+    emit ProposalEndedEvent(proposalID, g_ProposalsMap[proposalID].m_creator, now, g_ProposalsMap[proposalID].m_title, _stateToString(g_ProposalsMap[proposalID].m_state));
   }
 
-  /** @dev
+
+  /**
     */
-  getter getNumProposals() returns(uint256 numProposals)
+  getter getProposalStats() returns(uint total, uint active, uint approved, uint rejected, uint cancelled)
   {
-    return g_totalNumProposals;
+    total = g_TotalNumProposals;
+    active = g_TotalActiveProposals;
+    approved = g_TotalApprovedProposals;
+    rejected = g_TotalRejectedProposals;
+    cancelled = g_TotalCancelledProposals;
   }
 
-  /** @dev
+
+  /**
     */
-  getter getProposalByID(uint256 proposalID) returns (
+  getter getProposalVotingStats(string calldata proposalID) returns(uint totalVotingPower, uint totalVotes)
+  {
+    totalVotingPower = g_ProposalsMap[proposalID].m_totalVotingPower;
+    totalVotes = g_ProposalsMap[proposalID].m_totalVotes;
+  }
+
+
+  /**
+    */
+  getter getProposalByID(string calldata proposalID) returns (
     address creator,
     string memory title,
-    string memory urlLink,
-    string memory keywords,
-    string memory description,
-    uint numOptions,
-    uint256[] memory optionsArr,
-    uint256[] memory optionsVotePowers,
-    uint256[] memory optionsTotalVotes,
-    string memory coverImage,
-    uint256[] memory attachedFiles,
-    string memory votingType,
-    string memory publishDate,
+    uint publishDate,
     uint deadline,
-    uint256[] memory votingTokens,
-    uint256 totalVotingPower,
-    uint256 totalVotes,
+    uint totalVotingPower,
+    uint totalVotes,
     string memory state)
   {
-    state = "";
-    if (_checkIsComplete(proposalID))
-    {
-      state = "Complete";
-    }
-    else
-    {
-      state = "Active";
-    }
-
-    creator = g_proposalsArr[proposalID].m_creator;
-    title = g_proposalsArr[proposalID].m_title;
-    urlLink = g_proposalsArr[proposalID].m_urlLink;
-    keywords = g_proposalsArr[proposalID].m_keywords;
-    description = g_proposalsArr[proposalID].m_description;
-    numOptions = g_proposalsArr[proposalID].m_numOptions;
-
-    optionsArr = new uint256[](numOptions);
-    optionsVotePowers = new uint256[](numOptions);
-    optionsTotalVotes = new uint256[](numOptions);
-    for (uint i = 0; i < numOptions; ++i)
-    {
-      optionsArr[i] = g_proposalsArr[proposalID].m_optionsArr[i].m_optionTitle;
-      optionsVotePowers[i] = g_proposalsArr[proposalID].m_optionsArr[i].m_optionsVotePower;
-      optionsTotalVotes[i] = g_proposalsArr[proposalID].m_optionsArr[i].m_optionsTotalVotes;
-    }
-
-    coverImage = g_proposalsArr[proposalID].m_coverImage;
-    attachedFiles = g_proposalsArr[proposalID].m_attachedFiles;
-    votingType = g_proposalsArr[proposalID].m_votingType;
-    publishDate = g_proposalsArr[proposalID].m_publishDate;
-    deadline = g_proposalsArr[proposalID].m_deadline;
-    votingTokens =  g_proposalsArr[proposalID].m_votingTokens;
-    totalVotingPower = g_proposalsArr[proposalID].m_totalVotingPower;
-    totalVotes = g_proposalsArr[proposalID].m_totalVotes;
+    creator = g_ProposalsMap[proposalID].m_creator;
+    title = g_ProposalsMap[proposalID].m_title;
+    publishDate = g_ProposalsMap[proposalID].m_publishDate;
+    deadline = g_ProposalsMap[proposalID].m_deadline;
+    totalVotingPower = g_ProposalsMap[proposalID].m_totalVotingPower;
+    totalVotes = g_ProposalsMap[proposalID].m_totalVotes;
+    state = _stateToString(g_ProposalsMap[proposalID].m_state);
   }
 
-  /** @dev
+
+  /**
     */
-  getter getIsProposalComplete(uint256 proposalID) returns(bool isComplete)
+  getter checkIfVotedPreviously(address voter, string calldata proposalID) returns (bool hasVoted)
   {
-    if (now > g_proposalsArr[proposalID].m_deadline)
+    hasVoted = g_ProposalsMap[proposalID].m_prevVotersMap[voter];
+  }
+
+
+  /**
+    */
+  getter getIsProposalComplete(string calldata proposalID) returns(bool isComplete)
+  {
+    if (now > g_ProposalsMap[proposalID].m_deadline)
     {
       return true;
     }
@@ -292,74 +222,90 @@ contract DefaultProposal
     return false;
   }
 
-  /** @dev Convert a string to uint256
+
+  /** @dev Convert a string to uint
     *
     */
-  function _stringToUint(string memory _str) internal pure returns(uint256 res)
+  function _stateToString(State _state) internal pure returns(string memory strRes)
   {
-    for (uint256 i = 0; i < bytes(_str).length; ++i)
+    if (_state == State.Active)
     {
-      if ((uint8(bytes(_str)[i]) - 48) < 0 || (uint8(bytes(_str)[i]) - 48) > 9)
-      {
-        return 0;
-      }
-      res += (uint8(bytes(_str)[i]) - 48) * 10**(bytes(_str).length - i - 1);
+      strRes = "Active";
     }
-
-    return res;
+    else if (_state == State.Approved)
+    {
+      strRes = "Approved";
+    }
+    else if (_state == State.Rejected)
+    {
+      strRes = "Rejected";
+    }
+    else if (_state == State.Cancelled)
+    {
+      strRes = "Cancelled";
+    }
+    else
+    {
+      strRes = "Unknown";
+    }
   }
+
 
   /** @dev Function to change the proposal state depending on conditions.
     *
     */
-  function _checkIsComplete(uint256 proposalID) internal returns(bool)
+  function _checkIsComplete(string memory proposalID) internal returns(bool)
   {
-    // require(g_proposalsArr[proposalID].m_creator == msg.sender);
+    // require(g_ProposalsMap[proposalID].m_creator == msg.sender);
 
-    if (now > g_proposalsArr[proposalID].m_deadline)
+    if (now > g_ProposalsMap[proposalID].m_deadline)
     {
-        _calculateResults(proposalID);
-        emit ProposalEndedEvent(proposalID, now);
-        return true;
+      _calcResults(proposalID);
+      emit ProposalEndedEvent(proposalID, g_ProposalsMap[proposalID].m_creator, now, g_ProposalsMap[proposalID].m_title, _stateToString(g_ProposalsMap[proposalID].m_state));
+      return true;
     }
 
     return false;
   }
 
-  /** @dev Function to calculate results of proposal when complete
-    *
-    */
-  function _calculateResults(uint256 proposalID) internal
+
+  function _calcResults(string memory proposalID) internal
   {
-    // require(g_proposalsArr[proposalID].m_state == State.Complete);
-
-    // Proposal creator
-    address proposalCreator = g_proposalsArr[proposalID].m_creator;
-
-    // Winning option and num votes
-    uint index = 0;
-    ProposalOption memory winningOption = g_proposalsArr[proposalID].m_optionsArr[index];
-    for (index = 1; index < g_proposalsArr[proposalID].m_numOptions; ++index)
+    ProposalResults memory results = ProposalResults(0, 0, 0, State.Cancelled);
+    if (g_ProposalsMap[proposalID].m_totalVotes > 0)
     {
-      if (winningOption.m_optionsVotePower < g_proposalsArr[proposalID].m_optionsArr[index].m_optionsVotePower)
-        winningOption = g_proposalsArr[proposalID].m_optionsArr[index];
+      results.m_winningOptionTotalVotes = g_ProposalsMap[proposalID].m_optVoteStatsMap[0].m_optionTotalVotes;
+      results.m_winningOptionVotingPower = g_ProposalsMap[proposalID].m_optVoteStatsMap[0].m_optionVotingPower;
+
+      for (uint i = 1; i < g_ProposalsMap[proposalID].m_numOptions; ++i)
+      {
+        if (results.m_winningOptionVotingPower < g_ProposalsMap[proposalID].m_optVoteStatsMap[i].m_optionVotingPower)
+        {
+          results.m_winningOptionIndex = i;
+          results.m_winningOptionVotingPower = g_ProposalsMap[proposalID].m_optVoteStatsMap[i].m_optionVotingPower;
+        }
+      }
+
+      if (g_ProposalsMap[proposalID].m_state != State.Cancelled)
+      {
+        if (results.m_winningOptionIndex == (g_ProposalsMap[proposalID].m_numOptions - 1))
+        {
+          g_ProposalsMap[proposalID].m_state = State.Rejected;
+        }
+        else
+        {
+          g_ProposalsMap[proposalID].m_state = State.Approved;
+        }
+      }
+
+      results.m_winningOptionTotalVotes = g_ProposalsMap[proposalID].m_optVoteStatsMap[results.m_winningOptionIndex].m_optionTotalVotes;
     }
-    uint256 winningOptionVotes = winningOption.m_optionsTotalVotes;
+    else
+    {
+      g_ProposalsMap[proposalID].m_state = State.Cancelled;
+    }
 
-    // Total votes
-    uint256 totalVotes = g_proposalsArr[proposalID].m_totalVotes;
-
-    // Total voting power
-    uint256 totalVotingPower = g_proposalsArr[proposalID].m_totalVotingPower;
-
-    // Set the proposal state to complete (may already be set, but just in case)
-    // FIX ME
-    // Active, Approved, Rejected, Cancelled;
-    if (index == 0)
-      g_proposalsArr[proposalID].m_state = State.Approved;
-    else if (index == 1)
-      g_proposalsArr[proposalID].m_state = State.Rejected;
-
-    emit ProposalResultsCalculated(proposalID, proposalCreator, winningOptionVotes, totalVotes, totalVotingPower);
+    g_ProposalResultsMap[proposalID] = results;
   }
+
 }

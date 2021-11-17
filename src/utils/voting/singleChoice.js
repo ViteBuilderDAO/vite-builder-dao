@@ -1,11 +1,11 @@
 export default class SingleChoiceVoting {
-  proposal
-  votes
-  selected
+  votingPower
+  option
 
-  constructor(proposal, votes, selected) {
-    this.proposal = proposal
-    this.votes = votes
-    this.selected = selected
+  constructor(votingPower, option) {
+    this.votingPower = votingPower
+    this.option = option
   }
 }
+
+// Each voter may select a single choice to give their total voting power to.

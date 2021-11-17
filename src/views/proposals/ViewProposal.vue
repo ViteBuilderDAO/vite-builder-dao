@@ -71,7 +71,7 @@
                     optionsArr: {{ proposal.optionsArr }}
                     optionsVotePowers: {{ proposal.optionsVotePowers }}
                     optionsTotalVotes: {{ proposal.optionsTotalVotes }}
-                    coverImage: {{ proposal.coverImage }}
+                    proposalIcon: {{ proposal.proposalIcon }}
                     attachedFiles: {{ proposal.attachedFiles }}
                     votingType: {{ proposal.votingType }}
                     publishDate: {{ proposal.publishDate }}
@@ -82,7 +82,7 @@
                     state: {{ proposal.state }}
                   </v-card-text>
                   <!-- <FormulateForm
-                    @submit="submitVoteHandler(proposal, optionIndex)"
+                    @submit="submitVoteHandler(proposal)"
                   >
                     <FormulateForm
                       v-model="votingTokenGroup"
@@ -100,12 +100,41 @@
                       Selected Token ID: {{ proposal.votingTokens[votingTokenGroup.tokenIndex] }}
                     </v-card-text>
                     <FormulateInput
+                      v-model="value"
+                      :options="{first: 'First', second: 'Second', third: 'Third', fourth: 'Fourth'}"
+                      type="checkbox"
+                      label="This is a label for all the options (FIX ME)"
+                    />
+                    <FormulateInput
                       type="submit"
                       class="submit-vote-btn"
                       :disabled="hasMissingParams() || isStopping"
                       :label="isVoting ? 'Loading...' : 'Submit Vote'"
                     />
                   </FormulateForm> -->
+                  <FormulateForm
+                    v-model="proposalVoteData"
+                    @submit="submitVoteHandler(proposal)"
+                  >
+                    <FormulateInput
+                      v-for="item in proposalVoteSchema"
+                      :key="item.name"
+                      v-bind="item"
+                    >
+                      <FormulateInput
+                        v-for="childItem in item.children"
+                        :key="childItem.name"
+                        v-bind="childItem"
+                        :options="proposal.optionsArr ? proposal.optionsArr : ''"
+                      />
+                    </FormulateInput>
+                    <FormulateInput
+                      type="submit"
+                      class="submitFormButtonStyle"
+                      help="Note: Vite wallet must be connected to submit."
+                      :label="isLoading ? 'Awaiting Vite App Approval...' : 'Submit'"
+                    />
+                </FormulateForm>
                 </v-card>
               </div>
             </v-expand-transition>
@@ -127,20 +156,22 @@ import { getWalletBalanceInfo } from '@/utils/contract/contractHelpers'
 import {
   stopProposalEarly,
 } from '@/utils/proposal/proposalController'
-
-const { abi } = require('@vite/vitejs')
+import { ipfsGetData, ipfsSetData } from '@/store/ipfs'
 
 // stopProposal,
-// getAllProposals
 // voteOnProposal,
 // getIsProposalComplete,
 // getProposalByID,
 
 export default {
+  props: {
+    proposal: {
+      type: Array / Object / String / Number,
+      required: true,
+    },
+  },
   setup() {
     return {
-      numProposals: 0,
-      proposals: Array,
       isCardDetailsVisible: false,
       isVoting: false,
       isStopping: false,
@@ -148,6 +179,17 @@ export default {
         mdiChevronUp,
         mdiChevronDown,
       },
+      proposalVoteData: {},
+      proposalVoteSchema: [
+        {
+          type: 'select',
+          name: 'votingType',
+          label: 'Voting Type',
+          options: votingTypes,
+          class: 'createProposalDropdown',
+        },
+      ],
+      votingPowers = {},
     }
   },
   computed: {
@@ -180,7 +222,7 @@ export default {
     /**
      * async submitVoteHandler(proposalID, voteToken, voterPower(balance), optionNumber)
      */
-    async submitVoteHandler(proposal, optionNumber) {
+    async submitVoteHandler(proposal) {
       // if (this.hasMissingParams()) {
       //   console.log('VBDAO - Missing Required Parameter')
 
@@ -191,55 +233,25 @@ export default {
 
       this.isLoading = true
 
-      const voteToken = proposal.votingTokens[this.votingTokenGroup.tokenIndex]
-
-      // Get the balance of connected wallet by tokenId
-      // FIX ME - Use the tokenId to parse
-      let tokenBalance = 0
-      await getWalletBalanceInfo(this.connectedAccounts[0]).then(({ balance, unreceived }) => {
-        console.log('balance: ', balance, unreceived)
-        console.log('balanceInfoMap: ', balance.balanceInfoMap)
-        Object.values(balance.balanceInfoMap).forEach(val => {
-          console.log(val)
-          tokenBalance += parseInt(BigNumber(val.balance).dividedBy(`1e${val.tokenInfo.decimals}`).toFixed(), 10)
-        })
-      })
-
-      // FIX ME - Use the balance and voting type to calculate the weight of this vote
-      const voteWeight = tokenBalance
+      // (uint256 proposalID, address voter, uint256 voterPower, uint256 ipfsData)
+      console.log('VBDAO VOTE PARAM - voter: ', this.connectedAccounts[0])
+      console.log('VBDAO VOTE PARAM - proposalID: ', proposal.proposalID)
+      console.log('VBDAO VOTE PARAM - optionsVoted: ', this.proposalVoteData)
+      console.log('VBDAO VOTE PARAM - votingPowers: ', votingPowers)
 
       const voteParams = {
         voter: this.connectedAccounts[0],
         proposalID: proposal.proposalID,
-        voteToken: voteToken,
-        voterPower: voteWeight,
-        optionNumber: optionNumber,
-        voteTimestamp: new Date(),
+        optionsVoted: this.proposalVoteData,
+        votingPowers: votingPowers,
       }
 
-      console.log('VBDAO VOTE PARAM DECODED - voter: ', voteParams.voter)
-      console.log('VBDAO VOTE PARAM DECODED - proposalID: ', voteParams.proposalID)
-      console.log('VBDAO VOTE PARAM DECODED - votingToken: ', voteParams.votingToken)
-      console.log('VBDAO VOTE PARAM DECODED - voterPower: ', voteParams.voterPower)
-      console.log('VBDAO VOTE PARAM DECODED - optionNumber: ', voteParams.optionNumber)
-      console.log('VBDAO VOTE PARAM DECODED - voteTimestamp: ', voteParams.voteTimestamp)
+      console.log('VBDAO VOTE PARAM ENCODED - voter: ', voteParams.voter)
+      console.log('VBDAO VOTE PARAM ENCODED - proposalID: ', voteParams.proposalID)
+      console.log('VBDAO VOTE PARAM ENCODED - optionsVoted: ', voteParams.optionsVoted)
+      console.log('VBDAO VOTE PARAM ENCODED - votingPowers: ', voteParams.votingPowers)
 
-      const encodedParameters = abi.encodeParameters(['address', 'uint256', 'uint256', 'uint256', 'uint'], voteParams)
-
-      console.log('VBDAO VOTE PARAM ENCODED - voter: ', encodedParameters.voter)
-      console.log('VBDAO VOTE PARAM ENCODED - proposalID: ', encodedParameters.proposalID)
-      console.log('VBDAO VOTE PARAM ENCODED - votingToken: ', encodedParameters.votingToken)
-      console.log('VBDAO VOTE PARAM ENCODED - voterPower: ', encodedParameters.voterPower)
-      console.log('VBDAO VOTE PARAM ENCODED - optionNumber: ', encodedParameters.optionNumber)
-      console.log('VBDAO VOTE PARAM ENCODED - voteTimestamp: ', encodedParameters.voteTimestamp)
-
-      // voteOnProposal([
-      //   voteParams.voter.address,
-      //   voteParams.proposalID,
-      //   voteParams.voteToken,
-      //   voteParams.voterPower,
-      //   voteParams.optionNumber,
-      // ], this.onProposalVoteEvent).then(block => {
+      // voteOnProposal(voteParams, this.onProposalVoteEvent).then(block => {
       //   if (block && voteParams) {
       //     this.$store.dispatch('addProposalVote', voteParams.proposalID, voteParams)
       //     console.log('VBDAO: CALL TO CONTRACT (voteOnProposal) SUCCESS', block)
@@ -283,6 +295,26 @@ export default {
       })
     },
 
+
+    /**
+     *
+     */
+    async calculateVotingPowers(votingTokens, votingType) {
+      console.log('VBDAO - calculateVotingPowers:', votingTokens, votingType)
+
+      // Get the balance of connected wallet by tokenId
+      // FIX ME - Use the tokenId to parse
+      let tokenBalance = 0
+      await getWalletBalanceInfo(this.connectedAccounts[0]).then(({ balance, unreceived }) => {
+        console.log('balance: ', balance, unreceived)
+        console.log('balanceInfoMap: ', balance.balanceInfoMap)
+        Object.values(balance.balanceInfoMap).forEach(val => {
+          console.log(val)
+          tokenBalance += parseInt(BigNumber(val.balance).dividedBy(`1e${val.tokenInfo.decimals}`).toFixed(), 10)
+        })
+      })
+    },
+
     /**
      *
      */
@@ -309,8 +341,7 @@ export default {
      *
      */
     async onMounted() {
-      // this.proposals = await getAllProposals()
-      // this.numProposals = this.proposals.length
+      calculateVotingPowers
     },
   },
 }
@@ -326,5 +357,8 @@ export default {
 }
 .voting-token-dropdown {
   max-width: 200px !important;
+}
+.submitFormButtonStyle {
+  margin-top: 40px;
 }
 </style>

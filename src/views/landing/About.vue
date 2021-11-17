@@ -127,9 +127,6 @@
         </v-row>
       </v-card>
     </v-col>
-    <v-col cols="12">
-      <typography-texts></typography-texts>
-    </v-col>
   </v-row>
 </template>
 

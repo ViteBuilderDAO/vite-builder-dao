@@ -12,13 +12,14 @@ export function quadraticMath(i, choice, balance) {
 }
 
 export default class QuadraticVoting {
-  proposal
-  votes
-  selected
+  votingPower
+  option
 
-  constructor(proposal, votes, selected) {
-    this.proposal = proposal
-    this.votes = votes
-    this.selected = selected
+  constructor(votingPower, option) {
+    this.votingPower = votingPower
+    this.option = option
   }
 }
+
+// Each voter may spread voting power across any number of choices.
+// Results are calculated quadratically (sqrt(votingPower))

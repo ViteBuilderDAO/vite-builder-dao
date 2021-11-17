@@ -12,13 +12,13 @@ export function weightedPower(i, choice, balance) {
 }
 
 export default class WeightedVoting {
-  proposal
-  votes
-  selected
+  votingPower
+  option
 
-  constructor(proposal, votes, selected) {
-    this.proposal = proposal
-    this.votes = votes
-    this.selected = selected
+  constructor(votingPower, option) {
+    this.votingPower = votingPower
+    this.option = option
   }
 }
+
+// Each voter may spread voting power across any number of choices.

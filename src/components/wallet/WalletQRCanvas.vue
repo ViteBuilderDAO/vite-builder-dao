@@ -7,15 +7,13 @@ import QRCode from 'qrcode'
 import { getWalletConnectURI, getVbInstance } from '@/utils/wallet/walletClient'
 import WalletAccount from '@/utils/wallet/walletAccount'
 
+const vbInst = getVbInstance()
+
 export default {
   async mounted() {
     const uri = await getWalletConnectURI()
     this.generateQRCode(uri)
-    const vbInst = getVbInstance()
     vbInst.on('connect', (err, payload) => {
-      if (err) {
-        return console.log(err)
-      }
       const address = payload.params[0].accounts[0]
       this.$store.commit('setWalletConnected', true)
       this.$store.dispatch('addAccount', new WalletAccount({ address }))

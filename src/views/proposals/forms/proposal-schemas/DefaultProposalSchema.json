@@ -31,7 +31,7 @@
   },
   {
     "type": "file",
-    "name": "coverImage",
+    "name": "proposalIcon",
     "label": "Upload a photo to be used as a cover",
     "help": "Select one image to upload (*)",
     "single": true,
