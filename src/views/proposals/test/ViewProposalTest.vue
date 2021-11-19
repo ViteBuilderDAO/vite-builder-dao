@@ -186,6 +186,11 @@ export default {
     return {
       isVoting: false,
       isStopping: false,
+    }
+  },
+
+  data() {
+    return {
       votingBalance: 0,
     }
   },
@@ -220,7 +225,7 @@ export default {
     },
 
     async goBackClickHandler() {
-      this.$store.commit('setProposalMode', 'gallery', false)
+      this.$store.commit('setProposalMode', 'gallery')
     },
 
     async submitVoteHandler(voteData) {
@@ -230,16 +235,13 @@ export default {
         return
       }
 
-      console.log('~ VBDAO - ATTEMPTING SUBMIT VOTE TEST ~')
-
-      console.log('VBDAO - CALLBACK VOTE DATA optionsVoted: ', voteData.optionsVoted)
-      console.log('VBDAO - CALLBACK VOTE DATA votingPowers: ', voteData.votingPowers)
+      // console.log('~ VBDAO - ATTEMPTING SUBMIT VOTE TEST ~')
+      // console.log('VBDAO - CALLBACK VOTE DATA votingPowers: ', voteData.votingPowers)
 
       this.isVoting = true
-      this.calculateVotingPowers()
 
       const newStatTotals = []
-      voteData.optionsVoted.forEach((val, index) => {
+      voteData.votingPowers.forEach((val, index) => {
         const optionTotalVotes = parseInt(this.currProposalVotingStats.optTotalVotesData[0].data[index], 10)
         const optionTotalPowers = parseInt(this.currProposalVotingStats.optVotingPowerData[0].data[index], 10)
         if (val) {
@@ -250,15 +252,6 @@ export default {
         }
       })
 
-      const voteParams = {
-        voteID: this.currProposalVotingStats.totalVotes + 1,
-        proposalID: this.proposal.proposalID,
-        voter: this.connectedWalletAddr,
-        optionsVoted: voteData.optionsVoted,
-        votingPowers: voteData.votingPowers,
-        votingBalance: this.votingBalance,
-      }
-
       // console.log('VBDAO VOTE PARAM - proposalID: ', voteParams.proposalID)
       // console.log('VBDAO VOTE PARAM - voter: ', voteParams.voter)
       // console.log('VBDAO VOTE PARAM - optionsVoted: ', voteParams.optionsVoted)
@@ -266,9 +259,10 @@ export default {
       // console.log('VBDAO VOTE PARAM - votingBalance: ', voteParams.votingBalance)
       // console.log('VBDAO VOTE PARAM - newStatTotals: ', newStatTotals)
 
+      // FIX ME
       const updateRes = new Date()
       await updateDocData(votesFirestore, this.proposal.voteStatsID, {
-        totalVotes: voteParams.voteID,
+        totalVotes: ++this.currProposalVotingStats.totalVotes,
         totalVotingPower: this.currProposalVotingStats.totalVotingPower + this.votingBalance,
         optionStats: newStatTotals,
       })
@@ -291,11 +285,12 @@ export default {
       // console.log('VBDAO - VOTE PARAMS ipfsHashFile.path - ', ipfsHashFile.path)
       // console.log('VBDAO - VOTE PARAMS ipfsHashFile.cid - ', ipfsHashFile.cid)
 
-      voteOnProposal([voteParams.proposalID, voteParams.voter, voteParams.votingBalance, voteParams.votingPowers, updateRes.toString()], this.onProposalVoteEvent).then(block => {
+      voteOnProposal([this.proposal.proposalID, this.connectedWalletAddr, this.votingBalance, voteData.votingPowers, updateRes.toString()], this.onProposalVoteEvent).then(block => {
         if (block) {
           this.$store.commit('initializeCurrProposalVotingStats', this.proposal.voteStatsID)
-          this.isVoting = false
-          console.log('VBDAO: CALL TO CONTRACT SUCCESS (voteOnProposal)', block)
+          window.location.reload()
+
+          // console.log('VBDAO: CALL TO CONTRACT SUCCESS (voteOnProposal)', block)
         }
       })
     },
@@ -400,7 +395,7 @@ export default {
     transformDate(lhsDate) {
       const secDate = new Date(lhsDate.seconds * 1000)
 
-      return secDate.toUTCString()
+      return `${secDate.toDateString()} at ${secDate.toTimeString()}`
 
       // let month = secDate.getMonth() + 1
       // if (month < 9) {

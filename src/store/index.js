@@ -102,7 +102,6 @@ export default new Vuex.Store({
         state.proposalStats.numApprovedProposals = parseInt(stats[2], 10)
         state.proposalStats.numRejectedProposals = parseInt(stats[3], 10)
         state.proposalStats.numCancelledProposals = parseInt(stats[4], 10)
-        console.log('STORE.JS: initializeStore()')
       })
     },
 
@@ -116,7 +115,6 @@ export default new Vuex.Store({
           })
           state.currProposalVotingStats.totalVotes = votesData.totalVotes
           state.currProposalVotingStats.totalVotingPower = votesData.totalVotingPower
-          console.log('STORE.JS: initializeCurrProposalStats()', votesData)
           state.currVotingStatsLoaded = true
         }
       })
@@ -157,11 +155,7 @@ export default new Vuex.Store({
       state.proposalStatuses = statuses
     },
 
-    setProposalMode(state, proposalMode, isNewProposal) {
-      if (isNewProposal) {
-        ++state.proposalStats.totalProposals
-        ++state.proposalStats.numActiveProposals
-      }
+    setProposalMode(state, proposalMode) {
       state.proposalMode = proposalMode
     },
 
@@ -191,8 +185,8 @@ export default new Vuex.Store({
       commit('setSelectedAddress', newAccount.address)
     },
 
-    setProposalMode({ commit }, proposalMode, isNewProposal) {
-      commit('setProposalMode', proposalMode, isNewProposal)
+    setProposalMode({ commit }, proposalMode) {
+      commit('setProposalMode', proposalMode)
     },
 
     setProposals({ commit }, proposals) {
@@ -214,6 +208,7 @@ export default new Vuex.Store({
     setCurrProposalVotingStats({ commit }, proposalVotingStats) {
       commit('setCurrProposalVotingStats', proposalVotingStats)
     },
+
   },
   modules: {},
 })

@@ -19,11 +19,12 @@
         </v-card-title>
 
         <vue-apex-charts
-          v-if="currProposalVotingStats.optTotalVotesData"
+          v-if="totalVotesData"
+          ref="totalVotesChart"
           type="bar"
           width="500"
           :options="options"
-          :series="currProposalVotingStats.optTotalVotesData"
+          :series="totalVotesData"
           :class="$vuetify.theme.dark ? 'voting-results-dark' : 'voting-results-light'"
         ></vue-apex-charts>
       </div>
@@ -37,11 +38,12 @@
           <span class="me-3">Voting Power</span>
         </v-card-title>
         <vue-apex-charts
-          v-if="currProposalVotingStats.optVotingPowerData"
+          v-if="votingPowerData"
+          ref="votingPowerChart"
           type="bar"
           width="500"
           :options="options"
-          :series="currProposalVotingStats.optVotingPowerData"
+          :series="votingPowerData"
           :class="$vuetify.theme.dark ? 'voting-results-dark' : 'voting-results-light'"
         ></vue-apex-charts>
       </div>
@@ -64,6 +66,21 @@ export default {
     proposalOptions: { type: Array, default: null },
   },
 
+  data() {
+    return {
+      options: {
+        chart: {
+          id: 'Voting Results Chart',
+        },
+        xaxis: {
+          categories: [],
+        },
+      },
+      totalVotesData: [],
+      votingPowerData: [],
+    }
+  },
+
   computed: {
     ...mapState([
       'currProposalVotingStats',
@@ -79,20 +96,8 @@ export default {
     this.onCreated()
   },
 
-  setup() {
-    return {
-      chartDataReady: false,
-      options: {
-        chart: {
-          id: 'Voting Results Chart',
-        },
-        xaxis: {
-          categories: [],
-        },
-      },
-      totalVotesData: null,
-      votingPowerData: null,
-    }
+  mounted() {
+    this.onMounted()
   },
 
   methods: {
@@ -104,6 +109,21 @@ export default {
           this.options.xaxis.categories[index] = val.optionName
         })
       }
+    },
+
+    onMounted() {
+      console.log('VotingResultsWidget onMounted()')
+      if (this.currProposalVotingStats) {
+        this.totalVotesData = this.currProposalVotingStats.optTotalVotesData
+        this.votingPowerData = this.currProposalVotingStats.optVotingPowerData
+      }
+
+      // this.$refs.votingPowerChart.updateSeries([{
+      //   data: this.currProposalVotingStats.optVotingPowerData[0].data,
+      // }], false, true)
+      // this.$refs.totalVotesChart.updateSeries([{
+      //   data: this.currProposalVotingStats.optTotalVotesData[0].data,
+      // }], false, true)
     },
 
     // /**

@@ -101,7 +101,7 @@ export default {
      *
      */
     async createProposalHandler() {
-      this.$store.commit('setProposalMode', 'create', false)
+      this.$store.commit('setProposalMode', 'create')
     },
   },
 }

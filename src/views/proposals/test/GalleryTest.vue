@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="proposals != null"
+    v-if="proposals"
   >
     <gallery-test-widget
       :proposals="proposals"
@@ -27,6 +27,12 @@ export default {
     GalleryTestWidget,
   },
 
+  data() {
+    return {
+      proposals: [],
+    }
+  },
+
   computed: {
     ...mapState([
       'proposalMode',
@@ -38,7 +44,7 @@ export default {
 
   setup() {
     return {
-      proposals: null,
+      numStats: 4,
       icons: {
         mdiTrendingUp,
         mdiAlert,
@@ -51,23 +57,24 @@ export default {
   created() {
     this.onCreated()
   },
+
   methods: {
     /**
      *
      */
     async viewProposalHandler(proposal) {
       this.$store.commit('setCurrProposal', proposal)
-      this.$store.commit('setProposalMode', 'view', false)
+      this.$store.commit('setProposalMode', 'view')
     },
 
     async onCreated() {
       await getAllProposals().then(res => {
-        this.proposals = []
         res.forEach(value => {
           const proposalObj = value.data
           proposalObj.proposalID = value.id
           this.proposals.push(proposalObj)
-          console.log('GALLERYTEST.JS: onCreated getAllProposals()')
+
+          // console.log('GALLERYTEST.JS: onCreated getAllProposals()')
         })
       })
     },

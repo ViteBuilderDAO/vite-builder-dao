@@ -92,9 +92,9 @@ contract DefaultProposal
   /** @dev Function to start a new proposal.
     *
     */
-  onMessage startProposal(string calldata id, address creator, string calldata title, uint durationInDays, uint numOptions)
+  onMessage startProposal(string calldata id, address creator, string calldata title, uint durationInHours, uint numOptions)
   {
-    uint proposalDeadline = now.add(durationInDays.mul(1 days));
+    uint proposalDeadline = now.add(durationInHours.mul(1 hours));
 
     g_ProposalsMap[id] = (ProposalObj(id, creator, title, now, proposalDeadline, numOptions, new string[](0), 0, 0, State.Active));
 

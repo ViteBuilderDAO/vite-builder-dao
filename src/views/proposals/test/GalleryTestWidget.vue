@@ -68,7 +68,7 @@ export default {
   methods: {
     async viewProposalHandler(proposal) {
       this.$store.commit('setCurrProposal', proposal)
-      this.$store.commit('setProposalMode', 'view', false)
+      this.$store.commit('setProposalMode', 'view')
     },
   },
 

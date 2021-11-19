@@ -5,7 +5,6 @@
     ></v-divider>
     <v-container
       fluid
-      :class="hideBallot ? 'hidden-ballot-container' : 'visible-ballot-container'"
     >
       <v-row
         dense
@@ -14,7 +13,7 @@
           v-for="(option, index) in filteredOptions"
           :key="index"
           v-bind="option"
-          :cols="numOptions + 1"
+          :cols="(numOptions === 3) ? (numOptions + 1) : numOptions"
           class="ballot-flex"
         >
           <v-card
@@ -43,35 +42,24 @@
                 <v-col
                   cols="12"
                 >
-                  <v-text-field
-                    v-model="votingPowers[index]"
-                    outlined
-                    type="text"
-                    :disabled="isVotingPowerDisabled"
-                    :label="`Option #${index+1} Power:`"
-                    class="ballot-text-field"
-                  >
-                    <template
-                      v-slot:append-outer
-                      @click:append-outer="onOptionClicked(index)"
-                    >
-                      <v-switch
-                        v-if="isSwitchEnabled"
-                        id="optsSelected"
-                        v-model="votingOptionsSelected[index]"
-                        inset
-                        class="switch-rot-90"
-                      ></v-switch>
-                      <v-radio
-                        v-else
-                        id="optsSelected"
-                        v-model="votingOptionsSelected[index]"
-                        hide-details
-                        class="switch-rot-90"
-                      >
-                      </v-radio>
-                    </template>
-                  </v-text-field>
+                  <div class="d-flex">
+                    <v-text-field
+                      v-model="votingPowers[index]"
+                      outlined
+                      type="number"
+                      :disabled="isSwitchEnabled"
+                      :label="`Option #${index+1} Power:`"
+                      :class="isSwitchEnabled ? 'ballot-text-field' : ''"
+                      @input="validateVoteValue()"
+                    ></v-text-field>
+                    <v-switch
+                      v-if="isSwitchEnabled"
+                      v-model="votingOptionsSelected[index]"
+                      inset
+                      class="switch-rot-90"
+                      @click="onOptionClicked(index)"
+                    ></v-switch>
+                  </div>
                 </v-col>
               </v-row>
             </v-container>
@@ -82,20 +70,18 @@
             <v-checkbox
               v-if="isSwitchEnabled"
               id="optsSelected"
-              v-model="votingOptionsSelected[index]"
               hide-details
               class="shrink mr-2 mt-9"
             ></v-checkbox>
             <v-radio
               v-else
               id="optsSelected"
-              v-model="votingOptionsSelected[index]"
               hide-details
             >
             </v-radio>
             <v-text-field
               v-model="votingPowers[index]"
-              :disabled="isVotingPowerDisabled"
+              :disabled="isSwitchEnabled"
               :label="`Option #${index+1} Power:`"
               class="mr-2 mt-9"
             ></v-text-field>
@@ -105,7 +91,6 @@
     </v-container>
     <v-container
       fluid
-      :class="hideBallot ? 'hidden-ballot-container' : 'visible-ballot-container'"
     >
       <v-row
         dense
@@ -135,30 +120,24 @@
                 <v-col
                   cols="12"
                 >
-                  <v-text-field
-                    v-model="votingPowers[numOptions-1]"
-                    outlined
-                    type="text"
-                    :disabled="isVotingPowerDisabled"
-                    :label="`Reject All Options Voting Power:`"
-                    class="ballot-text-field"
-                  >
-                    <template v-slot:append-outer>
-                      <v-switch
-                        v-if="isSwitchEnabled"
-                        v-model="votingOptionsSelected[numOptions-1]"
-                        inset
-                        class="switch-rot-90"
-                      ></v-switch>
-                      <v-radio
-                        v-else
-                        v-model="votingOptionsSelected[numOptions-1]"
-                        hide-details
-                        class="switch-rot-90"
-                      >
-                      </v-radio>
-                    </template>
-                  </v-text-field>
+                  <div class="d-flex">
+                    <v-text-field
+                      v-model="votingPowers[numOptions-1]"
+                      outlined
+                      type="number"
+                      :disabled="isSwitchEnabled"
+                      :label="`Reject All Options Voting Power:`"
+                      :class="isSwitchEnabled ? 'ballot-text-field' : ''"
+                      @input="validateVoteValue()"
+                    ></v-text-field>
+                    <v-switch
+                      v-if="isSwitchEnabled"
+                      v-model="votingOptionsSelected[numOptions-1]"
+                      inset
+                      class="switch-rot-90"
+                      @change="onOptionClicked(numOptions-1)"
+                    ></v-switch>
+                  </div>
                 </v-col>
               </v-row>
             </v-container>
@@ -168,7 +147,6 @@
     </v-container>
     <v-container
       fluid
-      :class="hideBallot ? 'hidden-ballot-container' : 'visible-ballot-container'"
     >
       <v-row
         dense
@@ -206,7 +184,7 @@
             help="Note: Vite wallet must be connected to cast vote."
             :label="isVoting ? 'Awaiting Vite App Approval...' : 'Submit Vote'"
             class="cast-vote-submit-btn"
-            :disabled="!isValidForSubmit()"
+            :disabled="!isValidForSubmit() || disableSubmit"
           />
         </FormulateForm>
       </v-col>
@@ -238,19 +216,24 @@ export default {
   setup() {
     return {
       hideBallot: false,
-      isVotingPowerDisabled: false,
-      isSwitchEnabled: true,
+      disableSubmit: false,
+      isSwitchEnabled: false,
       numOptions: 0,
       votingBalance: 0,
       currSpendAmount: 0,
-      votingPowers: [],
-      quadraticPowers: [],
-      votingOptionsSelected: [],
       currNumOptsSelected: 0,
       filteredOptions: [],
       icons: {
         mdiAlert,
       },
+    }
+  },
+
+  data() {
+    return {
+      votingOptionsSelected: [],
+      votingPowers: [],
+      quadraticPowers: [],
     }
   },
 
@@ -286,16 +269,20 @@ export default {
     async onCreated() {
       this.numOptions = this.proposalOptions.length
       this.initVotingPower()
+
       this.proposalOptions.forEach((val, index) => {
         if (index < this.numOptions - 1) {
           this.filteredOptions.push(val)
         }
       })
-      this.votingOptionsSelected = new Array(this.numOptions).fill(false)
+
       this.votingPowers = new Array(this.numOptions).fill(0)
+      this.votingOptionsSelected = new Array(this.numOptions).fill(false)
+
       if (this.votingType === 'Quadratic') {
         this.quadraticPowers = new Array(this.numOptions).fill(0)
       }
+
       this.initVotingBallots()
       if (this.balance > 0) {
         this.dataStreamMult = (100.0 / this.balance)
@@ -304,6 +291,7 @@ export default {
       vbInst.on('connect', () => {
         this.initVotingPower()
       })
+
       vbInst.on('disconnect', () => {
         this.votingBalance = 0
       })
@@ -331,38 +319,38 @@ export default {
     async initVotingBallots() {
       switch (this.votingType) {
         case 'Approval':
-          this.isVotingPowerDisabled = true
           this.isSwitchEnabled = true
           break
         case 'Quadratic':
-          this.isVotingPowerDisabled = false
-          this.isSwitchEnabled = true
-          break
-        case 'Weighted':
-          this.isVotingPowerDisabled = false
-          this.isSwitchEnabled = true
-          break
-        case 'SingleChoice':
-          this.isVotingPowerDisabled = true
           this.isSwitchEnabled = false
           break
-        default:
-          this.isVotingPowerDisabled = false
+        case 'Weighted':
+          this.isSwitchEnabled = false
+          break
+        case 'Single-Choice':
           this.isSwitchEnabled = true
+          break
+        default:
+          this.isSwitchEnabled = false
           break
       }
     },
 
     async fireVotingCallback() {
-      // console.log('fireVotingCallback(), votingOptionsSelected:', this.votingOptionsSelected)
       // console.log('fireVotingCallback(), votingPowers:', this.votingPowers)
+      this.hideBallot = true
+
       if (this.votingType === 'Quadratic') {
+        this.votingPowers.forEach((val, index) => {
+          if (val > 0) {
+            this.quadraticPowers[index] = Math.round(Math.sqrt(val))
+          }
+        })
+
         this.votingPowers = this.quadraticPowers
       }
 
-      this.hideBallot = true
-
-      this.$emit('onSubmitVote', { optionsVoted: this.votingOptionsSelected, votingPowers: this.votingPowers })
+      this.$emit('onSubmitVote', { votingPowers: this.votingPowers })
     },
 
     async calcCurrPowersTotal() {
@@ -374,40 +362,46 @@ export default {
       return sum
     },
 
-    async isAnyOptionSelected() {
-      let optSelected = false
-      this.votingOptionsSelected.forEach(optVal => {
-        if (optVal) {
-          optSelected = true
-        }
-      })
-
-      return optSelected
-    },
-
     async onOptionClicked(index) {
-      console.log('onOptionsClicked() index:', index)
+      // console.log('onOptionsClicked() this.currNumOptsSelected:', this.currNumOptsSelected)
+      // console.log('onOptionsClicked() this.votingPowers:', this.votingPowers)
+      // console.log('onOptionsClicked() this.votingOptionsSelected:', this.votingOptionsSelected)
+
       if (this.votingOptionsSelected[index]) {
         ++this.currNumOptsSelected
-        switch (this.votingType) {
-          case 'Approval':
-            this.votingPowers[index] = (this.votingBalance / this.currNumOptsSelected)
-            break
-          case 'Quadratic':
-            this.quadraticPowers[index] = Math.sqrt(this.votingPowers[index])
-            break
-          case 'SingleChoice':
-            this.votingPowers[index] = this.votingBalance
-            break
-          default:
-            break
+        if (this.votingType === 'Single-Choice') {
+          this.votingPowers.forEach((val, powerIndex) => {
+            if (index !== powerIndex) {
+              this.votingPowers[powerIndex] = 0
+              if (this.votingOptionsSelected[powerIndex]) {
+                this.votingOptionsSelected[powerIndex] = false
+                --this.currNumOptsSelected
+              }
+            } else {
+              this.votingPowers[index] = this.votingBalance
+            }
+          })
         }
       } else {
         --this.currNumOptsSelected
-        if (this.votingType === 'SingleChoice') {
+        if (this.votingType === 'Single-Choice') {
           this.votingPowers[index] = 0
         }
       }
+
+      if (this.votingType === 'Approval') {
+        this.votingPowers.forEach((val, powerIndex) => {
+          if (this.votingOptionsSelected[powerIndex]) {
+            this.votingPowers[powerIndex] = (this.votingBalance / this.currNumOptsSelected)
+          } else {
+            this.votingPowers[powerIndex] = 0
+          }
+        })
+      }
+
+      // console.log('onOptionsClicked() this.currNumOptsSelected:', this.currNumOptsSelected)
+      // console.log('onOptionsClicked() this.votingPowers:', this.votingPowers)
+      // console.log('onOptionsClicked() this.votingOptionsSelected:', this.votingOptionsSelected)
     },
 
     calcBufferStreamVal(index) {
@@ -416,6 +410,23 @@ export default {
       }
 
       return 0
+    },
+
+    validateVoteValue() {
+      let sum = 0
+      this.votingPowers.forEach((val, index) => {
+        const parsedVal = parseInt(val, 10)
+        if (Number.isNaN(parsedVal)) {
+          this.votingPowers[index] = 0
+        } else {
+          sum += parsedVal
+        }
+      })
+      if (sum > this.votingBalance) {
+        this.disableSubmit = true
+      } else {
+        this.disableSubmit = false
+      }
     },
 
   },
@@ -471,7 +482,7 @@ export default {
 }
 
 .switch-rot-90 {
-  transform: rotate(-90deg) + translate(37.5px, 0px);
+  transform: rotate(-90deg) + translate(30px, 30px);
 }
 
 .visible-ballot-container {

@@ -8,7 +8,6 @@
       v-for="item in createProposalSchema"
       :key="item.name"
       v-bind="item"
-      :class="isLoading ? 'hidden-form-container' : 'visible-form-container'"
     >
       <FormulateInput
         v-for="childItem in item.children"
@@ -89,8 +88,8 @@ export default {
         },
         {
           label: 'Voting Period',
-          name: 'durationInDays',
-          help: 'Please use duration in days (e.g. 1)',
+          name: 'durationInHours',
+          help: 'Please use duration in hours (e.g. 24 = 1 day)',
           'error-behavior': 'live',
           validation: 'required',
           'validation-name': 'Voting period',
@@ -143,6 +142,7 @@ export default {
       ],
     }
   },
+
   computed: {
     ...mapState([
       'walletConnected',
@@ -155,9 +155,11 @@ export default {
       'getConnectedAccounts',
     ]),
   },
+
   mounted() {
     this.onMounted()
   },
+
   methods: {
 
     hasMissingParams() {
@@ -166,7 +168,7 @@ export default {
         || !this.createProposalData.votingTokenData
         || !this.createProposalData.title
         || !this.createProposalData.description
-        || !this.createProposalData.durationInDays
+        || !this.createProposalData.durationInHours
         || !this.createProposalData.proposalIcon
       ) {
         return true
@@ -201,7 +203,7 @@ export default {
       // console.log('VBDAO CREATE PROPOSAL PARAM - attachedFiles: ', this.createProposalData.attachedFiles)
       // console.log('VBDAO CREATE PROPOSAL PARAM - votingType: ', this.createProposalData.votingType)
       // console.log('VBDAO CREATE PROPOSAL PARAM - publishDate: ', new Date())
-      // console.log('VBDAO CREATE PROPOSAL PARAM - votingPeriod: ', this.createProposalData.durationInDays)
+      // console.log('VBDAO CREATE PROPOSAL PARAM - votingPeriod: ', this.createProposalData.durationInHours)
       // console.log('VBDAO CREATE PROPOSAL PARAM - votingTokens: ', this.createProposalData.votingTokenData)
 
       const optionsArr = this.createProposalData.optionsData
@@ -209,7 +211,8 @@ export default {
 
       const publishDate = new Date()
       const endDate = new Date(publishDate)
-      endDate.setDate(endDate.getDate() + parseInt(this.createProposalData.durationInDays, 10))
+      endDate.setHours(endDate.getHours() + parseInt(this.createProposalData.durationInHours, 10))
+
       const proposalParams = {
         creator: this.connectedWalletAddr,
         title: this.createProposalData.title,
@@ -221,7 +224,7 @@ export default {
         votingType: this.createProposalData.votingType,
         publishDate: publishDate,
         endDate: endDate,
-        votingPeriod: this.createProposalData.durationInDays,
+        votingPeriod: this.createProposalData.durationInHours,
         votingTokens: this.createProposalData.votingTokenData,
         status: 'Active',
       }
@@ -252,9 +255,10 @@ export default {
       startProposal([proposalParams.proposalID, proposalParams.creator, proposalParams.title, proposalParams.votingPeriod, proposalParams.numOptions], this.onProposalStartEvent).then(block => {
         if (block) {
           this.$store.commit('initializeStore')
-          this.$store.commit('setProposalMode', 'gallery', true)
-          this.isLoading = false
-          console.log('VBDAO: CALL TO CONTRACT SUCCESS')
+          window.location.reload()
+
+          // this.$store.commit('setProposalMode', 'gallery')
+          // console.log('VBDAO: CALL TO CONTRACT SUCCESS')
         }
       })
     },
@@ -374,6 +378,7 @@ export default {
 }
 </style>
 <!--
+:class="isLoading ? 'hidden-form-container' : 'visible-form-container'"
 {
   component: 'div',
   class: 'double-row',
