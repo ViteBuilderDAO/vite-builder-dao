@@ -1,177 +1,179 @@
 <template>
-  <v-card>
-    <v-divider
-      class="divider-margin-class"
-    ></v-divider>
-    <v-container
-      fluid
-    >
-      <v-row
-        dense
-      >
-        <v-col
-          v-for="(option, index) in filteredOptions"
-          :key="index"
-          v-bind="option"
-          :cols="(numOptions === 3) ? (numOptions + 1) : numOptions"
-          class="ballot-flex"
+  <v-card
+    v-if="!currAddrHasVoted"
+  >
+    <v-expand-transition>
+      <div v-show="!isVoting">
+        <v-divider
+          class="divider-margin-class"
+        ></v-divider>
+        <v-container
+          fluid
         >
-          <v-card
-            elevation="2"
-            outlined
-            shaped
-            min-height="200px"
+          <v-row
+            dense
           >
-            <v-card-title>
-              {{ option.optionName }}
-            </v-card-title>
-            <v-progress-linear
-              color="blue lighten-2"
-              :buffer-value="calcBufferStreamVal(index)"
-              stream
-            ></v-progress-linear>
-            <v-img
-              v-if="option.file"
-              :src="option.file"
-              height="200px"
-            ></v-img>
-          </v-card>
-          <v-form>
-            <v-container>
-              <v-row>
-                <v-col
-                  cols="12"
-                >
-                  <div class="d-flex">
-                    <v-text-field
-                      v-model="votingPowers[index]"
-                      outlined
-                      type="number"
-                      :disabled="isSwitchEnabled"
-                      :label="`Option #${index+1} Power:`"
-                      :class="isSwitchEnabled ? 'ballot-text-field' : ''"
-                      @input="validateVoteValue()"
-                    ></v-text-field>
-                    <v-switch
-                      v-if="isSwitchEnabled"
-                      v-model="votingOptionsSelected[index]"
-                      inset
-                      class="switch-rot-90"
-                      @click="onOptionClicked(index)"
-                    ></v-switch>
-                  </div>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-form>
-          <!--<v-row
-            align="center"
-          >
-            <v-checkbox
-              v-if="isSwitchEnabled"
-              id="optsSelected"
-              hide-details
-              class="shrink mr-2 mt-9"
-            ></v-checkbox>
-            <v-radio
-              v-else
-              id="optsSelected"
-              hide-details
+            <v-col
+              v-for="(option, index) in filteredOptions"
+              :key="index"
+              v-bind="option"
+              :cols="(numOptions === 3) ? (numOptions + 1) : numOptions"
+              class="ballot-flex"
             >
-            </v-radio>
-            <v-text-field
-              v-model="votingPowers[index]"
-              :disabled="isSwitchEnabled"
-              :label="`Option #${index+1} Power:`"
-              class="mr-2 mt-9"
-            ></v-text-field>
-          </v-row>-->
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-container
-      fluid
-    >
-      <v-row
-        dense
-      >
-        <v-col
-          cols="4"
-          class="ballot-flex"
-        >
-          <v-card
-            elevation="2"
-            outlined
-            shaped
-            min-height="200px"
-          >
-            <v-card-title>
-              Reject All Options
-            </v-card-title>
-            <v-progress-linear
-              color="red lighten-2"
-              :buffer-value="calcBufferStreamVal(numOptions-1)"
-              stream
-            ></v-progress-linear>
-          </v-card>
-          <v-form>
-            <v-container>
-              <v-row>
-                <v-col
-                  cols="12"
+              <v-card
+                elevation="2"
+                outlined
+                shaped
+                min-height="200px"
+              >
+                <v-card-title>
+                  {{ option.optionName }}
+                </v-card-title>
+                <v-progress-linear
+                  color="blue lighten-2"
+                  :buffer-value="streamBarVals[index]"
+                  stream
+                ></v-progress-linear>
+              </v-card>
+              <v-form>
+                <v-container>
+                  <v-row>
+                    <v-col
+                      cols="12"
+                    >
+                      <div class="d-flex">
+                        <v-text-field
+                          v-model="votingPowers[index]"
+                          outlined
+                          type="number"
+                          :disabled="isSwitchEnabled"
+                          :label="`Option #${index+1} Power:`"
+                          :class="isSwitchEnabled ? 'ballot-text-field' : ''"
+                          @input="validateVoteValue()"
+                        ></v-text-field>
+                        <v-switch
+                          v-if="isSwitchEnabled"
+                          v-model="votingOptionsSelected[index]"
+                          inset
+                          class="switch-rot-90"
+                          @click="onOptionClicked(index)"
+                        ></v-switch>
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-form>
+              <!--<v-row
+                align="center"
+              >
+                <v-checkbox
+                  v-if="isSwitchEnabled"
+                  id="optsSelected"
+                  hide-details
+                  class="shrink mr-2 mt-9"
+                ></v-checkbox>
+                <v-radio
+                  v-else
+                  id="optsSelected"
+                  hide-details
                 >
-                  <div class="d-flex">
-                    <v-text-field
-                      v-model="votingPowers[numOptions-1]"
-                      outlined
-                      type="number"
-                      :disabled="isSwitchEnabled"
-                      :label="`Reject All Options Voting Power:`"
-                      :class="isSwitchEnabled ? 'ballot-text-field' : ''"
-                      @input="validateVoteValue()"
-                    ></v-text-field>
-                    <v-switch
-                      v-if="isSwitchEnabled"
-                      v-model="votingOptionsSelected[numOptions-1]"
-                      inset
-                      class="switch-rot-90"
-                      @change="onOptionClicked(numOptions-1)"
-                    ></v-switch>
-                  </div>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-form>
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-container
-      fluid
-    >
-      <v-row
-        dense
-      >
-        <v-col
-          cols="4"
+                </v-radio>
+                <v-text-field
+                  v-model="votingPowers[index]"
+                  :disabled="isSwitchEnabled"
+                  :label="`Option #${index+1} Power:`"
+                  class="mr-2 mt-9"
+                ></v-text-field>
+              </v-row>-->
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container
+          fluid
         >
-          <v-card
-            elevation="2"
-            outlined
-            min-height="150px"
+          <v-row
+            dense
           >
-            <v-card-title>
-              Voting Balance
-            </v-card-title>
-            <v-card-subtitle>
-              Your Voting Power: {{ votingBalance }}
-            </v-card-subtitle>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-divider
-      class="divider-margin-class"
-    ></v-divider>
+            <v-col
+              cols="4"
+              class="ballot-flex"
+            >
+              <v-card
+                elevation="2"
+                outlined
+                shaped
+                min-height="200px"
+              >
+                <v-card-title>
+                  Reject All Options
+                </v-card-title>
+                <v-progress-linear
+                  color="red lighten-2"
+                  :buffer-value="streamBarVals[numOptions-1]"
+                  stream
+                ></v-progress-linear>
+              </v-card>
+              <v-form>
+                <v-container>
+                  <v-row>
+                    <v-col
+                      cols="12"
+                    >
+                      <div class="d-flex">
+                        <v-text-field
+                          v-model="votingPowers[numOptions-1]"
+                          outlined
+                          type="number"
+                          :disabled="isSwitchEnabled"
+                          :label="`Reject All Options Voting Power:`"
+                          :class="isSwitchEnabled ? 'ballot-text-field' : ''"
+                          @input="validateVoteValue()"
+                        ></v-text-field>
+                        <v-switch
+                          v-if="isSwitchEnabled"
+                          v-model="votingOptionsSelected[numOptions-1]"
+                          inset
+                          class="switch-rot-90"
+                          @change="onOptionClicked(numOptions-1)"
+                        ></v-switch>
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-form>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container
+          fluid
+        >
+          <v-row
+            dense
+          >
+            <v-col
+              cols="4"
+            >
+              <v-card
+                elevation="2"
+                outlined
+                min-height="150px"
+              >
+                <v-card-title>
+                  Voting Balance
+                </v-card-title>
+                <v-card-subtitle>
+                  Your Voting Power: {{ votingBalance }}
+                </v-card-subtitle>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+
+        <v-divider
+          class="divider-margin-class"
+        ></v-divider>
+      </div>
+    </v-expand-transition>
     <v-row>
       <v-col
         cols="12"
@@ -198,8 +200,8 @@ import {
 } from '@mdi/js'
 import { mapState, mapGetters } from 'vuex'
 import BigNumber from 'bignumber.js'
-import { getWalletBalanceInfo } from '@/utils/contract/contractHelpers'
 import { getVbInstance } from '@/utils/wallet/walletClient'
+import { checkIfVotedPreviously } from '@/utils/proposal/proposalController'
 
 const vbInst = getVbInstance()
 
@@ -234,24 +236,32 @@ export default {
       votingOptionsSelected: [],
       votingPowers: [],
       quadraticPowers: [],
+      streamBarVals: [],
+      currAddrHasVoted: 0,
     }
   },
 
   computed: {
     ...mapState([
       'walletConnected',
+      'connectedBalanceInfo',
       'connectedWalletAddr',
-      'connectedAccounts',
+      'currProposalID',
     ]),
     ...mapGetters([
       'getIsWalletConnected',
+      'getConnectedBalanceInfo',
       'getConnectedWalletAddr',
-      'getConnectedAccounts',
+      'getCurrProposalID',
     ]),
   },
 
   created() {
     this.onCreated()
+  },
+
+  mounted() {
+    this.onMounted()
   },
 
   methods: {
@@ -266,7 +276,7 @@ export default {
       return true
     },
 
-    async onCreated() {
+    onCreated() {
       this.numOptions = this.proposalOptions.length
       this.initVotingPower()
 
@@ -278,18 +288,17 @@ export default {
 
       this.votingPowers = new Array(this.numOptions).fill(0)
       this.votingOptionsSelected = new Array(this.numOptions).fill(false)
+      this.streamBarVals = new Array(this.numOptions).fill(0)
 
       if (this.votingType === 'Quadratic') {
         this.quadraticPowers = new Array(this.numOptions).fill(0)
       }
 
       this.initVotingBallots()
-      if (this.balance > 0) {
-        this.dataStreamMult = (100.0 / this.balance)
-      }
 
       vbInst.on('connect', () => {
         this.initVotingPower()
+        this.onMounted()
       })
 
       vbInst.on('disconnect', () => {
@@ -297,22 +306,34 @@ export default {
       })
     },
 
+    async onMounted() {
+      if (this.walletConnected && this.currProposalID) {
+        await checkIfVotedPreviously(this.connectedWalletAddr, this.currProposalID).then(res => {
+          if (res) {
+            this.currAddrHasVoted = parseInt(res[0], 10)
+          }
+        })
+      }
+    },
+
     /**
      *
      */
     async initVotingPower() {
       if (this.walletConnected) {
-        await getWalletBalanceInfo(this.connectedAccounts[0]).then(({ balance }) => {
-          const votingTokenArr = []
-          Object.values(this.votingTokens).forEach(token => {
-            votingTokenArr.push(token.votingTokens)
-          })
-          Object.values(balance.balanceInfoMap).forEach(val => {
-            if (votingTokenArr.includes(val.tokenInfo.tokenId)) {
-              this.votingBalance += parseInt(BigNumber(val.balance).dividedBy(`1e${val.tokenInfo.decimals}`).toFixed(), 10)
-            }
-          })
+        const votingTokenArr = []
+
+        Object.values(this.votingTokens).forEach(token => {
+          votingTokenArr.push(token.tokenTTI)
         })
+
+        Object.values(this.connectedBalanceInfo).forEach(val => {
+          if (votingTokenArr.includes(val.tokenInfo.tokenId)) {
+            this.votingBalance += parseInt(BigNumber(val.balance).dividedBy(`1e${val.tokenInfo.decimals}`).toFixed(), 10)
+          }
+        })
+
+        this.dataStreamMult = (100.0 / this.votingBalance)
       }
     },
 
@@ -339,6 +360,7 @@ export default {
     async fireVotingCallback() {
       // console.log('fireVotingCallback(), votingPowers:', this.votingPowers)
       this.hideBallot = true
+      this.currAddrHasVoted = true
 
       if (this.votingType === 'Quadratic') {
         this.votingPowers.forEach((val, index) => {
@@ -405,7 +427,7 @@ export default {
     },
 
     calcBufferStreamVal(index) {
-      if (this.balance > 0) {
+      if (this.votingBalance > 0) {
         return this.dataStreamMult * this.votingPowers[index]
       }
 
@@ -421,6 +443,8 @@ export default {
         } else {
           sum += parsedVal
         }
+
+        this.streamBarVals[index] = this.calcBufferStreamVal(index)
       })
       if (sum > this.votingBalance) {
         this.disableSubmit = true

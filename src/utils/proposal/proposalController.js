@@ -1,13 +1,63 @@
 import { query, orderBy } from 'firebase/firestore'
 import PROPOSAL_CONTRACT from './proposalContractInfo'
-import { callContract, subscribeToEvent, callContractOffChain } from '../contract/contractHelpers'
-import { proposalsFirestore, getAllData } from '@/firebase/firebase'
+import { callContract, callContractOffChain } from '../contract/contractHelpers'
+import {
+  proposalsFirestore,
+  votesFirestore,
+  resultsFirestore,
+  getAllData,
+  getDataById,
+  updateDocData,
+} from '@/firebase/firebase'
+
+// import { subscribeToEvent } from '../contract/contractHelpers'
 
 /**
  *
  */
-export async function startProposal(proposalParams, startedCallback) {
-  await subscribeToEvent(PROPOSAL_CONTRACT, 'ProposalStartedEvent', startedCallback)
+async function _calculateResults(proposalObj) {
+  console.log('_calculateResults')
+  getDataById(votesFirestore, proposalObj.voteStatsID).then(dataRes => {
+    let status = ''
+    if (dataRes) {
+      const proposalResults = {
+        winningOptionName: '',
+        winningOptionTotalVotes: 0,
+        winningOptionVotingPower: 0,
+        finalState: '',
+      }
+      const votesData = dataRes.data()
+      if (votesData.totalVotes > 0) {
+        votesData.optionStats.forEach((val, index) => {
+          if (proposalResults.winningOptionTotalVotes < val.optionTotalVotes) {
+            proposalResults.winningOptionName = proposalObj.options[index].optionName
+            if (index === (proposalObj.numOptions - 1)) {
+              proposalResults.finalState = 'Rejected'
+            } else {
+              proposalResults.finalState = 'Approved'
+            }
+            status = proposalResults.finalState
+            proposalResults.winningOptionVotingPower = val.optionTotalVotingPower
+            proposalResults.winningOptionTotalVotes = val.optionTotalVotes
+          }
+        })
+
+        updateDocData(resultsFirestore, proposalObj.proposalID, proposalResults)
+        console.log('_calculateResults Results Doc Updated - proposalResults: ', proposalResults)
+      } else {
+        status = 'Cancelled'
+      }
+    }
+
+    return status
+  })
+}
+
+/**
+ *
+ */
+export async function startProposal(proposalParams) {
+  // await subscribeToEvent(PROPOSAL_CONTRACT, 'ProposalStartedEvent', startedCallback)
 
   return callContract(PROPOSAL_CONTRACT, 'startProposal', proposalParams, 0)
 }
@@ -15,8 +65,8 @@ export async function startProposal(proposalParams, startedCallback) {
 /**
  *
  */
-export async function voteOnProposal(voteParams, votedCallback) {
-  await subscribeToEvent(PROPOSAL_CONTRACT, 'ProposalVotedOnEvent', votedCallback)
+export async function voteOnProposal(voteParams) {
+  // await subscribeToEvent(PROPOSAL_CONTRACT, 'ProposalVotedOnEvent', votedCallback)
 
   return callContract(PROPOSAL_CONTRACT, 'voteOnProposal', voteParams, 0)
 }
@@ -24,22 +74,44 @@ export async function voteOnProposal(voteParams, votedCallback) {
 /**
  *
  */
-export async function stopProposal(proposalID, endedCallback, resultsCallback) {
-  await subscribeToEvent(PROPOSAL_CONTRACT, 'ProposalEndedEvent', endedCallback)
-  await subscribeToEvent(PROPOSAL_CONTRACT, 'ProposalResultsCalculated', resultsCallback)
+export async function parseProposal(proposalDoc) {
+  let proposalObj = []
+  if (proposalDoc) {
+    proposalObj = proposalDoc.data()
+    proposalObj.proposalID = proposalDoc.id
 
-  return callContract(PROPOSAL_CONTRACT, 'stopProposal', [proposalID], 0)
+    if (new Date() > new Date(proposalObj.endDate)) {
+      proposalObj.status = await _calculateResults(proposalObj)
+    }
+
+    // else {
+    //
+    //   proposals.push({ data: proposalDoc.data(), id: proposalDoc.id })
+    // }
+  }
+
+  return proposalObj
 }
 
-/**
- *
- */
-export async function stopProposalEarly(proposalID, endedCallback, resultsCallback) {
-  await subscribeToEvent(PROPOSAL_CONTRACT, 'ProposalEndedEvent', endedCallback)
-  await subscribeToEvent(PROPOSAL_CONTRACT, 'ProposalResultsCalculated', resultsCallback)
-
-  return callContract(PROPOSAL_CONTRACT, 'stopProposalEarly', [proposalID], 0)
-}
+// /**
+//  *
+//  */
+// export async function stopProposal(proposalID) {
+//   // await subscribeToEvent(PROPOSAL_CONTRACT, 'ProposalEndedEvent', endedCallback)
+//   // await subscribeToEvent(PROPOSAL_CONTRACT, 'ProposalResultsCalculated', resultsCallback)
+//
+//   return callContract(PROPOSAL_CONTRACT, 'stopProposal', [proposalID], 0)
+// }
+//
+// /**
+//  *
+//  */
+// export async function stopProposalEarly(proposalID) {
+//   // await subscribeToEvent(PROPOSAL_CONTRACT, 'ProposalEndedEvent', endedCallback)
+//   // await subscribeToEvent(PROPOSAL_CONTRACT, 'ProposalResultsCalculated', resultsCallback)
+//
+//   return callContract(PROPOSAL_CONTRACT, 'stopProposalEarly', [proposalID], 0)
+// }
 
 /**
  *
@@ -86,45 +158,8 @@ export async function getProposalVotingStats(proposalID) {
 /**
  *
  */
-export async function getProposalStatus(docId) {
-  let status
-  await getProposalByID(docId).then(proposal => {
-    if (proposal) {
-      // console.log('proposal', proposal)
-      // console.log('proposalsFirestore', proposalObj)
-      // console.log('proposal[0]', proposal[0])
-      // proposalObj.publishDate = proposal[2].value
-      // proposalObj.deadline = proposal[3].value
-      // proposalObj.blocksSinceCreation = proposal[4].value
-      // proposalObj.totalVotingPower = proposal[5]
-      // proposalObj.totalVotes = proposal[6]
-      status = proposal[6]
-    }
-    console.log('status', status)
-
-    return status
-  })
-}
-
-/**
- *
- */
 export async function getAllProposals() {
-  const proposals = []
-  const sortedQuery = query(proposalsFirestore, orderBy('publishDate'))
-  await getAllData(sortedQuery).then(allProposals => {
-    allProposals.forEach(doc => {
-      proposals.push({ data: doc.data(), id: doc.id })
+  const sortedProposalsQuery = query(proposalsFirestore, orderBy('publishDate'))
 
-      // if (new Date() < doc.data().endDate) {
-      //   proposals.push({ data: doc.data(), id: doc.id })
-      // }
-      // else {
-      //
-      //   proposals.push({ data: doc.data(), id: doc.id })
-      // }
-    })
-  })
-
-  return proposals
+  return getAllData(sortedProposalsQuery)
 }

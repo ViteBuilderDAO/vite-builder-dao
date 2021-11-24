@@ -20,6 +20,7 @@ import {
 import GalleryTestWidget from './GalleryTestWidget.vue'
 import {
   getAllProposals,
+  parseProposal,
 } from '@/utils/proposal/proposalController'
 
 export default {
@@ -59,22 +60,16 @@ export default {
   },
 
   methods: {
-    /**
-     *
-     */
-    async viewProposalHandler(proposal) {
-      this.$store.commit('setCurrProposal', proposal)
-      this.$store.commit('setProposalMode', 'view')
-    },
 
     async onCreated() {
-      await getAllProposals().then(res => {
-        res.forEach(value => {
-          const proposalObj = value.data
-          proposalObj.proposalID = value.id
-          this.proposals.push(proposalObj)
-
-          // console.log('GALLERYTEST.JS: onCreated getAllProposals()')
+      await getAllProposals().then(allProposals => {
+        allProposals.forEach(doc => {
+          parseProposal(doc).then(parsedProposal => {
+            if (parsedProposal) {
+              const proposalObj = parsedProposal
+              this.proposals.push(proposalObj)
+            }
+          })
         })
       })
     },

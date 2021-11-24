@@ -71,7 +71,9 @@ export default {
     ...mapState([
       'walletConnected',
     ]),
-    ...mapGetters(['getIsWalletConnected']),
+    ...mapGetters([
+      'getIsWalletConnected',
+    ]),
   },
 }
 </script>

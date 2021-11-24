@@ -18,27 +18,54 @@
     <v-divider></v-divider>
     <v-card-text>
       <v-row
+        v-if="proposalStatsLoaded"
         class="pt-3"
       >
+        <v-col
+          v-if="proposalStatsLoaded"
+          cols="6"
+          md="3"
+          class="d-flex align-center"
+        >
+          <v-avatar
+            size="44"
+            color="primary"
+            rounded
+            class="elevation-1 ms-15"
+          >
+            <v-icon
+              dark
+              color="white"
+              size="30"
+            >
+              {{ icons.mdiTrendingUp }}
+            </v-icon>
+          </v-avatar>
+          <div class="ms-3">
+            <p class="text-xs mb-0">
+              Active
+            </p>
+            <h3 class="text-xl font-weight-semibold">
+              {{ proposalStats.numActiveProposals }}
+            </h3>
+          </div>
+        </v-col>
         <proposal-stats-widget
-          title="Active"
-          :icon="icons.mdiTrendingUp"
-          color="primary"
-          :total="proposalStats.numActiveProposals"
-        ></proposal-stats-widget>
-        <proposal-stats-widget
+          v-if="proposalStatsLoaded"
           title="Approved"
           :icon="icons.mdiChevronUp"
           color="success"
           :total="proposalStats.numApprovedProposals"
         ></proposal-stats-widget>
         <proposal-stats-widget
+          v-if="proposalStatsLoaded"
           title="Rejected"
           :icon="icons.mdiChevronDown"
           color="red"
           :total="proposalStats.numRejectedProposals"
         ></proposal-stats-widget>
         <proposal-stats-widget
+          v-if="proposalStatsLoaded"
           title="Cancelled"
           :icon="icons.mdiAlert"
           color="grey"
@@ -78,9 +105,11 @@ export default {
   computed: {
     ...mapState([
       'proposalStats',
+      'proposalStatsLoaded',
     ]),
     ...mapGetters([
       'getProposalStats',
+      'getProposalStatsLoaded',
     ]),
   },
 

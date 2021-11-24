@@ -18,9 +18,10 @@
               @click="viewProposalHandler(proposal)"
             >
               <v-list-item-avatar
-                color="grey darken-1"
+                v-if="proposal.endDate"
                 class="proposal-icon-avatar"
               >
+                {{ transformDate(proposal.endDate) }}
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title>{{ proposal.title }}</v-list-item-title>
@@ -69,6 +70,25 @@ export default {
     async viewProposalHandler(proposal) {
       this.$store.commit('setCurrProposal', proposal)
       this.$store.commit('setProposalMode', 'view')
+    },
+
+    /**
+     *
+     */
+    transformDate(lhsDate) {
+      const secDate = new Date(lhsDate.seconds * 1000)
+
+      return `${secDate.toDateString()}`
+
+      // let month = secDate.getMonth() + 1
+      // if (month < 9) {
+      //   month = `0${month}`
+      // }
+      // let day = secDate.getDate()
+      // if (day < 9) {
+      //   day = `0${day}`
+      // }
+      // return `${month}/${day}/${secDate.getFullYear()}`
     },
   },
 

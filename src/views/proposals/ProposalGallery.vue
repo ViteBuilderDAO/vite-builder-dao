@@ -61,7 +61,6 @@ export default {
   },
   created() {
     this.$store.commit('initializeStore')
-    console.log('Gallery created(): ')
   },
 }
 </script>

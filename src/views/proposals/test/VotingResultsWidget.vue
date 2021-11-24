@@ -19,7 +19,7 @@
         </v-card-title>
 
         <vue-apex-charts
-          v-if="totalVotesData"
+          v-if="currVotingStatsLoaded && totalVotesData"
           ref="totalVotesChart"
           type="bar"
           width="500"
@@ -38,7 +38,7 @@
           <span class="me-3">Voting Power</span>
         </v-card-title>
         <vue-apex-charts
-          v-if="votingPowerData"
+          v-if="currVotingStatsLoaded && votingPowerData"
           ref="votingPowerChart"
           type="bar"
           width="500"
@@ -103,7 +103,7 @@ export default {
   methods: {
 
     onCreated() {
-      console.log('proposalOptions', this.proposalOptions)
+      // console.log('proposalOptions', this.proposalOptions)
       if (this.proposalOptions) {
         this.proposalOptions.forEach((val, index) => {
           this.options.xaxis.categories[index] = val.optionName
@@ -112,35 +112,12 @@ export default {
     },
 
     onMounted() {
-      console.log('VotingResultsWidget onMounted()')
       if (this.currProposalVotingStats) {
         this.totalVotesData = this.currProposalVotingStats.optTotalVotesData
         this.votingPowerData = this.currProposalVotingStats.optVotingPowerData
       }
-
-      // this.$refs.votingPowerChart.updateSeries([{
-      //   data: this.currProposalVotingStats.optVotingPowerData[0].data,
-      // }], false, true)
-      // this.$refs.totalVotesChart.updateSeries([{
-      //   data: this.currProposalVotingStats.optTotalVotesData[0].data,
-      // }], false, true)
     },
 
-    // /**
-    //  *
-    //  */
-    // async initVotingStats() {
-    //   console.log('initVotingStats')
-    //   await getDataById(votesFirestore, this.voteStatsID).then(dataRes => {
-    //     if (dataRes) {
-    //       this.votingStats.optionStats = new Array(this.numOptions).fill({ optionTotalVotes: 0, optionTotalVotingPower: 0 })
-    //       this.votingStats.optionStats = dataRes.data().optionStats
-    //       this.votingStats.totalVotes = dataRes.data().totalVotes
-    //       this.votingStats.totalVotingPower = dataRes.data().totalVotingPower
-    //       console.log('ViewProposalTest optionStats: ', this.votingStats.optionStats)
-    //     }
-    //   })
-    // },
   },
 }
 </script>

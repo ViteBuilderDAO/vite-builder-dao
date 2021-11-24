@@ -115,7 +115,7 @@ export async function callContractOffChain(contract, methodName, inputParams) {
     code,
     data: dataBuf,
   }).then(result => {
-    console.log('VBDAO: SUCCESS - OFF-CHAIN CONTRACT CALL: ', result)
+    console.log('VBDAO: SUCCESS - OFF-CHAIN CONTRACT CALL ')
 
     return result
   }).catch(err => {

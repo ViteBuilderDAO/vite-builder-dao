@@ -4,22 +4,28 @@
     :class="$vuetify.theme.dark ? 'create-proposal-light-text' : 'create-proposal-dark-borders'"
     @submit="submitHandler"
   >
-    <FormulateInput
-      v-for="item in createProposalSchema"
-      :key="item.name"
-      v-bind="item"
-    >
-      <FormulateInput
-        v-for="childItem in item.children"
-        :key="childItem.name"
-        v-bind="childItem"
-        :options="tokenList ? tokenList : ''"
-      />
-    </FormulateInput>
+    <v-expand-transition>
+      <div v-show="!isLoading">
+        <FormulateInput
+          v-for="item in createProposalSchema"
+          :key="item.name"
+          v-bind="item"
+        >
+          <FormulateInput
+            v-for="childItem in item.children"
+            :key="childItem.name"
+            v-bind="childItem"
+            :options="tokenList ? tokenList : ''"
+          />
+        </FormulateInput>
+      </div>
+    </v-expand-transition>
     <FormulateInput
       type="submit"
       class="submitFormButtonStyle"
-      help="Note: Vite wallet must be connected to submit."
+      error-behavior="live"
+      :validation="!walletConnected ? 'required' : ''"
+      validation-name="Vite wallet"
       :label="isLoading ? 'Awaiting Vite App Approval...' : 'Submit'"
       :disabled="hasMissingParams()"
     />
@@ -67,7 +73,7 @@ export default {
             {
               type: 'select',
               placeholder: 'Select a token',
-              name: 'votingTokens',
+              name: 'tokenTTI',
               'error-behavior': 'live',
               validation: 'required',
               'validation-name': 'Voting token',
@@ -108,18 +114,9 @@ export default {
           'validation-name': 'Description',
         },
         {
-          type: 'file',
-          name: 'proposalIcon',
-          label: 'Upload a photo to be used as a cover',
-          help: 'Select one image to upload',
-          single: true,
-          'error-behavior': 'live',
-          validation: 'required',
-          'validation-name': 'Cover photo',
-        },
-        {
           type: 'group',
           name: 'optionsData',
+          label: 'Options',
           repeatable: true,
           'add-label': '+ Add Option',
           value: [{}],
@@ -131,11 +128,7 @@ export default {
               'error-behavior': 'live',
               validation: 'required',
               'validation-name': 'Option name',
-            },
-            {
-              type: 'file',
-              name: 'attachment',
-              label: 'File',
+              help: 'Note: by default a "downvote all" option is added to every proposal',
             },
           ],
         },
@@ -163,13 +156,19 @@ export default {
   methods: {
 
     hasMissingParams() {
+      console.log(this.createProposalData.votingTokenData)
       if (
         !this.walletConnected
-        || !this.createProposalData.votingTokenData
-        || !this.createProposalData.title
-        || !this.createProposalData.description
-        || !this.createProposalData.durationInHours
-        || !this.createProposalData.proposalIcon
+        || !(this.createProposalData.votingTokenData
+            && this.createProposalData.votingTokenData[0].tokenTTI)
+        || !(this.createProposalData.title
+            && this.createProposalData.title.length > 0)
+        || !(this.createProposalData.description
+            && this.createProposalData.description.length > 0)
+        || !(this.createProposalData.durationInHours
+            && this.createProposalData.durationInHours.length > 0)
+        || !(this.createProposalData.optionsData
+            && this.createProposalData.optionsData[0].optionName.length > 0)
       ) {
         return true
       }
@@ -188,10 +187,6 @@ export default {
 
       this.isLoading = true
 
-      // const carTest = new Car('Car name', 25)
-      // console.log('VBDAO - CAR CLASS TEST - NAME ', carTest.name)
-      // console.log('VBDAO - CAR CLASS TEST - AGE ', carTest.age())
-
       // console.log('VBDAO CREATE PROPOSAL PARAM - creator: ', this.connectedWalletAddr)
       // console.log('VBDAO CREATE PROPOSAL PARAM - title: ', this.createProposalData.title)
       // console.log('VBDAO CREATE PROPOSAL PARAM - urlLink: ', this.createProposalData.urlLink)
@@ -199,7 +194,6 @@ export default {
       // console.log('VBDAO CREATE PROPOSAL PARAM - description: ', this.createProposalData.description)
       // console.log('VBDAO CREATE PROPOSAL PARAM - numOptions: ', this.createProposalData.optionsData.length)
       // console.log('VBDAO CREATE PROPOSAL PARAM - options: ', this.createProposalData.optionsData)
-      // console.log('VBDAO CREATE PROPOSAL PARAM - proposalIcon: ', this.createProposalData.proposalIcon)
       // console.log('VBDAO CREATE PROPOSAL PARAM - attachedFiles: ', this.createProposalData.attachedFiles)
       // console.log('VBDAO CREATE PROPOSAL PARAM - votingType: ', this.createProposalData.votingType)
       // console.log('VBDAO CREATE PROPOSAL PARAM - publishDate: ', new Date())
@@ -216,8 +210,6 @@ export default {
       const proposalParams = {
         creator: this.connectedWalletAddr,
         title: this.createProposalData.title,
-        urlLink: this.createProposalData.urlLink,
-        keywords: this.createProposalData.keywords,
         description: this.createProposalData.description,
         numOptions: optionsArr.length,
         options: optionsArr,
@@ -229,38 +221,51 @@ export default {
         status: 'Active',
       }
 
+      if (this.createProposalData.urlLink && this.createProposalData.urlLink.length > 0) {
+        proposalParams.urlLink = this.createProposalData.urlLink
+      }
+
+      if (this.createProposalData.keywords && this.createProposalData.keywords.length > 0) {
+        proposalParams.keywords = this.createProposalData.keywords
+      }
+
       const voteStatsInit = {
         totalVotes: 0,
         totalVotingPower: 0,
         optionStats: new Array(proposalParams.numOptions).fill({ optionTotalVotes: 0, optionTotalVotingPower: 0 }),
       }
 
-      const votesInitRes = await addNewDoc(votesFirestore, voteStatsInit)
-      proposalParams.voteStatsID = votesInitRes.id.toString()
-      const dataStorRes = await addNewDoc(proposalsFirestore, proposalParams)
-      proposalParams.proposalID = dataStorRes.id.toString()
+      if (voteStatsInit) {
+        const votesInitRes = await addNewDoc(votesFirestore, voteStatsInit)
+        proposalParams.voteStatsID = votesInitRes.id.toString()
+      }
+
+      if (proposalParams.voteStatsID) {
+        const dataStorRes = await addNewDoc(proposalsFirestore, proposalParams)
+        proposalParams.proposalID = dataStorRes.id.toString()
+      }
 
       // const ipfsPath = `ProposalParams_|${proposalID.toString()}`
       // const ipfsHashFile = ipfsSetData(ipfsPath, proposalParams)
 
-      console.log('VBDAO - PROPOSAL PARAMS proposalID - ', proposalParams.proposalID)
-      console.log('VBDAO - PROPOSAL PARAMS dataStorRes.id - ', dataStorRes.id)
-      console.log('VBDAO - PROPOSAL PARAMS voteStatsID - ', proposalParams.voteStatsID)
-      console.log('VBDAO - PROPOSAL PARAMS votesInitRes - ', votesInitRes.id)
+      // console.log('VBDAO - PROPOSAL PARAMS proposalID - ', proposalParams.proposalID)
+      // console.log('VBDAO - PROPOSAL PARAMS voteStatsID - ', proposalParams.voteStatsID)
 
       // console.log('VBDAO - PROPOSAL PARAMS ipfspath - ', ipfsPath)
       // console.log('VBDAO - PROPOSAL PARAMS ipfsHashFile.path - ', ipfsHashFile.path)
       // console.log('VBDAO - PROPOSAL PARAMS ipfsHashFile.cid - ', ipfsHashFile.cid)
 
-      startProposal([proposalParams.proposalID, proposalParams.creator, proposalParams.title, proposalParams.votingPeriod, proposalParams.numOptions], this.onProposalStartEvent).then(block => {
-        if (block) {
-          this.$store.commit('initializeStore')
-          window.location.reload()
+      if (proposalParams.proposalID) {
+        startProposal([proposalParams.proposalID, proposalParams.creator, proposalParams.votingPeriod, proposalParams.numOptions]).then(block => {
+          if (block) {
+            this.$store.commit('initializeStore', true)
 
-          // this.$store.commit('setProposalMode', 'gallery')
-          // console.log('VBDAO: CALL TO CONTRACT SUCCESS')
-        }
-      })
+            // window.location.reload()
+            // this.$store.commit('setProposalMode', 'gallery')
+            // console.log('VBDAO: CALL TO CONTRACT SUCCESS')
+          }
+        })
+      }
     },
 
     async onMounted() {
@@ -289,6 +294,8 @@ export default {
 .create-proposal-light-text {
   .formulate-input-help.formulate-input-help {
     color: gray;
+    margin-top: 5px;
+    margin-bottom: 5px;
   }
 
   .formulate-input {
@@ -309,7 +316,8 @@ export default {
 
   .formulate-input .formulate-input-error,
   .formulate-input .formulate-file-upload-error {
-    color: red;
+    color: gold;
+    font-size: 0.90em;
   }
 
 }

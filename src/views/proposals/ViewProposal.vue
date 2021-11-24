@@ -153,15 +153,7 @@ import {
 } from '@mdi/js'
 import BigNumber from 'bignumber.js'
 import { getWalletBalanceInfo } from '@/utils/contract/contractHelpers'
-import {
-  stopProposalEarly,
-} from '@/utils/proposal/proposalController'
 import { ipfsGetData, ipfsSetData } from '@/store/ipfs'
-
-// stopProposal,
-// voteOnProposal,
-// getIsProposalComplete,
-// getProposalByID,
 
 export default {
   props: {
@@ -251,7 +243,7 @@ export default {
       console.log('VBDAO VOTE PARAM ENCODED - optionsVoted: ', voteParams.optionsVoted)
       console.log('VBDAO VOTE PARAM ENCODED - votingPowers: ', voteParams.votingPowers)
 
-      // voteOnProposal(voteParams, this.onProposalVoteEvent).then(block => {
+      // voteOnProposal(voteParams).then(block => {
       //   if (block && voteParams) {
       //     this.$store.dispatch('addProposalVote', voteParams.proposalID, voteParams)
       //     console.log('VBDAO: CALL TO CONTRACT (voteOnProposal) SUCCESS', block)
@@ -275,24 +267,24 @@ export default {
       //   return
       // }
 
-      console.log('VBDAO - ATTEMPTING TO STOP PROPOSAL: ')
-      this.isStopping = true
-      if (!this.walletConnected) {
-        console.log('VBDAO: debugStopProposalHandler error - wallet is not connected')
+      // console.log('VBDAO - ATTEMPTING TO STOP PROPOSAL: ')
+      // this.isStopping = true
+      // if (!this.walletConnected) {
+      //   console.log('VBDAO: debugStopProposalHandler error - wallet is not connected')
 
-        return
-      }
+      //   return
+      // }
 
-      console.log('VBDAO STOP PROPOSAL PARAM - proposalID: ', proposalID)
-      console.log('VBDAO STOP PROPOSAL PARAM - onProposalEndEvent: ', this.onProposalEndEvent)
-      console.log('VBDAO STOP PROPOSAL PARAM - onProposalResultsEvent: ', this.onProposalResultsEvent)
+      // console.log('VBDAO STOP PROPOSAL PARAM - proposalID: ', proposalID)
+      // console.log('VBDAO STOP PROPOSAL PARAM - onProposalEndEvent: ', this.onProposalEndEvent)
+      // console.log('VBDAO STOP PROPOSAL PARAM - onProposalResultsEvent: ', this.onProposalResultsEvent)
 
-      stopProposalEarly(proposalID, this.onProposalEndEvent, this.onProposalResultsEvent).then(block => {
-        if (block) {
-          console.log('VBDAO: debugStopProposalHandler success', block)
-          this.isStopping = false
-        }
-      })
+      // stopProposalEarly(proposalID).then(block => {
+      //   if (block) {
+      //     console.log('VBDAO: debugStopProposalHandler success', block)
+      //     this.isStopping = false
+      //   }
+      // })
     },
 
 
