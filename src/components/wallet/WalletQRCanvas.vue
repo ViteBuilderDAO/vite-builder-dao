@@ -17,7 +17,8 @@ export default {
       const address = payload.params[0].accounts[0]
       this.$store.commit('setWalletConnected', true)
       this.$store.dispatch('addAccount', new WalletAccount({ address }))
-      this.$store.commit('initializeBalanceInfo')
+
+      // this.$store.commit('initializeBalanceInfo')
 
       return console.log('Vite wallet connected')
     })

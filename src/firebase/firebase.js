@@ -20,8 +20,8 @@ export const database = getDatabase()
 export const firestoreDB = getFirestore()
 
 export const proposalsFirestore = collection(firestoreDB, 'proposals')
+export const proposalStatsFirestore = collection(firestoreDB, 'proposal-stats')
 export const votesFirestore = collection(firestoreDB, 'votes')
-export const resultsFirestore = collection(firestoreDB, 'results')
 
 // export async function writeData(path, data) {
 //   return set(ref(database, path), data)

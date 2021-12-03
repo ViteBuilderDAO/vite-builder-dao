@@ -144,7 +144,8 @@
             </v-col>
           </v-row>
         </v-container>
-        <v-container
+
+        <!--<v-container
           fluid
         >
           <v-row
@@ -167,7 +168,7 @@
               </v-card>
             </v-col>
           </v-row>
-        </v-container>
+        </v-container>-->
 
         <v-divider
           class="divider-margin-class"
@@ -201,7 +202,8 @@ import {
 import { mapState, mapGetters } from 'vuex'
 import BigNumber from 'bignumber.js'
 import { getVbInstance } from '@/utils/wallet/walletClient'
-import { checkIfVotedPreviously } from '@/utils/proposal/proposalController'
+
+// import { checkIfVotedPreviously } from '@/utils/proposal/proposalController'
 
 const vbInst = getVbInstance()
 
@@ -213,6 +215,7 @@ export default {
     proposalOptions: { type: Array, default: null },
     isVoting: { type: Boolean, default: false },
     isStopping: { type: Boolean, default: false },
+    prevVoterMap: { type: Array, default: null },
   },
 
   setup() {
@@ -221,7 +224,7 @@ export default {
       disableSubmit: false,
       isSwitchEnabled: false,
       numOptions: 0,
-      votingBalance: 0,
+      votingBalance: 100,
       currSpendAmount: 0,
       currNumOptsSelected: 0,
       filteredOptions: [],
@@ -237,7 +240,7 @@ export default {
       votingPowers: [],
       quadraticPowers: [],
       streamBarVals: [],
-      currAddrHasVoted: 0,
+      currAddrHasVoted: false,
     }
   },
 
@@ -278,7 +281,8 @@ export default {
 
     onCreated() {
       this.numOptions = this.proposalOptions.length
-      this.initVotingPower()
+
+      // this.initVotingPower()
 
       this.proposalOptions.forEach((val, index) => {
         if (index < this.numOptions - 1) {
@@ -297,7 +301,7 @@ export default {
       this.initVotingBallots()
 
       vbInst.on('connect', () => {
-        this.initVotingPower()
+        // this.initVotingPower()
         this.onMounted()
       })
 
@@ -307,12 +311,18 @@ export default {
     },
 
     async onMounted() {
-      if (this.walletConnected && this.currProposalID) {
-        await checkIfVotedPreviously(this.connectedWalletAddr, this.currProposalID).then(res => {
-          if (res) {
-            this.currAddrHasVoted = parseInt(res[0], 10)
-          }
-        })
+      if (this.walletConnected && this.prevVoterMap) {
+        if (this.prevVoterMap.includes(this.connectedWalletAddr)) {
+          this.currAddrHasVoted = true
+        } else {
+          this.currAddrHasVoted = false
+        }
+
+        // await checkIfVotedPreviously(this.connectedWalletAddr, this.currProposalID).then(res => {
+        //   if (res) {
+        //     this.currAddrHasVoted = parseInt(res[0], 10)
+        //   }
+        // })
       }
     },
 
@@ -332,8 +342,6 @@ export default {
             this.votingBalance += parseInt(BigNumber(val.balance).dividedBy(`1e${val.tokenInfo.decimals}`).toFixed(), 10)
           }
         })
-
-        this.dataStreamMult = (100.0 / this.votingBalance)
       }
     },
 
@@ -426,14 +434,6 @@ export default {
       // console.log('onOptionsClicked() this.votingOptionsSelected:', this.votingOptionsSelected)
     },
 
-    calcBufferStreamVal(index) {
-      if (this.votingBalance > 0) {
-        return this.dataStreamMult * this.votingPowers[index]
-      }
-
-      return 0
-    },
-
     validateVoteValue() {
       let sum = 0
       this.votingPowers.forEach((val, index) => {
@@ -444,9 +444,9 @@ export default {
           sum += parsedVal
         }
 
-        this.streamBarVals[index] = this.calcBufferStreamVal(index)
+        this.streamBarVals[index] = val
       })
-      if (sum > this.votingBalance) {
+      if (sum > this.votingBalance || sum <= 0) {
         this.disableSubmit = true
       } else {
         this.disableSubmit = false

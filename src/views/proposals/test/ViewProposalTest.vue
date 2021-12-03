@@ -132,6 +132,7 @@
           :proposalOptions="currProposal.options"
           :isVoting="isVoting"
           :isStopping="isStopping"
+          :prevVoterMap="currProposal.prevVoterMap"
           @onSubmitVote="submitVoteHandler"
         >
         </voting-ballot-form>
@@ -143,15 +144,15 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import {
-  voteOnProposal,
-} from '@/utils/proposal/proposalController'
-import {
   votesFirestore,
+  proposalsFirestore,
   updateDocData,
+  getDataById,
 } from '@/firebase/firebase'
 import VotingBallotForm from '../forms/FormVotingBallot.vue'
 import VotingResultsWidget from './VotingResultsWidget.vue'
 
+// import { voteOnProposal } from '@/utils/proposal/proposalController'
 // import { ipfsSetData } from '@/store/ipfs'
 // const ViewProposalTestWidget = () => import('./ViewProposalTestWidget.vue')
 
@@ -227,6 +228,7 @@ export default {
       voteData.votingPowers.forEach((val, index) => {
         const optionTotalVotes = parseInt(this.currProposalVotingStats.optTotalVotesData[0].data[index], 10)
         const optionTotalPowers = parseInt(this.currProposalVotingStats.optVotingPowerData[0].data[index], 10)
+
         if (val) {
           const parsedPower = parseInt(voteData.votingPowers[index], 10)
           newStatTotals[index] = { optionTotalVotes: optionTotalVotes + 1, optionTotalVotingPower: optionTotalPowers + parsedPower }
@@ -249,6 +251,31 @@ export default {
         optionStats: newStatTotals,
       })
 
+      const currVoterMap = this.currProposal.prevVoterMap
+      currVoterMap.push(this.connectedWalletAddr)
+
+      await updateDocData(proposalsFirestore, this.currProposal.proposalID, {
+        prevVoterMap: currVoterMap,
+      })
+
+      getDataById(votesFirestore, this.currProposal.voteStatsID).then(dataRes => {
+        if (dataRes) {
+          let currCastedVotes = []
+          if (dataRes.castedVotes && dataRes.castedVotes.length) {
+            currCastedVotes = dataRes.castedVotes
+            currCastedVotes.push({ voterAddr: this.connectedWalletAddr, votingPowers: voteData.votingPowers })
+          } else {
+            currCastedVotes = new Array(1).fill({ voterAddr: this.connectedWalletAddr, votingPowers: voteData.votingPowers })
+          }
+          updateDocData(votesFirestore, this.currProposal.voteStatsID, {
+            castedVotes: currCastedVotes,
+          })
+        }
+      })
+
+      this.$store.commit('initializeCurrProposalVotingStats', this.currProposal.voteStatsID)
+      this.isVoting = false
+
       // const ipfsPath = `VoteParams_|${voteParams.proposalID.toString()}|_${voteParams.voteID}`
       // const ipfsHashFile = ipfsSetData(ipfsPath, voteParams)
 
@@ -265,12 +292,12 @@ export default {
       // console.log('VBDAO - VOTE PARAMS ipfsHashFile.path - ', ipfsHashFile.path)
       // console.log('VBDAO - VOTE PARAMS ipfsHashFile.cid - ', ipfsHashFile.cid)
 
-      voteOnProposal([this.currProposal.proposalID, this.connectedWalletAddr, this.votingBalance, voteData.votingPowers]).then(block => {
-        if (block) {
-          this.$store.commit('initializeCurrProposalVotingStats', this.currProposal.voteStatsID)
-        }
-        this.isVoting = false
-      })
+      // voteOnProposal([this.currProposal.proposalID, this.connectedWalletAddr, this.votingBalance, voteData.votingPowers]).then(block => {
+      //   if (block) {
+      //     this.$store.commit('initializeCurrProposalVotingStats', this.currProposal.voteStatsID)
+      //   }
+      //   this.isVoting = false
+      // })
     },
 
     /**

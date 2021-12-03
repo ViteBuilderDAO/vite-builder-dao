@@ -12,15 +12,15 @@ const VITE_WSS = process.env.NODE_ENV === 'production' ? TEST_WS_NET : TEST_WS_N
 /**
  *
  */
-export function getWalletBalanceInfo(walletAcct) {
+export function getWalletBalanceInfo(walletAddr) {
   console.log('VBDAO: GET WALLET BALANCE BY TOKEN REQUEST')
   const connection = new WS_RPC(VITE_WSS)
   const provider = new ViteAPI(connection, () => {
     console.log('VBDAO: getWalletBalanceByToken() client connected')
   })
 
-  if (walletAcct) {
-    return walletAcct.getBalance(provider)
+  if (walletAddr) {
+    return provider.getBalanceInfo(walletAddr)
   }
 
   return null

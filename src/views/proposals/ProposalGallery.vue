@@ -59,8 +59,5 @@ export default {
       'getCurrProposal',
     ]),
   },
-  created() {
-    this.$store.commit('initializeStore')
-  },
 }
 </script>

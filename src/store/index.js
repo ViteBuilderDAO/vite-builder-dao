@@ -7,6 +7,7 @@ import {
 } from '@/utils/proposal/proposalController'
 import {
   votesFirestore,
+  proposalStatsFirestore,
   getDataById,
 } from '@/firebase/firebase'
 import { getWalletBalanceInfo } from '@/utils/contract/contractHelpers'
@@ -39,6 +40,7 @@ export default new Vuex.Store({
     },
     currVotingStatsLoaded: false,
     proposalStats: {
+      id: '',
       totalProposals: 0,
       numActiveProposals: 0,
       numApprovedProposals: 0,
@@ -112,21 +114,35 @@ export default new Vuex.Store({
 
   },
   mutations: {
-    initializeStore(state, isNewProposal) {
+    initializeStore(state) {
       state.proposalStatsLoaded = false
-      getAllProposalStats().then(stats => {
-        state.proposalStats.totalProposals = parseInt(stats[0], 10)
-        if (isNewProposal) {
-          state.proposalStats.numActiveProposals = (parseInt(stats[1], 10) + 1)
-        } else {
-          state.proposalStats.numActiveProposals = parseInt(stats[1], 10)
-        }
-        state.proposalStats.numApprovedProposals = parseInt(stats[2], 10)
-        state.proposalStats.numRejectedProposals = parseInt(stats[3], 10)
-        state.proposalStats.numCancelledProposals = parseInt(stats[4], 10)
-        state.proposalMode = 'gallery'
-        state.proposalStatsLoaded = true
-      })
+      if (state.proposalStats.id !== '') {
+        getDataById(proposalStatsFirestore, state.proposalStats.id).then(dataRes => {
+          if (dataRes) {
+            const statsData = dataRes.data()
+            state.proposalStats.totalProposals = statsData.totalNumProposals
+            state.proposalStats.numActiveProposals = statsData.totalActiveProposals
+            state.proposalStats.numApprovedProposals = statsData.totalApprovedProposals
+            state.proposalStats.numRejectedProposals = statsData.totalRejectedProposals
+            state.proposalStats.numCancelledProposals = statsData.totalCancelledProposals
+            state.proposalMode = 'gallery'
+            state.proposalStatsLoaded = true
+          }
+        })
+      } else {
+        getAllProposalStats().then(dataRes => {
+          const statsData = dataRes.docs[0].data()
+          state.proposalStats.id = statsData.id
+          state.proposalStats.totalProposals = statsData.totalNumProposals
+          state.proposalStats.numActiveProposals = statsData.totalActiveProposals
+          state.proposalStats.numApprovedProposals = statsData.totalApprovedProposals
+          state.proposalStats.numRejectedProposals = statsData.totalRejectedProposals
+          state.proposalStats.numCancelledProposals = statsData.totalCancelledProposals
+        })
+      }
+
+      state.proposalMode = 'gallery'
+      state.proposalStatsLoaded = true
     },
 
     initializeCurrProposalVotingStats(state, voteStatsID) {
@@ -149,7 +165,7 @@ export default new Vuex.Store({
 
     async initializeBalanceInfo(state) {
       if (state.walletConnected) {
-        await getWalletBalanceInfo(state.connectedAccounts[0]).then(({ balance }) => {
+        await getWalletBalanceInfo(state.connectedWalletAddr).then(({ balance }) => {
           state.connectedBalanceInfo = balance.balanceInfoMap
         })
       }
@@ -202,16 +218,20 @@ export default new Vuex.Store({
       state.currProposal = proposal
     },
 
-    setProposalStats(state, proposalStats) {
-      state.proposalStats.totalProposals = parseInt(proposalStats[0], 10)
-      state.proposalStats.numActiveProposals = parseInt(proposalStats[1], 10)
-      state.proposalStats.numApprovedProposals = parseInt(proposalStats[2], 10)
-      state.proposalStats.numRejectedProposals = parseInt(proposalStats[3], 10)
-      state.proposalStats.numCancelledProposals = parseInt(proposalStats[4], 10)
-    },
-
     setProposalStatsLoaded(state, loaded) {
       state.proposalStatsLoaded = loaded
+    },
+
+    setProposalStats(state, statsData) {
+      state.proposalStatsLoaded = false
+      state.proposalStats.id = statsData.id
+      state.proposalStats.totalProposals = statsData.totalNumProposals
+      state.proposalStats.numActiveProposals = statsData.totalActiveProposals
+      state.proposalStats.numApprovedProposals = statsData.totalApprovedProposals
+      state.proposalStats.numRejectedProposals = statsData.totalRejectedProposals
+      state.proposalStats.numCancelledProposals = statsData.totalCancelledProposals
+      state.proposalMode = 'gallery'
+      state.proposalStatsLoaded = true
     },
   },
   actions: {
@@ -237,8 +257,8 @@ export default new Vuex.Store({
       commit('setCurrProposal', proposal)
     },
 
-    setProposalStats({ commit }, proposalStats) {
-      commit('setProposalStats', proposalStats)
+    setProposalStats({ commit }, statsData) {
+      commit('setProposalStats', statsData)
     },
   },
   modules: {},

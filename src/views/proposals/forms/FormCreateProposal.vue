@@ -36,11 +36,17 @@
 import { mapState, mapGetters } from 'vuex'
 import { getTokenList } from '@/utils/contract/contractHelpers'
 import votingTypes from '@/utils/voting/votingController'
-import { startProposal } from '@/utils/proposal/proposalController'
-import { proposalsFirestore, votesFirestore, addNewDoc } from '@/firebase/firebase'
+import {
+  proposalsFirestore,
+  votesFirestore,
+  proposalStatsFirestore,
+  addNewDoc,
+  updateDocData,
+} from '@/firebase/firebase'
 
 // const { abi } = require('@vite/vitejs')
 // import { ipfsSetData } from '@/store/ipfs'
+// import { startProposal } from '@/utils/proposal/proposalController'
 
 export default {
   data() {
@@ -141,11 +147,13 @@ export default {
       'walletConnected',
       'connectedWalletAddr',
       'connectedAccounts',
+      'proposalStats',
     ]),
     ...mapGetters([
       'getIsWalletConnected',
       'getConnectedWalletAddr',
       'getConnectedAccounts',
+      'getProposalStats',
     ]),
   },
 
@@ -156,7 +164,6 @@ export default {
   methods: {
 
     hasMissingParams() {
-      console.log(this.createProposalData.votingTokenData)
       if (
         !this.walletConnected
         || !(this.createProposalData.votingTokenData
@@ -168,6 +175,7 @@ export default {
         || !(this.createProposalData.durationInHours
             && this.createProposalData.durationInHours.length > 0)
         || !(this.createProposalData.optionsData
+            && this.createProposalData.optionsData[0].optionName
             && this.createProposalData.optionsData[0].optionName.length > 0)
       ) {
         return true
@@ -219,6 +227,7 @@ export default {
         votingPeriod: this.createProposalData.durationInHours,
         votingTokens: this.createProposalData.votingTokenData,
         status: 'Active',
+        prevVoterMap: [],
       }
 
       if (this.createProposalData.urlLink && this.createProposalData.urlLink.length > 0) {
@@ -233,6 +242,12 @@ export default {
         totalVotes: 0,
         totalVotingPower: 0,
         optionStats: new Array(proposalParams.numOptions).fill({ optionTotalVotes: 0, optionTotalVotingPower: 0 }),
+        results: {
+          winningOptionName: '',
+          winningOptionIndex: 0,
+          finalState: '',
+        },
+        castedVotes: [],
       }
 
       if (voteStatsInit) {
@@ -245,6 +260,21 @@ export default {
         proposalParams.proposalID = dataStorRes.id.toString()
       }
 
+      if (this.proposalStats.id) {
+        await updateDocData(proposalStatsFirestore, this.proposalStats.id, {
+          id: this.proposalStats.id,
+          totalActiveProposals: this.proposalStats.numActiveProposals + 1,
+          totalApprovedProposals: this.proposalStats.numApprovedProposals,
+          totalCancelledProposals: this.proposalStats.numCancelledProposals,
+          totalNumProposals: this.proposalStats.totalProposals + 1,
+          totalRejectedProposals: this.proposalStats.numRejectedProposals,
+        })
+
+        if (proposalParams.proposalID) {
+          this.$store.commit('initializeStore')
+        }
+      }
+
       // const ipfsPath = `ProposalParams_|${proposalID.toString()}`
       // const ipfsHashFile = ipfsSetData(ipfsPath, proposalParams)
 
@@ -255,17 +285,17 @@ export default {
       // console.log('VBDAO - PROPOSAL PARAMS ipfsHashFile.path - ', ipfsHashFile.path)
       // console.log('VBDAO - PROPOSAL PARAMS ipfsHashFile.cid - ', ipfsHashFile.cid)
 
-      if (proposalParams.proposalID) {
-        startProposal([proposalParams.proposalID, proposalParams.creator, proposalParams.votingPeriod, proposalParams.numOptions]).then(block => {
-          if (block) {
-            this.$store.commit('initializeStore', true)
+      // if (proposalParams.proposalID) {
+      //   startProposal([proposalParams.proposalID, proposalParams.creator, proposalParams.votingPeriod, proposalParams.numOptions]).then(block => {
+      //     if (block) {
+      //       this.$store.commit('initializeStore', true)
 
-            // window.location.reload()
-            // this.$store.commit('setProposalMode', 'gallery')
-            // console.log('VBDAO: CALL TO CONTRACT SUCCESS')
-          }
-        })
-      }
+      //       // window.location.reload()
+      //       // this.$store.commit('setProposalMode', 'gallery')
+      //       // console.log('VBDAO: CALL TO CONTRACT SUCCESS')
+      //     }
+      //   })
+      // }
     },
 
     async onMounted() {
