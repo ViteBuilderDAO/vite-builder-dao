@@ -6,13 +6,37 @@
           Proposals
         </h2>
         <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          class="create-proposal-btn"
-          @click="createProposalHandler()"
-        >
-          Create Proposal
-        </v-btn>
+        <v-tooltip top>
+          <template v-slot:activator="{ on, attrs }">
+            <!--<v-btn
+              color="primary"
+              class="create-proposal-btn"
+              :disabled="!whitelisted() || !walletConnected"
+              v-bind="attrs"
+              v-on="on"
+              @click="createProposalHandler()"
+            >
+              Create Proposal
+            </v-btn>-->
+            <span
+              v-bind="attrs"
+              v-on="on"
+            >
+              <FormulateForm
+                @submit="createProposalHandler()"
+              >
+                <FormulateInput
+                  type="submit"
+                  label="Create Proposal"
+                  color="primary"
+                  class="create-proposal-btn"
+                  :disabled="!whitelisted() || !walletConnected"
+                />
+              </FormulateForm>
+            </span>
+          </template>
+          <span>Vite wallet must be connected and your address whitelisted to create a proposal.</span>
+        </v-tooltip>
       </div>
     </div>
     <v-divider></v-divider>
@@ -25,7 +49,7 @@
           v-if="proposalStatsLoaded"
           cols="6"
           md="3"
-          class="d-flex align-center"
+          class="d-flex align-center proposal-stats-row"
         >
           <v-avatar
             size="44"
@@ -52,24 +76,11 @@
         </v-col>
         <proposal-stats-widget
           v-if="proposalStatsLoaded"
-          title="Approved"
-          :icon="icons.mdiChevronUp"
-          color="success"
-          :total="proposalStats.numApprovedProposals"
-        ></proposal-stats-widget>
-        <proposal-stats-widget
-          v-if="proposalStatsLoaded"
-          title="Rejected"
-          :icon="icons.mdiChevronDown"
-          color="red"
-          :total="proposalStats.numRejectedProposals"
-        ></proposal-stats-widget>
-        <proposal-stats-widget
-          v-if="proposalStatsLoaded"
-          title="Cancelled"
-          :icon="icons.mdiAlert"
+          title="Closed"
+          :icon="icons.mdiCheckBold"
           color="grey"
-          :total="proposalStats.numCancelledProposals"
+          :total="proposalStats.numClosedProposals"
+          class="proposal-stats-row"
         ></proposal-stats-widget>
       </v-row>
     </v-card-text>
@@ -80,12 +91,10 @@
 // eslint-disable-next-line object-curly-newline
 import { mapState, mapGetters } from 'vuex'
 import {
-  mdiAlert,
   mdiTrendingUp,
-  mdiChevronUp,
-  mdiChevronDown,
+  mdiCheckBold,
 } from '@mdi/js'
-import ProposalStatsWidget from './ProposalStatsWidget.vue'
+import ProposalStatsWidget from './widgets/ProposalStatsWidget.vue'
 
 export default {
   components: {
@@ -95,9 +104,7 @@ export default {
     return {
       icons: {
         mdiTrendingUp,
-        mdiAlert,
-        mdiChevronUp,
-        mdiChevronDown,
+        mdiCheckBold,
       },
     }
   },
@@ -106,10 +113,16 @@ export default {
     ...mapState([
       'proposalStats',
       'proposalStatsLoaded',
+      'walletConnected',
+      'connectedWalletAddr',
+      'whitelistedAddresses',
     ]),
     ...mapGetters([
       'getProposalStats',
       'getProposalStatsLoaded',
+      'getConnectedWalletAddr',
+      'getIsWalletConnected',
+      'getWhitelistedAddresses',
     ]),
   },
 
@@ -126,18 +139,31 @@ export default {
       return false
     },
 
+    whitelisted() {
+      if (this.walletConnected
+          && this.connectedWalletAddr
+          && this.whitelistedAddresses.includes(this.connectedWalletAddr)) {
+        return true
+      }
+
+      return false
+    },
+
     /**
      *
      */
     async createProposalHandler() {
-      this.$store.commit('setProposalMode', 'create')
+      this.$router.push('create-proposal')
     },
   },
 }
 </script>
 
-<style lang="scss" scoped>
-.create-proposal-btn {
-  box-shadow: 0 1px 20px 1px #127bf0 !important;
+<style lang="scss">
+@import '@braid/vue-formulate/themes/snow/snow.scss';
+
+.proposal-stats-row {
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

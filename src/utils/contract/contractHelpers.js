@@ -1,7 +1,8 @@
-import { getVbInstance } from '@/utils/wallet/walletClient'
-
 const { WS_RPC } = require('@vite/vitejs-ws')
-const { ViteAPI, accountBlock, abi } = require('@vite/vitejs')
+const { ViteAPI, abi } = require('@vite/vitejs')
+
+// const { accountBlock } = require('@vite/vitejs')
+// import { getVbInstance } from '@/utils/wallet/walletClient'
 
 const TEST_WS_NET = 'wss://buidl.vite.net/gvite/ws'
 
@@ -51,50 +52,50 @@ export async function getTokenList() {
   return tokenList
 }
 
-/**
- *
- */
-function sendVcTx(vbInstance, ...args) {
-  return vbInstance
-    .sendCustomRequest({ method: 'vite_signAndSendTx', params: args })
-    .then(signedBlock => signedBlock)
-}
+// /**
+//  *
+//  */
+// function sendVcTx(vbInstance, ...args) {
+//   return vbInstance
+//     .sendCustomRequest({ method: 'vite_signAndSendTx', params: args })
+//     .then(signedBlock => signedBlock)
+// }
 
-/**
- *
- */
-export async function callContract(contract, methodName, inputParams, amount) {
-  console.log('VBDAO: ATTEMPTING CALL TO CONTRACT')
-
-  const vbInstance = getVbInstance()
-
-  // const quotaInfo = getQuotaByAccount()
-  // let currentQuota = 0
-  // let stakeAmount = 0
-  // quotaInfo.forEach(value => {
-  //   currentQuota = value.currentQuota
-  //   console.log('VBDAO: getQuotaByAccount - currentQuota: ', currentQuota)
-  //   console.log('VBDAO: getQuotaByAccount - maxQuota: ', value.maxQuota)
-  //   stakeAmount = value.stakeAmount
-  //   console.log('VBDAO: getQuotaByAccount - stakeAmount: ', stakeAmount)
-  // })
-
-  // if (stakeAmount <= 0) {
-  //   stakeQuotaForContract(vbInstance, contract, 134)
-  // }
-
-  const block = await accountBlock.createAccountBlock('callContract', {
-    address: vbInstance.accounts[0],
-    abi: contract.abi,
-    toAddress: contract.address,
-    params: inputParams,
-    methodName,
-    amount: String(amount),
-  })
-  const callContractBlock = block.accountBlock
-
-  return sendVcTx(vbInstance, { block: callContractBlock, abi: contract.abi })
-}
+// /**
+//  *
+//  */
+// export async function callContract(contract, methodName, inputParams, amount) {
+//   console.log('VBDAO: ATTEMPTING CALL TO CONTRACT')
+//
+//   const vbInstance = getVbInstance()
+//
+//   // const quotaInfo = getQuotaByAccount()
+//   // let currentQuota = 0
+//   // let stakeAmount = 0
+//   // quotaInfo.forEach(value => {
+//   //   currentQuota = value.currentQuota
+//   //   console.log('VBDAO: getQuotaByAccount - currentQuota: ', currentQuota)
+//   //   console.log('VBDAO: getQuotaByAccount - maxQuota: ', value.maxQuota)
+//   //   stakeAmount = value.stakeAmount
+//   //   console.log('VBDAO: getQuotaByAccount - stakeAmount: ', stakeAmount)
+//   // })
+//
+//   // if (stakeAmount <= 0) {
+//   //   stakeQuotaForContract(vbInstance, contract, 134)
+//   // }
+//
+//   const block = await accountBlock.createAccountBlock('callContract', {
+//     address: vbInstance.accounts[0],
+//     abi: contract.abi,
+//     toAddress: contract.address,
+//     params: inputParams,
+//     methodName,
+//     amount: String(amount),
+//   })
+//   const callContractBlock = block.accountBlock
+//
+//   return sendVcTx(vbInstance, { block: callContractBlock, abi: contract.abi })
+// }
 
 /**
  *

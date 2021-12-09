@@ -1,208 +1,241 @@
 <template>
-  <div>
-    <v-row>
-      <v-col
-        cols="12"
-        md="12"
+  <v-row
+    v-if="currProposal && currProposal.length !== 0"
+  >
+    <v-col
+      cols="12"
+      md="12"
+    >
+      <v-row
+        class="pad-text-left"
       >
-        <v-card-title>Proposal Gallery</v-card-title>
-        <v-card-text>
-          Number of Proposals: {{ numProposals }}
-        </v-card-text>
-        <!-- Card for each active proposal -->
         <v-col
-          md="4"
-          sm="6"
           cols="12"
+          class="mb-6"
         >
-          <v-card
-            v-for="(proposal, index) in proposals"
-            :key="index"
-          >
-            <v-card-title>
-              {{ proposal.title }}
-            </v-card-title>
-            <v-card-text v-if="proposal.state === 'Active'">
-              Active
-            </v-card-text>
-            <v-card-text v-else>
-              Complete
-            </v-card-text>
-            <v-card-text>
-              Proposal ID: {{ proposal.proposalID }}
-            </v-card-text>
-            <v-card-text>
-              Description: {{ proposal.description }}
-            </v-card-text>
-            <v-card-text>
-              Creator: {{ proposal.creator }}
-            </v-card-text>
-            <!-- :disabled="hasMissingParams() || isVoting" -->
-            <FormulateInput
-              type="submit"
-              class="stop-proposal-btn"
-              help="Note: Vite wallet must be connected to stop the proposal."
-              :label="isVoting ? 'Stopping...' : 'Stop (Debug)'"
-              @submit="debugStopProposalHandler(proposal.proposalID)"
-            />
-            <v-card-actions class="dense">
-              <v-btn
-                color="primary"
-                text
+          <v-card>
+            <v-btn
+              :depressed="false"
+              plain
+              class="go-back-btn"
+              @click="goBackClickHandler()"
+            >
+              Go Back
+            </v-btn>
+            <v-row class="ma-0 pb-5 px-2">
+              <v-col
+                cols="12"
+                class="align-text-center"
               >
-                Details
-              </v-btn>
-              <v-spacer></v-spacer>
-              <v-btn
-                icon
-                @click="isCardDetailsVisible = !isCardDetailsVisible"
+                <h1>
+                  {{ currProposal.title }}
+                </h1>
+              </v-col>
+            </v-row>
+            <v-col
+              cols="12"
+              sm="12"
+            >
+              <h2>
+                Description
+              </h2>
+              <span class="body-1">{{ currProposal.description }}</span>
+            </v-col>
+            <v-col
+              cols="12"
+            >
+              <h3>
+                Creator
+              </h3>
+              <span class="body-1">{{ currProposal.creator }}</span>
+            </v-col>
+            <v-col
+              v-if="currProposal.urlLink"
+              cols="12"
+            >
+              <h3>
+                URL
+              </h3>
+              <span class="body-1">
+                <a
+                  :href="currProposal.urlLink"
+                  target="_blank"
+                  rel="nofollow"
+                >
+                  {{ currProposal.urlLink }}
+                </a>
+              </span>
+            </v-col>
+            <v-col
+              v-if="currProposal.keywords"
+              cols="12"
+            >
+              <h3>
+                Keywords
+              </h3>
+              <span class="body-1">{{ currProposal.keywords }}</span>
+            </v-col>
+            <v-col
+              v-if="currProposal.publishDate && datesLoaded"
+              cols="12"
+            >
+              <h3>
+                Publish Date
+              </h3>
+              <span class="body-1">{{ currProposal.publishDate }}</span>
+            </v-col>
+            <v-col
+              v-if="currProposal.endDate && datesLoaded"
+              cols="12"
+            >
+              <h3>
+                End Date
+              </h3>
+              <span class="body-1">{{ currProposal.endDate }}</span>
+            </v-col>
+            <v-col
+              cols="12"
+            >
+              <h3>
+                Voting Type
+              </h3>
+              <span class="body-1">{{ currProposal.votingType }}</span>
+            </v-col>
+            <v-col
+              cols="12"
+              sm="12"
+            >
+              <div
+                v-if="votingTokensLoaded"
               >
-                <v-icon>{{ isCardDetailsVisible ? icons.mdiChevronUp : icons.mdiChevronDown }}</v-icon>
-              </v-btn>
-            </v-card-actions>
-            <v-expand-transition>
-              <div v-show="isCardDetailsVisible">
-                <v-card>
-                  <v-card-text>
-                    urlLink: {{ proposal.urlLink }}
-                    keywords: {{ proposal.keywords }}
-                    description: {{ proposal.description }}
-                    numOptions: {{ proposal.numOptions }}
-                    optionsArr: {{ proposal.optionsArr }}
-                    optionsVotePowers: {{ proposal.optionsVotePowers }}
-                    optionsTotalVotes: {{ proposal.optionsTotalVotes }}
-                    proposalIcon: {{ proposal.proposalIcon }}
-                    attachedFiles: {{ proposal.attachedFiles }}
-                    votingType: {{ proposal.votingType }}
-                    publishDate: {{ proposal.publishDate }}
-                    deadline: {{ proposal.deadline }}
-                    votingTokens: {{ proposal.votingTokens }}
-                    totalVotingPower: {{ proposal.totalVotingPower }}
-                    totalVotes: {{ proposal.totalVotes }}
-                    state: {{ proposal.state }}
-                  </v-card-text>
-                  <!-- <FormulateForm
-                    @submit="submitVoteHandler(proposal)"
-                  >
-                    <FormulateForm
-                      v-model="votingTokenGroup"
+                <h3>
+                  Voting Tokens
+                </h3>
+                <v-badge
+                  v-for="(tokenObj, tokenIndex) in currProposal.votingTokens"
+                  :key="tokenIndex"
+                  :label="tokenObj.tokenName"
+                  :value="hover[tokenIndex]"
+                  :content="tokenObj.tokenName"
+                  bottom
+                >
+                  <v-hover v-model="hover[tokenIndex]">
+                    <v-avatar
+                      v-if="require(`@/assets/img/token-images/${tokenObj.tokenTTI}.png`)"
+                      size="44"
+                      rounded
+                      class="elevation-1 mt-3 ml-5"
                     >
-                      <FormulateInput
-                        :key="votingTokenSelected.name"
-                        :options="proposal.votingTokens"
-                        class="voting-token-dropdown"
-                        name="tokenIndex"
-                        type="select"
-                        label="Vote Token"
-                      />
-                    </FormulateForm>
-                    <v-card-text>
-                      Selected Token ID: {{ proposal.votingTokens[votingTokenGroup.tokenIndex] }}
-                    </v-card-text>
-                    <FormulateInput
-                      v-model="value"
-                      :options="{first: 'First', second: 'Second', third: 'Third', fourth: 'Fourth'}"
-                      type="checkbox"
-                      label="This is a label for all the options (FIX ME)"
-                    />
-                    <FormulateInput
-                      type="submit"
-                      class="submit-vote-btn"
-                      :disabled="hasMissingParams() || isStopping"
-                      :label="isVoting ? 'Loading...' : 'Submit Vote'"
-                    />
-                  </FormulateForm> -->
-                  <FormulateForm
-                    v-model="proposalVoteData"
-                    @submit="submitVoteHandler(proposal)"
-                  >
-                    <FormulateInput
-                      v-for="item in proposalVoteSchema"
-                      :key="item.name"
-                      v-bind="item"
+                      <img
+                        :src="require(`@/assets/img/token-images/${tokenObj.tokenTTI}.png`)"
+                        :alt="tokenObj.tokenName"
+                      >
+                    </v-avatar>
+                    <v-avatar
+                      v-else
+                      size="44"
+                      rounded
+                      class="elevation-1 mt-3 ml-5"
                     >
-                      <FormulateInput
-                        v-for="childItem in item.children"
-                        :key="childItem.name"
-                        v-bind="childItem"
-                        :options="proposal.optionsArr ? proposal.optionsArr : ''"
-                      />
-                    </FormulateInput>
-                    <FormulateInput
-                      type="submit"
-                      class="submitFormButtonStyle"
-                      help="Note: Vite wallet must be connected to submit."
-                      :label="isLoading ? 'Awaiting Vite App Approval...' : 'Submit'"
-                    />
-                </FormulateForm>
-                </v-card>
+                      {{ tokenObj.tokenName }}
+                    </v-avatar>
+                  </v-hover>
+                </v-badge>
               </div>
-            </v-expand-transition>
+              <!--<span
+                v-for="(tokenObj, index) in currProposal.votingTokens"
+                :key="index"
+                class="body-1"
+              >
+                <span
+                  v-if="index < currProposal.votingTokens.length-1"
+                >
+                  {{ `${currProposal.votingTokens[index].tokenTTI}, ` }}
+                </span>
+                <span
+                  v-else
+                >
+                  {{ `${currProposal.votingTokens[index].tokenTTI}` }}
+                </span>
+              </span>-->
+            </v-col>
+            <v-divider
+              class="divider-margin-class"
+            ></v-divider>
+            <voting-results-widget
+              v-if="currProposal"
+            ></voting-results-widget>
+            <voting-ballot-form
+              v-if="currProposal.status === 'Active' && currProposal.votingTokens"
+              :votingTokens="currProposal.votingTokens"
+              :votingType="currProposal.votingType"
+              :proposalOptions="currProposal.options"
+              :isVoting="isVoting"
+              :isStopping="isStopping"
+              :prevVoterMap="currProposal.prevVoterMap"
+              @onSubmitVote="submitVoteHandler"
+            >
+            </voting-ballot-form>
           </v-card>
         </v-col>
-      </v-col>
-    </v-row>
-  </div>
+      </v-row>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex'
 import {
-  mdiChevronUp,
-  mdiChevronDown,
-} from '@mdi/js'
-import BigNumber from 'bignumber.js'
-import { getWalletBalanceInfo } from '@/utils/contract/contractHelpers'
-import { ipfsGetData, ipfsSetData } from '@/store/ipfs'
+  votesFirestore,
+  proposalsFirestore,
+  updateDocData,
+  getDataById,
+} from '@/firebase/firebase'
+import VotingBallotForm from './forms/FormVotingBallot.vue'
+import VotingResultsWidget from './widgets/VotingResultsWidget.vue'
+
+// import { voteOnProposal } from '@/utils/proposal/proposalController'
+// import { ipfsSetData } from '@/store/ipfs'
 
 export default {
-  props: {
-    proposal: {
-      type: Array / Object / String / Number,
-      required: true,
-    },
+
+  components: {
+    VotingBallotForm,
+    VotingResultsWidget,
   },
-  setup() {
+
+  data() {
     return {
-      isCardDetailsVisible: false,
+      votingBalance: 100,
       isVoting: false,
       isStopping: false,
-      icons: {
-        mdiChevronUp,
-        mdiChevronDown,
-      },
-      proposalVoteData: {},
-      proposalVoteSchema: [
-        {
-          type: 'select',
-          name: 'votingType',
-          label: 'Voting Type',
-          options: votingTypes,
-          class: 'createProposalDropdown',
-        },
-      ],
-      votingPowers = {},
+      datesLoaded: false,
+      votingTokensLoaded: false,
+      hover: [],
     }
   },
+
   computed: {
     ...mapState([
       'walletConnected',
       'connectedWalletAddr',
-      'connectedAccounts',
+      'currProposalVotingStats',
+      'currProposal',
     ]),
     ...mapGetters([
       'getIsWalletConnected',
       'getConnectedWalletAddr',
-      'getConnectedAccounts',
+      'getCurrProposalVotingStats',
+      'getCurrProposal',
     ]),
   },
-  mounted() {
-    this.onMounted()
+
+  created() {
+    this.onCreated()
   },
+
   methods: {
-    /**
-     *
-     */
+
     hasMissingParams() {
       if (!this.walletConnected) {
         return true
@@ -211,56 +244,88 @@ export default {
       return false
     },
 
-    /**
-     * async submitVoteHandler(proposalID, voteToken, voterPower(balance), optionNumber)
-     */
-    async submitVoteHandler(proposal) {
-      // if (this.hasMissingParams()) {
-      //   console.log('VBDAO - Missing Required Parameter')
-
-      //   return
-      // }
-
-      console.log('VBDAO - ATTEMPTING TO SUBMIT VOTE: ')
-
-      this.isLoading = true
-
-      // (uint256 proposalID, address voter, uint256 voterPower, uint256 ipfsData)
-      console.log('VBDAO VOTE PARAM - voter: ', this.connectedAccounts[0])
-      console.log('VBDAO VOTE PARAM - proposalID: ', proposal.proposalID)
-      console.log('VBDAO VOTE PARAM - optionsVoted: ', this.proposalVoteData)
-      console.log('VBDAO VOTE PARAM - votingPowers: ', votingPowers)
-
-      const voteParams = {
-        voter: this.connectedAccounts[0],
-        proposalID: proposal.proposalID,
-        optionsVoted: this.proposalVoteData,
-        votingPowers: votingPowers,
+    async goBackClickHandler() {
+      if (window.history.length) {
+        this.$router.go(-1)
+      } else {
+        this.$router.push('/')
       }
 
-      console.log('VBDAO VOTE PARAM ENCODED - voter: ', voteParams.voter)
-      console.log('VBDAO VOTE PARAM ENCODED - proposalID: ', voteParams.proposalID)
-      console.log('VBDAO VOTE PARAM ENCODED - optionsVoted: ', voteParams.optionsVoted)
-      console.log('VBDAO VOTE PARAM ENCODED - votingPowers: ', voteParams.votingPowers)
+      // this.$router.push({ path: `/` }) // -> /home
+    },
 
-      // voteOnProposal(voteParams).then(block => {
-      //   if (block && voteParams) {
-      //     this.$store.dispatch('addProposalVote', voteParams.proposalID, voteParams)
-      //     console.log('VBDAO: CALL TO CONTRACT (voteOnProposal) SUCCESS', block)
-      //     getProposalByID(voteParams.proposalID).then(proposalObj => {
-      //       if (proposalObj) {
-      //         this.proposals[voteParams.proposalID] = proposalObj)
-      //         this.isLoading = false
-      //       }
-      //     })
-      //   }
-      // })
+    async submitVoteHandler(voteData) {
+      if (this.hasMissingParams()) {
+        console.log('VBDAO - Submit Error')
+
+        return
+      }
+
+      this.isVoting = true
+
+      let powerSum = 0
+      const newStatTotals = []
+      voteData.votingPowers.forEach((val, index) => {
+        const optionTotalVotes = parseInt(this.currProposalVotingStats.optTotalVotesData[0].data[index], 10)
+        const optionTotalPowers = parseInt(this.currProposalVotingStats.optVotingPowerData[0].data[index], 10)
+
+        if (val) {
+          const parsedPower = ((parseInt(voteData.votingPowers[index], 10) * voteData.userBalance) / 100)
+          powerSum += parsedPower
+          newStatTotals[index] = {
+            optionTotalVotes: optionTotalVotes + 1,
+            optionTotalVotingPower: optionTotalPowers + parsedPower,
+          }
+        } else {
+          newStatTotals[index] = {
+            optionTotalVotes: optionTotalVotes,
+            optionTotalVotingPower: optionTotalPowers,
+          }
+        }
+      })
+
+      if (this.currProposalVotingStats) {
+        await updateDocData(votesFirestore, this.currProposal.voteStatsID, {
+          timestamp: new Date(),
+          totalVotes: ++this.currProposalVotingStats.totalVotes,
+          totalVotingPower: this.currProposalVotingStats.totalVotingPower + powerSum,
+          optionStats: newStatTotals,
+        })
+      }
+
+      const currVoterMap = this.currProposal.prevVoterMap
+      currVoterMap.push(this.connectedWalletAddr)
+
+      if (currVoterMap) {
+        await updateDocData(proposalsFirestore, this.currProposal.proposalID, {
+          prevVoterMap: currVoterMap,
+        })
+      }
+
+      getDataById(votesFirestore, this.currProposal.voteStatsID).then(dataRes => {
+        if (dataRes) {
+          const castedVotesData = dataRes.data()
+          if (castedVotesData) {
+            const currCastedVotes = castedVotesData.castedVotes
+            if (currCastedVotes) {
+              currCastedVotes.push({ voterAddr: this.connectedWalletAddr, votingPowers: voteData.votingPowers })
+
+              updateDocData(votesFirestore, this.currProposal.voteStatsID, {
+                castedVotes: currCastedVotes,
+              })
+            }
+          }
+        }
+      })
+
+      this.$store.commit('initializeCurrProposalVotingStats', this.currProposal.voteStatsID)
+      this.isVoting = false
     },
 
     /**
      *
      */
-    async debugStopProposalHandler(proposalID) {
+    async debugStopProposalHandler() {
       // if (this.hasMissingParams()) {
       //   console.log('VBDAO - Missing Required Parameter')
 
@@ -275,11 +340,11 @@ export default {
       //   return
       // }
 
-      // console.log('VBDAO STOP PROPOSAL PARAM - proposalID: ', proposalID)
+      // console.log('VBDAO STOP PROPOSAL PARAM - proposalID: ', this.currProposal.proposalID)
       // console.log('VBDAO STOP PROPOSAL PARAM - onProposalEndEvent: ', this.onProposalEndEvent)
       // console.log('VBDAO STOP PROPOSAL PARAM - onProposalResultsEvent: ', this.onProposalResultsEvent)
 
-      // stopProposalEarly(proposalID).then(block => {
+      // stopProposalEarly(this.currProposal.proposalID).then(block => {
       //   if (block) {
       //     console.log('VBDAO: debugStopProposalHandler success', block)
       //     this.isStopping = false
@@ -287,32 +352,12 @@ export default {
       // })
     },
 
-
-    /**
-     *
-     */
-    async calculateVotingPowers(votingTokens, votingType) {
-      console.log('VBDAO - calculateVotingPowers:', votingTokens, votingType)
-
-      // Get the balance of connected wallet by tokenId
-      // FIX ME - Use the tokenId to parse
-      let tokenBalance = 0
-      await getWalletBalanceInfo(this.connectedAccounts[0]).then(({ balance, unreceived }) => {
-        console.log('balance: ', balance, unreceived)
-        console.log('balanceInfoMap: ', balance.balanceInfoMap)
-        Object.values(balance.balanceInfoMap).forEach(val => {
-          console.log(val)
-          tokenBalance += parseInt(BigNumber(val.balance).dividedBy(`1e${val.tokenInfo.decimals}`).toFixed(), 10)
-        })
-      })
-    },
-
     /**
      *
      */
     async onProposalVoteEvent(eventLog) {
       console.log('VBDAO - onProposalVoteEvent:', eventLog)
-      this.isLoading = false
+      this.isVoting = false
     },
 
     /**
@@ -332,25 +377,82 @@ export default {
     /**
      *
      */
-    async onMounted() {
-      calculateVotingPowers
+    async calculateVotingPowers() {
+      console.log('VBDAO - calculateVotingPowers:', this.currProposal.votingTokens)
     },
+
+    /**
+     *
+     */
+    async initializeCurrProposal() {
+      if (this.currProposal.length !== 0) {
+        this.$store.commit('initializeCurrProposalVotingStats', this.currProposal.voteStatsID)
+        this.currProposal.publishDate = await this.transformDate(this.currProposal.publishDate)
+        this.currProposal.endDate = await this.transformDate(this.currProposal.endDate)
+        this.hover = new Array(this.currProposal.votingTokens.length).fill(false)
+        this.votingTokensLoaded = true
+      }
+    },
+
+    /**
+     *
+     */
+    async onCreated() {
+      if (!this.currProposal) {
+        getDataById(proposalsFirestore, this.$router.history._startLocation.replace('/view/', '')).then(dataRes => {
+          if (dataRes) {
+            this.$store.commit('setCurrProposal', dataRes.data())
+            this.initializeCurrProposal()
+          }
+        })
+      } else {
+        this.initializeCurrProposal()
+      }
+    },
+
+    /**
+     *
+     */
+    async transformDate(lhsDate) {
+      if (!lhsDate) {
+        return ''
+      }
+
+      const secDate = new Date(lhsDate.seconds * 1000)
+      this.datesLoaded = true
+
+      return `${secDate.toDateString()} at ${secDate.toTimeString()}`
+    },
+
   },
 }
 </script>
 
 <style lang="scss">
-.stop-proposal-btn {
+@import '@braid/vue-formulate/themes/snow/snow.scss';
+.align-text-center {
+  text-align: center;
+}
+.pad-text-left {
+  margin-left: 15px;
+}
+.center-flex {
+  .d-flex {
+    margin: unset !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+.cast-vote-submit-btn {
+  margin: 20px;
+}
+.options-row-style {
+  margin-top: 10px;
+}
+.divider-margin-class {
+  margin: 20px;
+}
+.go-back-btn {
   margin: 10px;
-  left: 0;
-}
-.submit-vote-btn {
-  margin-top: 40px;
-}
-.voting-token-dropdown {
-  max-width: 200px !important;
-}
-.submitFormButtonStyle {
-  margin-top: 40px;
 }
 </style>

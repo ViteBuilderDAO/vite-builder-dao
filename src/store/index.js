@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 // import * as storage from '@/utils/storage/storage'
+// import Connector from '@vite/connector'
 import {
   getAllProposalStats,
 } from '@/utils/proposal/proposalController'
@@ -11,6 +12,10 @@ import {
   getDataById,
 } from '@/firebase/firebase'
 import { getWalletBalanceInfo } from '@/utils/contract/contractHelpers'
+import eventBus from '@/utils/events/eventBus'
+
+// url to vite connect server
+// const BRIDGE = 'wss://biforst.vite.net'
 
 Vue.use(Vuex)
 
@@ -19,18 +24,17 @@ export default new Vuex.Store({
     // Wallet Connection Status
     walletConnected: false,
     mnemonics: '',
-    connectedAccounts: [],
     connectedWalletAddr: '',
     connectedBalanceInfo: [],
     accountStates: '',
-    proposalMode: 'gallery',
     proposals: [],
     proposalStatuses: [],
-    currProposal: [],
+    currProposal: null,
     currProposalID: '',
     currProposalVotingStats: {
       totalVotes: 0,
       totalVotingPower: 0,
+      winningIndices: [],
       optTotalVotesData: [{
         data: [],
       }],
@@ -43,11 +47,17 @@ export default new Vuex.Store({
       id: '',
       totalProposals: 0,
       numActiveProposals: 0,
-      numApprovedProposals: 0,
-      numRejectedProposals: 0,
-      numCancelledProposals: 0,
+      numClosedProposals: 0,
     },
     proposalStatsLoaded: false,
+    whitelistedAddresses: [
+      'vite_04d31e740dbca35a0e00db5fb1ef12fb4cedbd1e66e7895774',
+      'vite_f30697191707a723c70d0652ab80304195e5928dcf71fcab99',
+      'vite_940c816f5527b63ba425a2ca9abd6380535c9f7f53803d620c',
+      'vite_471d56e8d25ca76c4abbd6b097794b9190f052ac7eea880c88',
+      'vite_9a4c9281f8770751f7281a6a89f2d32c30d45d322304c447a9',
+      'vite_1e6fcaa6ade80cb29b981bc70b2e8396bbdfd70a04e6164705',
+    ],
 
   },
   getters: {
@@ -58,10 +68,6 @@ export default new Vuex.Store({
 
     getWalletMnemonics(state) {
       return state.mnemonics
-    },
-
-    getConnectedAccounts(state) {
-      return state.connectedAccounts
     },
 
     getConnectedWalletAddr(state) {
@@ -78,10 +84,6 @@ export default new Vuex.Store({
 
     getProposalStatuses(state) {
       return state.proposalStatuses
-    },
-
-    getProposalMode(state) {
-      return state.proposalMode
     },
 
     getCurrProposal(state) {
@@ -112,20 +114,22 @@ export default new Vuex.Store({
       return state.proposalStatsLoaded
     },
 
+    getWhitelistedAddresses(state) {
+      return state.whitelistedAddresses
+    },
+
   },
   mutations: {
     initializeStore(state) {
       state.proposalStatsLoaded = false
+
       if (state.proposalStats.id !== '') {
         getDataById(proposalStatsFirestore, state.proposalStats.id).then(dataRes => {
           if (dataRes) {
             const statsData = dataRes.data()
             state.proposalStats.totalProposals = statsData.totalNumProposals
             state.proposalStats.numActiveProposals = statsData.totalActiveProposals
-            state.proposalStats.numApprovedProposals = statsData.totalApprovedProposals
-            state.proposalStats.numRejectedProposals = statsData.totalRejectedProposals
-            state.proposalStats.numCancelledProposals = statsData.totalCancelledProposals
-            state.proposalMode = 'gallery'
+            state.proposalStats.numClosedProposals = statsData.totalClosedProposals
             state.proposalStatsLoaded = true
           }
         })
@@ -135,13 +139,10 @@ export default new Vuex.Store({
           state.proposalStats.id = statsData.id
           state.proposalStats.totalProposals = statsData.totalNumProposals
           state.proposalStats.numActiveProposals = statsData.totalActiveProposals
-          state.proposalStats.numApprovedProposals = statsData.totalApprovedProposals
-          state.proposalStats.numRejectedProposals = statsData.totalRejectedProposals
-          state.proposalStats.numCancelledProposals = statsData.totalCancelledProposals
+          state.proposalStats.numClosedProposals = statsData.totalClosedProposals
         })
       }
 
-      state.proposalMode = 'gallery'
       state.proposalStatsLoaded = true
     },
 
@@ -150,15 +151,28 @@ export default new Vuex.Store({
       getDataById(votesFirestore, voteStatsID).then(dataRes => {
         if (dataRes) {
           const votesData = dataRes.data()
-          state.currProposalVotingStats.optTotalVotesData[0].data = []
-          state.currProposalVotingStats.optVotingPowerData[0].data = []
-          votesData.optionStats.forEach((val, index) => {
-            state.currProposalVotingStats.optTotalVotesData[0].data[index] = val.optionTotalVotes
-            state.currProposalVotingStats.optVotingPowerData[0].data[index] = val.optionTotalVotingPower
-          })
-          state.currProposalVotingStats.totalVotes = votesData.totalVotes
-          state.currProposalVotingStats.totalVotingPower = votesData.totalVotingPower
-          state.currVotingStatsLoaded = true
+          if (votesData) {
+            state.currProposalVotingStats.optTotalVotesData[0].data = []
+            state.currProposalVotingStats.optVotingPowerData[0].data = []
+            let winningOptPower = 0
+            votesData.optionStats.forEach((val, index) => {
+              state.currProposalVotingStats.optTotalVotesData[0].data[index] = val.optionTotalVotes
+              state.currProposalVotingStats.optVotingPowerData[0].data[index] = val.optionTotalVotingPower
+              if (winningOptPower < val.optionTotalVotingPower) {
+                winningOptPower = val.optionTotalVotingPower
+                state.currProposalVotingStats.winningIndices = new Array(1).fill(index)
+              } else if (winningOptPower === val.optionTotalVotingPower) {
+                state.currProposalVotingStats.winningIndices.push(index)
+              }
+            })
+            state.currProposalVotingStats.totalVotes = votesData.totalVotes
+            state.currProposalVotingStats.totalVotingPower = votesData.totalVotingPower
+            state.currVotingStatsLoaded = true
+            eventBus.$emit('voting-results-updated', {
+              optTotalVotesData: state.currProposalVotingStats.optTotalVotesData[0].data,
+              optVotingPowerData: state.currProposalVotingStats.optVotingPowerData[0].data,
+            })
+          }
         }
       })
     },
@@ -182,14 +196,6 @@ export default new Vuex.Store({
       state.mnemonics = payload
     },
 
-    addAccount(state, { account }) {
-      state.connectedAccounts = state.connectedAccounts.concat([account])
-    },
-
-    setAccounts(state, accounts) {
-      state.connectedAccounts = accounts
-    },
-
     setSelectedAddress(state, address) {
       state.connectedWalletAddr = address
     },
@@ -209,10 +215,6 @@ export default new Vuex.Store({
       state.proposalStatuses = statuses
     },
 
-    setProposalMode(state, proposalMode) {
-      state.proposalMode = proposalMode
-    },
-
     setCurrProposal(state, proposal) {
       state.currProposalID = proposal.proposalID
       state.currProposal = proposal
@@ -227,22 +229,19 @@ export default new Vuex.Store({
       state.proposalStats.id = statsData.id
       state.proposalStats.totalProposals = statsData.totalNumProposals
       state.proposalStats.numActiveProposals = statsData.totalActiveProposals
-      state.proposalStats.numApprovedProposals = statsData.totalApprovedProposals
-      state.proposalStats.numRejectedProposals = statsData.totalRejectedProposals
-      state.proposalStats.numCancelledProposals = statsData.totalCancelledProposals
-      state.proposalMode = 'gallery'
+      state.proposalStats.numClosedProposals = statsData.totalClosedProposals
       state.proposalStatsLoaded = true
     },
+
+    addWhitelistedAddress(state, { address }) {
+      state.whitelistedAddresses = state.whitelistedAddresses.concat([address])
+    },
+
   },
   actions: {
 
     addAccount({ commit }, newAccount) {
-      commit('addAccount', { account: newAccount })
       commit('setSelectedAddress', newAccount.address)
-    },
-
-    setProposalMode({ commit }, proposalMode) {
-      commit('setProposalMode', proposalMode)
     },
 
     setProposals({ commit }, proposals) {
@@ -259,6 +258,10 @@ export default new Vuex.Store({
 
     setProposalStats({ commit }, statsData) {
       commit('setProposalStats', statsData)
+    },
+
+    addWhitelistedAddress({ commit }, newAddress) {
+      commit('addWhitelistedAddress', { address: newAddress })
     },
   },
   modules: {},

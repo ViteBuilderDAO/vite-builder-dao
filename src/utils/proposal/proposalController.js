@@ -1,4 +1,4 @@
-import { query, orderBy } from 'firebase/firestore'
+import { query, orderBy, where } from 'firebase/firestore'
 import {
   proposalsFirestore,
   proposalStatsFirestore,
@@ -9,7 +9,6 @@ import {
  *
  */
 export async function getAllProposalStats() {
-  // return callContractOffChain(PROPOSAL_CONTRACT, 'getProposalStats', [])
   return getAllData(proposalStatsFirestore)
 }
 
@@ -17,7 +16,10 @@ export async function getAllProposalStats() {
  *
  */
 export async function getAllProposals() {
-  const sortedProposalsQuery = query(proposalsFirestore, orderBy('publishDate'))
+  const sortedActiveProposalsQuery = query(proposalsFirestore, where('status', '==', 'Active'), orderBy('publishDate'))
+  const sortedClosedProposalsQuery = query(proposalsFirestore, where('status', '==', 'Closed'), orderBy('endDate'))
+  const activeProposals = await getAllData(sortedActiveProposalsQuery)
+  const closedProposals = await getAllData(sortedClosedProposalsQuery)
 
-  return getAllData(sortedProposalsQuery)
+  return [].concat(closedProposals.docs, activeProposals.docs)
 }

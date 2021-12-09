@@ -1,35 +1,49 @@
 <template>
-  <FormulateForm
-    v-model="createProposalData"
-    :class="$vuetify.theme.dark ? 'create-proposal-light-text' : 'create-proposal-dark-borders'"
-    @submit="submitHandler"
-  >
-    <v-expand-transition>
-      <div v-show="!isLoading">
-        <FormulateInput
-          v-for="item in createProposalSchema"
-          :key="item.name"
-          v-bind="item"
-        >
-          <FormulateInput
-            v-for="childItem in item.children"
-            :key="childItem.name"
-            v-bind="childItem"
-            :options="tokenList ? tokenList : ''"
-          />
-        </FormulateInput>
-      </div>
-    </v-expand-transition>
-    <FormulateInput
-      type="submit"
-      class="submitFormButtonStyle"
-      error-behavior="live"
-      :validation="!walletConnected ? 'required' : ''"
-      validation-name="Vite wallet"
-      :label="isLoading ? 'Awaiting Vite App Approval...' : 'Submit'"
-      :disabled="hasMissingParams()"
-    />
-  </FormulateForm>
+  <v-row>
+    <!-- Create new proposal -->
+    <v-col
+      class="create-proposal-form"
+      cols="12"
+      md="12"
+    >
+      <v-card>
+        <v-card-title>Create a Proposal</v-card-title>
+        <v-card-text>
+          <FormulateForm
+            v-model="createProposalData"
+            :class="$vuetify.theme.dark ? 'create-proposal-light-text' : 'create-proposal-dark-borders'"
+            @submit="submitHandler"
+          >
+            <v-expand-transition>
+              <div v-show="!isLoading">
+                <FormulateInput
+                  v-for="item in createProposalSchema"
+                  :key="item.name"
+                  v-bind="item"
+                >
+                  <FormulateInput
+                    v-for="childItem in item.children"
+                    :key="childItem.name"
+                    v-bind="childItem"
+                    :options="tokenList ? tokenList : ''"
+                  />
+                </FormulateInput>
+              </div>
+            </v-expand-transition>
+            <FormulateInput
+              type="submit"
+              class="submitFormButtonStyle"
+              error-behavior="live"
+              :validation="!walletConnected ? 'required' : ''"
+              validation-name="Vite wallet"
+              :label="isLoading ? 'Loading...' : 'Submit'"
+              :disabled="hasMissingParams()"
+            />
+          </FormulateForm>
+        </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -43,6 +57,7 @@ import {
   addNewDoc,
   updateDocData,
 } from '@/firebase/firebase'
+import eventBus from '@/utils/events/eventBus'
 
 // const { abi } = require('@vite/vitejs')
 // import { ipfsSetData } from '@/store/ipfs'
@@ -134,7 +149,6 @@ export default {
               'error-behavior': 'live',
               validation: 'required',
               'validation-name': 'Option name',
-              help: 'Note: by default a "downvote all" option is added to every proposal',
             },
           ],
         },
@@ -146,19 +160,35 @@ export default {
     ...mapState([
       'walletConnected',
       'connectedWalletAddr',
-      'connectedAccounts',
       'proposalStats',
+      'whitelistedAddresses',
     ]),
     ...mapGetters([
       'getIsWalletConnected',
       'getConnectedWalletAddr',
-      'getConnectedAccounts',
       'getProposalStats',
+      'getWhitelistedAddresses',
     ]),
   },
 
+  created() {
+    if (this.walletConnected && !this.whitelisted()) {
+      this.$router.push('/')
+    }
+  },
+
   mounted() {
+    eventBus.$on('vite-wallet-connected', () => {
+      if (this.walletConnected && !this.whitelisted()) {
+        this.$router.push('/')
+      }
+    })
     this.onMounted()
+  },
+
+  beforeDestroy() {
+    // removing eventBus listeners
+    eventBus.$off('vite-wallet-connected')
   },
 
   methods: {
@@ -166,6 +196,7 @@ export default {
     hasMissingParams() {
       if (
         !this.walletConnected
+        || !this.whitelisted()
         || !(this.createProposalData.votingTokenData
             && this.createProposalData.votingTokenData[0].tokenTTI)
         || !(this.createProposalData.title
@@ -184,32 +215,33 @@ export default {
       return false
     },
 
+    whitelisted() {
+      if (this.connectedWalletAddr
+          && this.whitelistedAddresses
+          && this.whitelistedAddresses.includes(this.connectedWalletAddr)) {
+        return true
+      }
+
+      return false
+    },
+
     async submitHandler() {
+      const votingTokenArr = []
+      this.createProposalData.votingTokenData.forEach(votingTokenObj => {
+        this.tokenList.forEach(tokenListObj => {
+          if (tokenListObj.value.includes(votingTokenObj.tokenTTI)) {
+            votingTokenArr.push({ tokenTTI: votingTokenObj.tokenTTI, tokenName: tokenListObj.label })
+          }
+        })
+      })
+
       if (this.hasMissingParams()) {
-        console.log('VBDAO - Missing Required Parameter')
+        console.log('VBDAO - Submit Error')
 
         return
       }
 
-      console.log('VBDAO - submitHandler Proposal Started')
-
       this.isLoading = true
-
-      // console.log('VBDAO CREATE PROPOSAL PARAM - creator: ', this.connectedWalletAddr)
-      // console.log('VBDAO CREATE PROPOSAL PARAM - title: ', this.createProposalData.title)
-      // console.log('VBDAO CREATE PROPOSAL PARAM - urlLink: ', this.createProposalData.urlLink)
-      // console.log('VBDAO CREATE PROPOSAL PARAM - keywords: ', this.createProposalData.keywords)
-      // console.log('VBDAO CREATE PROPOSAL PARAM - description: ', this.createProposalData.description)
-      // console.log('VBDAO CREATE PROPOSAL PARAM - numOptions: ', this.createProposalData.optionsData.length)
-      // console.log('VBDAO CREATE PROPOSAL PARAM - options: ', this.createProposalData.optionsData)
-      // console.log('VBDAO CREATE PROPOSAL PARAM - attachedFiles: ', this.createProposalData.attachedFiles)
-      // console.log('VBDAO CREATE PROPOSAL PARAM - votingType: ', this.createProposalData.votingType)
-      // console.log('VBDAO CREATE PROPOSAL PARAM - publishDate: ', new Date())
-      // console.log('VBDAO CREATE PROPOSAL PARAM - votingPeriod: ', this.createProposalData.durationInHours)
-      // console.log('VBDAO CREATE PROPOSAL PARAM - votingTokens: ', this.createProposalData.votingTokenData)
-
-      const optionsArr = this.createProposalData.optionsData
-      optionsArr.push({ optionName: 'Reject All Options' })
 
       const publishDate = new Date()
       const endDate = new Date(publishDate)
@@ -219,13 +251,13 @@ export default {
         creator: this.connectedWalletAddr,
         title: this.createProposalData.title,
         description: this.createProposalData.description,
-        numOptions: optionsArr.length,
-        options: optionsArr,
+        numOptions: this.createProposalData.optionsData.length,
+        options: this.createProposalData.optionsData,
         votingType: this.createProposalData.votingType,
         publishDate: publishDate,
         endDate: endDate,
         votingPeriod: this.createProposalData.durationInHours,
-        votingTokens: this.createProposalData.votingTokenData,
+        votingTokens: votingTokenArr,
         status: 'Active',
         prevVoterMap: [],
       }
@@ -245,7 +277,6 @@ export default {
         results: {
           winningOptionName: '',
           winningOptionIndex: 0,
-          finalState: '',
         },
         castedVotes: [],
       }
@@ -264,47 +295,21 @@ export default {
         await updateDocData(proposalStatsFirestore, this.proposalStats.id, {
           id: this.proposalStats.id,
           totalActiveProposals: this.proposalStats.numActiveProposals + 1,
-          totalApprovedProposals: this.proposalStats.numApprovedProposals,
-          totalCancelledProposals: this.proposalStats.numCancelledProposals,
+          totalClosedProposals: this.proposalStats.numClosedProposals,
           totalNumProposals: this.proposalStats.totalProposals + 1,
-          totalRejectedProposals: this.proposalStats.numRejectedProposals,
         })
 
         if (proposalParams.proposalID) {
           this.$store.commit('initializeStore')
+          this.$router.push('/')
+
+          // this.$router.push({ path: `/` }) // -> /home
         }
       }
-
-      // const ipfsPath = `ProposalParams_|${proposalID.toString()}`
-      // const ipfsHashFile = ipfsSetData(ipfsPath, proposalParams)
-
-      // console.log('VBDAO - PROPOSAL PARAMS proposalID - ', proposalParams.proposalID)
-      // console.log('VBDAO - PROPOSAL PARAMS voteStatsID - ', proposalParams.voteStatsID)
-
-      // console.log('VBDAO - PROPOSAL PARAMS ipfspath - ', ipfsPath)
-      // console.log('VBDAO - PROPOSAL PARAMS ipfsHashFile.path - ', ipfsHashFile.path)
-      // console.log('VBDAO - PROPOSAL PARAMS ipfsHashFile.cid - ', ipfsHashFile.cid)
-
-      // if (proposalParams.proposalID) {
-      //   startProposal([proposalParams.proposalID, proposalParams.creator, proposalParams.votingPeriod, proposalParams.numOptions]).then(block => {
-      //     if (block) {
-      //       this.$store.commit('initializeStore', true)
-
-      //       // window.location.reload()
-      //       // this.$store.commit('setProposalMode', 'gallery')
-      //       // console.log('VBDAO: CALL TO CONTRACT SUCCESS')
-      //     }
-      //   })
-      // }
     },
 
     async onMounted() {
       this.tokenList = await getTokenList()
-
-      // this.tokenList.forEach((token, index) => {
-      //   this.tokenList[index].value = token.value
-      //   this.tokenList[index].value = token.label
-      // })
     },
 
     async onProposalStartEvent(eventLog) {
@@ -376,6 +381,10 @@ export default {
   margin-right: auto;
 }
 
+.formulate-input[data-classification="textarea"] textarea {
+  height: 150px;
+}
+
 .v-card.v-sheet[data-v-14f11f54] {
   width: 40%;
   margin-left: auto;
@@ -415,18 +424,3 @@ export default {
   display: none;
 }
 </style>
-<!--
-:class="isLoading ? 'hidden-form-container' : 'visible-form-container'"
-{
-  component: 'div',
-  class: 'double-row',
-  children: [
-    {
-
-    },
-    {
-
-    },
-  ]
-}
--->

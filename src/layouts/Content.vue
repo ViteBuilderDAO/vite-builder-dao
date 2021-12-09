@@ -74,7 +74,6 @@
               <v-list>
                 <v-list-item
                   to="/"
-                  @click="$store.commit('setProposalMode', 'gallery')"
                 >
                   <v-list-item-icon>
                     <v-icon
@@ -89,7 +88,6 @@
                 </v-list-item>
                 <v-list-item
                   to="about"
-                  @click="$store.commit('setProposalMode', 'gallery')"
                 >
                   <v-list-item-icon>
                     <v-icon

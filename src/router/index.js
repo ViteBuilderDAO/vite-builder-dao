@@ -6,16 +6,13 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    redirect: '/#',
-  },
-  {
-    path: '/#',
     name: 'home',
-    component: () => import('@/views/dashboard/Dashboard.vue'),
+    component: () => import('@/views/proposals/ProposalGallery.vue'),
     meta: {
       layout: 'content',
     },
   },
+
   {
     path: '/about',
     name: 'about',
@@ -24,22 +21,25 @@ const routes = [
       layout: 'content',
     },
   },
+
   {
-    path: '/gallery-test',
-    name: 'gallery-test',
-    component: () => import('@/views/proposals/test/GalleryTest.vue'),
+    path: '/create-proposal',
+    name: 'create-proposal',
+    component: () => import('@/views/proposals/forms/FormCreateProposal.vue'),
     meta: {
       layout: 'content',
     },
   },
+
   {
-    path: '/view-proposal-test',
-    name: 'view-proposal-test',
-    component: () => import('@/views/proposals/test/ViewProposalTest.vue'),
+    path: '/view/:proposalID',
+    name: 'view-proposal',
+    component: () => import('@/views/proposals/ViewProposal.vue'),
     meta: {
       layout: 'content',
     },
   },
+
   {
     path: '/error-404',
     name: 'error-404',
@@ -52,6 +52,35 @@ const routes = [
     path: '*',
     redirect: 'error-404',
   },
+
+  // {
+  //   path: '/',
+  //   redirect: '/#',
+  // },
+  // {
+  //   path: '/',
+  //   name: 'home',
+  //   component: () => import('@/views/dashboard/Dashboard.vue'),
+  //   meta: {
+  //     layout: 'content',
+  //   },
+  // },
+  // {
+  //   path: '/proposal-gallery',
+  //   name: 'proposal-gallery',
+  //   component: () => import('@/views/proposals/ProposalGallery.vue'),
+  //   meta: {
+  //     layout: 'content',
+  //   },
+  // },
+  // {
+  //   path: '/view-proposal',
+  //   name: 'view-proposal',
+  //   component: () => import('@/views/proposals/ViewProposal.vue'),
+  //   meta: {
+  //     layout: 'content',
+  //   },
+  // },
 ]
 
 const router = new VueRouter({

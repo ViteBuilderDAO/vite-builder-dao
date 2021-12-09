@@ -56,9 +56,7 @@ export default {
   setup() {
     const statusColor = {
       'Active': 'primary',
-      'Approved': 'success',
-      'Rejected': 'red',
-      'Cancelled': 'grey',
+      'Closed': 'grey',
     }
 
     return {
@@ -69,7 +67,10 @@ export default {
   methods: {
     async viewProposalHandler(proposal) {
       this.$store.commit('setCurrProposal', proposal)
-      this.$store.commit('setProposalMode', 'view')
+      this.$router.push(`/view/${proposal.proposalID}`)
+
+      // this.$router.push({ path: `/view/${proposal.proposalID}` }) // -> /view/proposalID
+      // this.$router.push({ name: 'view-proposal', params: { proposal.proposalID } }) // -> /view/proposalID
     },
 
     /**

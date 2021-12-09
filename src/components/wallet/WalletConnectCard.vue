@@ -37,9 +37,10 @@
       :max-width="!walletConnected ? '300' : '460'"
     >
       <wallet-qr-canvas
-        v-if="!walletConnected"
+        v-if="!walletConnected && walletURI !== ''"
         class="wallet-card-qr-style"
         height="350px"
+        :walletURI="walletURI"
       >
       </wallet-qr-canvas>
       <wallet-account-info
@@ -61,12 +62,23 @@
 import { mapState, mapGetters } from 'vuex'
 import WalletQrCanvas from './WalletQRCanvas.vue'
 import WalletAccountInfo from './WalletAccountInfo.vue'
+import eventBus from '@/utils/events/eventBus'
+import getWalletConnectURI from '@/utils/wallet/walletClient'
+import WalletAccount from '@/utils/wallet/walletAccount'
 
 export default {
+
   components: {
     WalletQrCanvas,
     WalletAccountInfo,
   },
+
+  data() {
+    return {
+      walletURI: '',
+    }
+  },
+
   computed: {
     ...mapState([
       'walletConnected',
@@ -74,6 +86,37 @@ export default {
     ...mapGetters([
       'getIsWalletConnected',
     ]),
+  },
+
+  async mounted() {
+    this.initWalletQR()
+    eventBus.$on('vite-wallet-connected', eventData => {
+      const address = eventData.payload.params[0].accounts[0]
+      this.$store.commit('setWalletConnected', true)
+      this.$store.dispatch('addAccount', new WalletAccount({ address }))
+    })
+    eventBus.$on('vite-wallet-disconnected', () => {
+      this.walletURI = ''
+      this.$store.commit('setWalletConnected', false)
+      this.initWalletQR()
+    })
+  },
+
+  beforeDestroy() {
+    // removing eventBus listeners
+    eventBus.$off('vite-wallet-connected')
+    eventBus.$off('vite-wallet-disconnected')
+  },
+
+  methods: {
+
+    async initWalletQR() {
+      const vbInstance = await getWalletConnectURI()
+      if (!this.walletConnected) {
+        await vbInstance.createSession()
+        this.walletURI = vbInstance.uri
+      }
+    },
   },
 }
 </script>
